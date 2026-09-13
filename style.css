@@ -529,3 +529,5 @@
   .mech-video b{ font-size:.86em; color:var(--muted); }
   .mech-video ul{ margin:4px 0 0; padding-left:18px; }
   footer p.legal{ font-size:.78em; color:var(--muted); margin-top:6px; }
+  .tier-sel .tier-label{ font-size:.8em; color:var(--muted); padding:0 8px; align-self:center; font-family:var(--mono); }
+  .tier-sel.detail-tiers{ margin-top:8px; }

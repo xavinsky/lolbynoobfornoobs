@@ -18,6 +18,16 @@ Des pages statiques, sans serveur : le site s'ouvre aussi bien en local qu'en li
 
 Les données viennent de Data Dragon (Riot Games), du wiki League of Legends, d'op.gg et de lolalytics ; le détail et les dates de récupération sont sur la page Sources.
 
+## Mettre à jour les statistiques
+
+Les taux de victoire, de pick et de ban par palier (Fer, Bronze, Argent, Or, et la référence Émeraude+) se périment à chaque patch. Le script livré avec le site les rafraîchit :
+
+```
+python3 script/update_tiers.py
+```
+
+À lancer depuis la racine du site (le dossier qui contient `index.html`). Il lit 25 pages « tier list » de lolalytics, une par palier et par rôle, sans clé ni compte, en une minute environ (Python 3 seul, aucune dépendance), et modifie **un seul fichier : `data/roles_tiers.js`**, qui porte la date et le patch de la mise à jour. Le sélecteur de paliers du site lit ce fichier ; le reste des données (compétences, objets, stats par rôle de référence) est régénéré depuis le brouillon privé.
+
 ## Licences
 
 Code et textes du site : [licence MIT](LICENSE). Les textes traduits ou résumés du wiki League of Legends restent sous [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), page d'origine citée. Les données de jeu, noms, icônes et vidéos appartiennent à Riot Games.

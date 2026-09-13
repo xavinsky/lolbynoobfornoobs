@@ -29,6 +29,7 @@
 
     <div class="toolbar">
       <input type="search" id="search" placeholder="Chercher…" autocomplete="off">
+      <div class="segmented tier-sel" id="tierSel" title="Paliers pris en compte pour WR, pick et ban (parties classées Solo/Duo de ces paliers, combinées au prorata de leurs parties) ; aucun palier coché = référence Émeraude+"></div>
       <div class="segmented" id="dmgFilter">
         <button data-dmg="all" class="on">Tout</button>
         <button data-dmg="AD">AD</button>
@@ -78,6 +79,7 @@
 </footer>
 
 <script src="data/champions.js"></script>
+<script src="data/roles_tiers.js"></script>
 <script src="data/tips_video.js"></script>
 <script src="data/stats.js"></script>
 <script src="data/mechanics.js"></script>
@@ -118,15 +120,48 @@
   // WR = moyenne des rôles pondérée par leur PR. Ban = une seule valeur : on bannit un champion, pas
   // un rôle — la source la répète sur chaque rôle avec de petits écarts de moment de mesure, on garde
   // celle du rôle principal (cf. sources.js, mécanisme "rolesCombined").
+  // ---------- Paliers affichés (WR / PR / Ban) : Fer, Bronze, Argent, Or, cochables ; aucun coché = référence Émeraude+ ----------
+  const TIER_KEYS = [['iron', 'Fer'], ['bronze', 'Bronze'], ['silver', 'Argent'], ['gold', 'Or']];
+  function loadTiers(){ try{ const v = JSON.parse(localStorage.getItem('docTiers')); return Array.isArray(v) ? v.filter(t => TIER_KEYS.some(k => k[0] === t)) : TIER_KEYS.map(k => k[0]); }catch(e){ return TIER_KEYS.map(k => k[0]); } }
+  function saveTiers(){ try{ localStorage.setItem('docTiers', JSON.stringify(state.tiers)); }catch(e){} }
+  const RT = (typeof ROLES_TIERS !== 'undefined') ? ROLES_TIERS : null;
+  // Chiffres d'un champion à un rôle pour les paliers cochés : WR pondéré par les parties du champion, PR et Ban pondérés
+  // par les parties analysées du palier (mécanisme « rolesTiers ») ; sans palier coché ou sans donnée, la référence
+  // Émeraude+ de champions.js (mécanisme « roles »), avec sa lettre de tier.
+  function roleStat(ch, role){
+    const ref = ch.roles[role]; if(!ref) return null;
+    if(!RT || !state.tiers.length) return { ...ref, src: 'ref' };
+    const per = (RT.champions[String(parseInt(ch.key, 10))] || {})[role] || {};
+    let g = 0, wr = 0, an = 0, pr = 0, br = 0;
+    for(const t of state.tiers){
+      const x = per[t], lane = (RT.tiers[t] || { lanes: {} }).lanes[role];
+      if(!x || !lane) continue;
+      g += x.games; wr += x.wr * x.games; an += lane.analysed; pr += x.pr * lane.analysed; br += x.br * lane.analysed;
+    }
+    if(!g) return { tier: null, wr: NaN, pr: 0, ban: NaN, games: 0, src: 'tiers', missing: true };
+    return { tier: null, wr: wr / g, pr: pr / an, ban: br / an, games: g, src: 'tiers' };
+  }
+  function tiersLabel(){ return state.tiers.length ? TIER_KEYS.filter(k => state.tiers.includes(k[0])).map(k => k[1]).join(' + ') : 'Émeraude+ (référence)'; }
+  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''}>${l}</button>`).join('') + `<span class="tier-label">${RT ? (state.tiers.length ? `patch ${escHtml(RT.patch || '')}` : 'référence Émeraude+') : 'référence Émeraude+'}</span>`; }
+  function bindTierSel(box, onChange){
+    box.innerHTML = tierSelHtml();
+    box.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => {
+      const t = b.dataset.tier; const i = state.tiers.indexOf(t); if(i >= 0) state.tiers.splice(i, 1); else state.tiers.push(t);
+      state.tiers = TIER_KEYS.map(k => k[0]).filter(k => state.tiers.includes(k)); saveTiers();
+      document.querySelectorAll('.tier-sel').forEach(el => { el.innerHTML = tierSelHtml(); }); document.querySelectorAll('.tier-sel').forEach(el => bindTierSel(el, onChange));
+      onChange();
+    }));
+  }
+  const fmtPct = v => isNaN(v) ? '—' : v.toFixed(1) + '%';
   function combinedStatsFor(ch){
-    const roles = rolesOf(ch);
-    const totalPr = roles.reduce((s,role)=>s+ch.roles[role].pr, 0);
-    const wr = totalPr>0 ? roles.reduce((s,role)=>s+ch.roles[role].wr*ch.roles[role].pr,0)/totalPr : 0;
+    const rs = rolesOf(ch).map(role => roleStat(ch, role)).filter(r => r && !r.missing);
+    const totalPr = rs.reduce((s,r)=>s+r.pr, 0);
+    const wr = totalPr>0 ? rs.reduce((s,r)=>s+r.wr*r.pr,0)/totalPr : NaN;
     return { wr, pr: totalPr, ban: banOf(ch) };
   }
-  function banOf(ch){ return ch.roles[primaryRole(ch)].ban; }
+  function banOf(ch){ const r = roleStat(ch, primaryRole(ch)); return r ? r.ban : NaN; }
   function statsFor(ch){
-    if(state.role !== 'all') return ch.roles[state.role];
+    if(state.role !== 'all') return roleStat(ch, state.role) || { tier: null, wr: NaN, pr: 0, ban: NaN };
     return { tier: ch.roles[primaryRole(ch)].tier, ...combinedStatsFor(ch) };
   }
   function abilityVideoUrl(ch, letter){ return `https://lol.dyn.riotcdn.net/x/videos/champion-abilities/${ch.key}/ability_${ch.key}_${letter.toUpperCase()}1.mp4`; }
@@ -427,10 +462,10 @@
   function listLane(ch){ return state.role === 'all' ? defaultLane(ch) : state.role; }
   function rolePillsHtml(ch){
     return rolesOf(ch).sort((x,y)=>ch.roles[y].pr-ch.roles[x].pr).map(role => {
-      const rs = ch.roles[role];
+      const rs = roleStat(ch, role);
       const cur = role === state.role;
-      const prHtml = cur ? `<b>${rs.pr.toFixed(1)}%</b>` : `${rs.pr.toFixed(1)}%`;
-      return `<span class="pill pill-role${cur ? ' cur' : ''}">${roleIconOnlyHtml(role)} <b>${rs.tier}</b> <span class="n">PR ${prHtml}</span>${starHtml(ch, role)}</span>`;
+      const prHtml = cur ? `<b>${fmtPct(rs.pr)}</b>` : fmtPct(rs.pr);
+      return `<span class="pill pill-role${cur ? ' cur' : ''}" title="${escHtml(tiersLabel())}${rs.missing ? ' — pas assez de parties à ces paliers' : ''}">${roleIconOnlyHtml(role)} ${rs.tier ? `<b>${rs.tier}</b> ` : ''}<span class="n">PR ${prHtml}</span>${starHtml(ch, role)}</span>`;
     }).join('');
   }
   function champNameHtml(ch, withIcon){
@@ -438,7 +473,7 @@
   }
   function dmgPillHtml(ch){ return `<span class="pill pill-dmg ${dmgClass(ch.damageType)}" title="${dmgTitle(ch)}">${dmgLabel(ch.damageType)}</span>`; }
   // Trois segments : en grille (carte étroite) le Ban passe seul à la ligne plutôt que de couper au milieu.
-  function statLineHtml(ch){ const r = combinedStatsFor(ch); return `<span class="stat"><span>WR ${r.wr.toFixed(1)}% · PR ${r.pr.toFixed(1)}%</span><span class="ban">Ban ${r.ban.toFixed(1)}%</span></span>`; }
+  function statLineHtml(ch){ const r = combinedStatsFor(ch); return `<span class="stat" title="${escHtml(tiersLabel())}"><span>WR ${fmtPct(r.wr)} · PR ${fmtPct(r.pr)}</span><span class="ban">Ban ${fmtPct(r.ban)}</span></span>`; }
   const toggleBtnHtml = '<button class="champ-toggle" aria-expanded="false" title="Voir Points forts / Contre">▸ détails</button>';
   // Vue tableau : une ligne par champion, cellules dans l'ordre des colonnes de l'en-tête (grille CSS,
   // cf. .tbl .champ-head) — une cellule vide garde la colonne quand le champion n'a pas de conseil.
@@ -517,7 +552,7 @@
       if(state.sort === 'pr') return rb.pr - ra.pr;
       if(state.sort === 'ban') return rb.ban - ra.ban;
       if(state.sort === 'wr') return rb.wr - ra.wr;
-      if(state.sort === 'tier') return (TIER_ORDER[ra.tier] ?? 9) - (TIER_ORDER[rb.tier] ?? 9);
+      if(state.sort === 'tier') return (ra.tier || rb.tier) ? (TIER_ORDER[ra.tier] ?? 9) - (TIER_ORDER[rb.tier] ?? 9) : (isNaN(rb.wr) ? -1 : rb.wr) - (isNaN(ra.wr) ? -1 : ra.wr);
       if(state.sort === 'az') return a.name.localeCompare(b.name);
       return 0;
     });
@@ -587,6 +622,8 @@
     renderList();
   });
   document.getElementById('search').addEventListener('input', e => { state.q = e.target.value; renderList(); });
+  state.tiers = loadTiers();
+  bindTierSel(document.getElementById('tierSel'), () => renderList());
   document.getElementById('sortSel').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
 
   // ---------- Vue détail ----------
@@ -855,7 +892,7 @@
     const card = body => `<div class="detail-card roster-card" id="rosterCard">${body}</div>`;
     const mine = mastered().filter(x => x.endsWith(':' + lane)).map(x => findChamp(x.split(':')[0])).filter(c => c && laneStats(c, lane));
     if(!mine.length) return card(`<h3 class="section-label">Recommandations — ${ROLE_LABEL[lane]}</h3><p class="muted" style="margin:0">Aucun champion ★ pour ce rôle : en ajouter un ci-dessus (ou par l'étoile de la liste) pour voir les adversaires mal couverts et quoi apprendre.</p>`);
-    const opps = CHAMPIONS.filter(c => c.roles[lane] && c.roles[lane].pr >= 1 && laneStats(c, lane));
+    const opps = CHAMPIONS.filter(c => c.roles[lane] && (roleStat(c, lane) || {}).pr >= 1 && laneStats(c, lane));
     const weak = [], unknown = [];
     for(const o of opps){
       const best = mine.map(c => wrVs(c, lane, o)).filter(r => r && r.sig).sort((a,b)=>b.wr-a.wr)[0];
@@ -863,7 +900,7 @@
     }
     const cand = CHAMPIONS.filter(c => laneStats(c, lane) && !isMastered(c.id, lane)).map(c => {
       let score = 0; const fixes = [];
-      for(const o of weak){ const r = wrVs(c, lane, o); if(r && r.sig && r.wr > 50){ score += (r.wr - 50) * o.roles[lane].pr; fixes.push(o); } }
+      for(const o of weak){ const r = wrVs(c, lane, o); if(r && r.sig && r.wr > 50){ score += (r.wr - 50) * ((roleStat(o, lane) || {}).pr || 0); fixes.push(o); } }
       return { c, score, fixes };
     }).filter(x => x.fixes.length).sort((a,b)=>b.score-a.score).slice(0,5);
     return card(`<h3 class="section-label">Recommandations — ${ROLE_LABEL[lane]} <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">avec ${mine.map(c=>escHtml(c.name)).join(', ')}</span></h3>
@@ -938,9 +975,9 @@
     // soient numérotés dans l'ordre où on les lit sur la fiche.
     // Pastilles de rôle = sélecteur du rôle affiché par les sections stats (courbe, build, runes, matchups…).
     const rolelineHtml = () => rolesOf(ch).sort((x,y)=>ch.roles[y].pr-ch.roles[x].pr).map(role => {
-      const rs = ch.roles[role];
+      const rs = roleStat(ch, role);
       const selectable = !!laneStats(ch, role);
-      return `<${selectable ? 'button type="button" data-lane="' + role + '"' : 'span'} class="pill pill-role${role === state.detailLane ? ' cur' : ''}${selectable ? ' selectable' : ''}" title="${selectable ? 'Afficher les stats de ce rôle' : ''}">${roleLabelHtml(role)} <b>${rs.tier}</b> <span class="n">WR ${rs.wr.toFixed(1)}% · PR ${rs.pr.toFixed(1)}%</span>${refSpecific(ch, 'roles.' + role)}${starHtml(ch, role)}</${selectable ? 'button' : 'span'}>`;
+      return `<${selectable ? 'button type="button" data-lane="' + role + '"' : 'span'} class="pill pill-role${role === state.detailLane ? ' cur' : ''}${selectable ? ' selectable' : ''}" title="${escHtml(tiersLabel())}${selectable ? ' — cliquer : afficher les stats de ce rôle' : ''}${rs.missing ? ' — pas assez de parties à ces paliers' : ''}">${roleLabelHtml(role)} ${rs.tier ? `<b>${rs.tier}</b> ` : ''}<span class="n">WR ${fmtPct(rs.wr)} · PR ${fmtPct(rs.pr)}</span>${refSpecific(ch, 'roles.' + role)}${starHtml(ch, role)}</${selectable ? 'button' : 'span'}>`;
     }).join('');
     const abilityKeys = ['passive','q','w','e','r'];
     const rows = abilityKeys.map(k => {
@@ -966,7 +1003,7 @@
               <span id="powerBadge" style="display:contents;">${powerTagHtml(ch, state.detailLane)}</span>
               ${growthPillHtml(ch)}
               <span class="champ-class" style="align-self:center;">${ch.class}</span>
-              <span class="pill pill-ban" title="Taux de ban du champion (une seule valeur : on bannit un champion, pas un rôle — cf. page Sources)">Ban ${pct(banOf(ch))}</span>
+              <span class="pill pill-ban" title="Taux de ban du champion (une seule valeur : on bannit un champion, pas un rôle — cf. page Sources)">Ban ${fmtPct(banOf(ch))}</span>
               <span class="pill pill-rework" title="${reworkTitle(ch)}">${reworkLabel(ch)}</span>
             </div>
           </div>
@@ -974,6 +1011,7 @@
           <a class="champ-link" href="${champPageUrl(ch)}" target="_blank" rel="noopener">Fiche officielle ↗</a>
         </div>
         <div class="roleline" style="margin-top:12px;">${rolelineHtml()}</div>
+        <div class="segmented tier-sel detail-tiers" title="Paliers pris en compte pour WR, pick et ban ; aucun palier coché = référence Émeraude+"></div>
         ${analysisBlockHtml(ch, 'margin-top:12px;')}
       </div>
 
@@ -1024,6 +1062,7 @@
     // pour comprendre ce que fait la fiche.
     selectAbility(abilityKeys.find(k => ch.abilities[k] && k === 'r') || abilityKeys.find(k => ch.abilities[k]));
 
+    document.querySelectorAll('#detailContent .tier-sel').forEach(el => bindTierSel(el, () => renderDetail(ch)));
     initCollapsibles();
     initRefLinks();
     initStars(document.getElementById('detailContent'), ch);
