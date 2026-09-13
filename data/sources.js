@@ -29,7 +29,8 @@ const GLOBAL_SOURCES = [
     url: null,
     retrieved: null,
     caveat: "Le tri (menu \"Trier\") continue lui à utiliser la valeur du seul rôle actif quand un filtre de rôle précis est sélectionné (pas la somme) — sinon classer \"par PR\" sous l'onglet Jungle, par ex., ne classerait plus par popularité en jungle. Le même Ban unique est affiché sur la fiche champion."
-  }  {
+  },
+  {
     id: "rolesTiers",
     label: "WR / Pick / Ban par palier (Fer, Bronze, Argent, Or — sélecteur de paliers)",
     fields: ["data/roles_tiers.js : ROLES_TIERS.champions[clé][rôle][palier] (wr, pr, br, games, grade), ROLES_TIERS.tiers[palier].lanes[rôle].analysed"],
@@ -38,7 +39,6 @@ const GLOBAL_SOURCES = [
     retrieved: "2026-09-14",
     caveat: "Le WR moyen d'un palier n'est pas 50 % (les joueurs Fer gagnent ≈ 44 % de leurs parties classées, les Or ≈ 50 %) : un WR lu à un palier se compare aux autres champions du même palier, pas à 50. Un champion peu joué à un palier a peu de parties : le chiffre est alors instable (« — » s'il n'en a aucune). Pas de lettre de tier en mode paliers (les notes du site source ne se combinent pas)."
   },
-,
   {
     id: "abilities",
     label: "Titre du champion, nom et description des compétences",
