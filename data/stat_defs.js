@@ -1,0 +1,30 @@
+// Définitions des statistiques d'objets, en français — résumés traduits des pages du wiki League of Legends (en, CC BY-SA
+// 3.0 ; page citée dans `wiki`), mécanisme « statDefs » de data/sources.js. Clé = terme tel qu'il apparaît dans les
+// descriptions officielles des objets (minuscules, sans article), cf. itemstats.js.
+const STAT_DEFS = {
+  "dégâts d'attaque": { label: "Dégâts d'attaque (AD)", wiki: 'Attack_damage', desc: "Dégâts physiques de chaque attaque de base, et base des ratios « AD » des sorts. Réduits par l'armure de la cible. Chaque champion en a de base et en gagne par niveau ; les objets ajoutent un montant fixe." },
+  "puissance": { label: 'Puissance (AP)', wiki: 'Ability_power', desc: "Ne fait rien seule : elle augmente les sorts (et certains effets d'objets) qui ont un ratio « AP ». Les dégâts qu'elle produit sont magiques, réduits par la résistance magique. Aucun champion n'en a de base." },
+  "force adaptative": { label: 'Force adaptative', wiki: 'Adaptive_force', desc: "Se convertit en dégâts d'attaque (0,6 par point) ou en puissance (1 par point) selon la statistique bonus la plus élevée du champion à cet instant." },
+  "vitesse d'attaque": { label: "Vitesse d'attaque", wiki: 'Attack_speed', desc: "Nombre d'attaques par seconde. Les objets donnent un pourcentage de la vitesse d'attaque de base du champion, plafonnée à 2,5 attaques par seconde (3 pour certains). Les champions qui font mal à l'attaque en profitent le plus." },
+  "chances de coup critique": { label: 'Chances de coup critique', wiki: 'Critical_strike', desc: "Probabilité qu'une attaque de base fasse un coup critique : 175 % des dégâts au lieu de 100 %. À 100 %, toutes les attaques sont critiques. N'affecte pas les sorts, sauf ceux qui le disent." },
+  "dégâts de coup critique": { label: 'Dégâts de coup critique', wiki: 'Critical_strike', desc: "Augmente le multiplicateur d'un coup critique au-delà de 175 %." },
+  "létalité": { label: 'Létalité', wiki: 'Lethality', desc: "Pénétration d'armure fixe : chaque point retire un point d'armure à la cible pour le calcul des dégâts physiques (sans descendre sous zéro). Vaut surtout contre les cibles peu blindées." },
+  "pénétration d'armure": { label: "Pénétration d'armure (%)", wiki: 'Armor_penetration', desc: "Ignore un pourcentage de l'armure de la cible pour le calcul des dégâts physiques ; s'applique avant la létalité. Vaut surtout contre les cibles très blindées." },
+  "pénétration magique": { label: 'Pénétration magique', wiki: 'Magic_penetration', desc: "Ignore une partie de la résistance magique de la cible pour le calcul des dégâts magiques : fixe (points) ou en pourcentage, le pourcentage s'appliquant en premier." },
+  "pv": { label: 'PV (points de vie)', wiki: 'Health', desc: "Vie maximale. Les objets en ajoutent un montant fixe ; certains effets (dégâts en pourcentage de PV, soins en pourcentage) grandissent avec les PV max." },
+  "pv max": { label: 'PV max', wiki: 'Health', desc: "Vie maximale (voir PV)." },
+  "armure": { label: 'Armure', wiki: 'Armor', desc: "Réduit les dégâts physiques reçus : dégâts × 100 ÷ (100 + armure). 100 d'armure divisent les dégâts physiques par deux. Ne fait rien contre les dégâts magiques ni bruts." },
+  "résistance magique": { label: 'Résistance magique (RM)', wiki: 'Magic_resistance', desc: "Réduit les dégâts magiques reçus, même formule que l'armure : dégâts × 100 ÷ (100 + RM). Ne fait rien contre les dégâts physiques ni bruts." },
+  "régénération de base des pv": { label: 'Régénération des PV', wiki: 'Health_regeneration', desc: "Vie récupérée toutes les 5 secondes, hors combat comme en combat. Les objets donnent un pourcentage de la régénération de base du champion." },
+  "ténacité": { label: 'Ténacité', wiki: 'Tenacity', desc: "Réduit la durée des contrôles de foule subis (étourdissement, ralentissement, immobilisation…), sauf les projections en l'air et la suppression. Plusieurs sources se cumulent avec rendement décroissant." },
+  "résistance aux ralentissements": { label: 'Résistance aux ralentissements', wiki: 'Slow_resist', desc: "Réduit la force des ralentissements subis (pas leur durée)." },
+  "vol de vie": { label: 'Vol de vie', wiki: 'Life_steal', desc: "Soigne un pourcentage des dégâts infligés par les attaques de base seulement." },
+  "omnivampirisme": { label: 'Omnivampirisme', wiki: 'Omnivamp', desc: "Soigne un pourcentage de tous les dégâts infligés, attaques et sorts ; réduit sur les dégâts de zone." },
+  "efficacité des soins et boucliers": { label: 'Efficacité des soins et boucliers', wiki: 'Heal_and_shield_power', desc: "Augmente les soins et les boucliers que le champion donne aux autres et à lui-même (pas le vol de vie)." },
+  "mana": { label: 'Mana', wiki: 'Mana', desc: "Réserve dépensée par les sorts des champions à mana. Les objets en ajoutent un montant fixe ; certains convertissent le mana en dégâts ou en bouclier." },
+  "régénération de base du mana": { label: 'Régénération du mana', wiki: 'Mana_regeneration', desc: "Mana récupéré toutes les 5 secondes ; les objets donnent un pourcentage de la régénération de base du champion." },
+  "accélération de compétence": { label: 'Accélération de compétence', wiki: 'Ability_haste', desc: "Réduit les délais de récupération des sorts : délai ÷ (1 + accélération ÷ 100). 100 d'accélération = deux fois plus de sorts. Sans plafond, à rendement décroissant." },
+  "po toutes les 10 sec": { label: 'Or passif', wiki: 'Gold', desc: "Pièces d'or gagnées automatiquement, en plus de celles des sbires et des éliminations ; typique des objets de soutien." },
+  "vitesse de déplacement": { label: 'Vitesse de déplacement', wiki: 'Movement_speed', desc: "Unités parcourues par seconde. Les objets donnent un montant fixe ou un pourcentage ; les bonus élevés ont un rendement décroissant." },
+  "portée d'attaque": { label: "Portée d'attaque", wiki: 'Range', desc: "Distance maximale d'une attaque de base ; corps à corps en dessous de 300." },
+};

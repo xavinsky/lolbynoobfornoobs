@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compétences — LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="bases" data-page="competences"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+
+<main>
+  <div class="detail-card">
+    <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Compétences — lire un sort en un coup d'œil</h2>
+    <p style="margin:6px 0 0;">Chaque sort d'un champion est décrit sur sa fiche par une rangée d'icônes : comment on vise, qui est touché, quel type de dégâts, à quelle distance, ce que le sort fait subir ou apporte, et ce qui peut le contrer. Cette page explique chaque icône, avec le nombre de sorts concernés et des exemples. Sources en fin de page <a class="ref" href="#sources">[1]</a>.</p>
+    <nav class="sub-nav" id="axisNav"></nav>
+  </div>
+  <div id="content" style="display:flex; flex-direction:column; gap:12px;"></div>
+</main>
+
+<footer>
+  <p><b>Merci à</b> : <a href="https://op.gg" target="_blank" rel="noopener">op.gg</a> · <a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noopener">Data Dragon</a> · <a href="https://wiki.leagueoflegends.com" target="_blank" rel="noopener">LoL Wiki</a> · <a href="https://lolalytics.com" target="_blank" rel="noopener">lolalytics</a> · <a class="yt-link" href="https://www.youtube.com/channel/UC2t5bjwHdUX4vM2g8TRDq5g" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>League of Legends</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCU-l1ajszDLFd6lWyCs1_GA" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>LoL France</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCbqpZInu-pjnBIy5sbh7Eag" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>3 Minute LoL</a> · <a href="sources.html">[et les autres]</a></p>
+  <p class="legal">LoL by Noob for Noobs est un projet indépendant, sans lien avec Riot Games. LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc. Textes issus du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, pages citées sur la page Sources.</p>
+</footer>
+
+<script src="data/champions.js"></script>
+<script src="data/mechanics.js"></script>
+<script src="taxonomy.js"></script>
+<script>
+(function(){
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const LETTER = { passive:'P', q:'Q', w:'W', e:'E', r:'R' };
+  // Tous les sorts avec leur classification, pour compter et donner des exemples.
+  const ALL = [];
+  CHAMPIONS.forEach(ch => { const m = ABILITY_MECHANICS[ch.id] || {}; for(const k of ['passive','q','w','e','r']){ const t = m[k] && m[k].tax; if(!t) continue; ALL.push({ ch, k, name: ch.abilities[k] ? ch.abilities[k].name : k.toUpperCase(), tax: t }); } });
+  const has = (a, axis, key) => {
+    const t = a.tax;
+    if(axis === 'range') return rangeBucket(t.targetRange) === key;
+    if(axis === 'interaction') return t[key] === 'true';
+    return Array.isArray(t[axis]) && t[axis].includes(key);
+  };
+  const exLink = a => `<a class="tx-ex" href="index.html#/champ/${encodeURIComponent(a.ch.id)}" title="${esc(a.name)}"><img class="champ-icon" src="https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${a.ch.ddid}.png" alt="">${esc(a.ch.name)} <kbd class="key">${LETTER[a.k]}</kbd></a>`;
+  function entryHtml(axis, key){
+    const it = TAXONOMY[axis].items[key];
+    const hits = ALL.filter(a => has(a, axis, key));
+    // exemples : des champions différents, les plus joués d'abord (PR toutes lignes)
+    const seen = new Set(); const sorted = hits.slice().sort((a,b) => Object.values(b.ch.roles).reduce((s,r)=>s+r.pr,0) - Object.values(a.ch.roles).reduce((s,r)=>s+r.pr,0)).filter(a => !seen.has(a.ch.id) && seen.add(a.ch.id));
+    const ex = sorted.slice(0, 3);
+    const full = hits.slice().sort((a,b) => a.ch.name.localeCompare(b.ch.name) || a.k.localeCompare(b.k));
+    const fullList = hits.length > 3 ? `<details class="tx-all"><summary>Tous les sorts (${hits.length})</summary><div class="tx-examples">${full.map(exLink).join('')}</div></details>` : '';
+    return `<div class="tx-entry" id="tx-${axis}-${key}">
+      <div class="tx-entry-h">${taxIconHtml(axis, key, { cls:'big', text: it.label })}<span class="tx-count">${hits.length} sort${hits.length>1?'s':''}</span></div>
+      <p class="tx-desc">${esc(it.desc)}</p>
+      ${ex.length ? `<div class="tx-examples">${ex.map(a => exLink(a)).join('')}</div>` : ''}${fullList}
+    </div>`;
+  }
+  const card = (id, title, intro, body) => `<div class="detail-card" id="${id}"><h3 class="section-label">${title}</h3>${intro ? `<p style="margin:0 0 8px;">${intro}</p>` : ''}${body}</div>`;
+  const grid = keys => (axis => `<div class="tx-grid">${keys.map(k => entryHtml(axis, k)).join('')}</div>`);
+  const AXES = [
+    ['targeting', "Le mode de visée détermine ce qu'on peut esquiver : un sort en direction se rate, un sort sur unité ne se rate pas, une zone au sol laisse le temps de sortir. Un sort peut combiner deux modes (un dash en direction puis une explosion automatique)."],
+    ['affects', "Qui le sort touche. La plupart touchent les ennemis ; beaucoup agissent aussi sur le lanceur (déplacement, bonus) ; les sorts de soutien touchent les alliés."],
+    ['damage', "Contre qui acheter de l'armure ou de la résistance magique : voir Calcul des dégâts. Les sorts sans type ne font pas de dégâts."],
+    ['range', "Portée de ciblage, en unités du jeu, ramenée à sept tranches. Repères : portée d'attaque d'un combattant 125-175, d'un tireur 550-650, vue d'un champion 1350. La portée d'une zone (rayon) s'ajoute à celle du ciblage."],
+    ['effects', "Ce que le sort fait subir à sa cible ou apporte à son lanceur. Les contrôles de foule sont classés d'après la page « Crowd control » du wiki ; les icônes des contrôles sont celles du jeu."],
+    ['interaction', "Ce qui peut annuler ou bloquer le sort. Précieux face à un champion précis : un mur de vent contre ses projectiles, un bouclier de sort contre son contrôle, un ancrage contre son dash."],
+  ];
+  const nav = []; const cards = [];
+  for(const [axis, intro] of AXES){
+    const T = TAXONOMY[axis]; nav.push(`<a href="#ax-${axis}">${esc(T.title.split(' — ')[0])}</a>`);
+    let body;
+    if(T.groups){
+      body = T.groups.map(g => `<h4 id="tx-group-${g.id}">${esc(g.title)}</h4>` + grid(g.keys)(axis)).join('');
+    } else body = grid(Object.keys(T.items))(axis);
+    cards.push(card('ax-' + axis, T.title, intro, body));
+  }
+  cards.push(`<div class="detail-card sources-card" id="sources"><h3 class="section-label">Sources</h3>
+    <div class="source-item"><div class="h"><span class="label">Wiki League of Legends — gabarits « Data &lt;Champion&gt;/&lt;Sort&gt; »</span><span class="date">865 gabarits, récupérés le 12 septembre 2026 · CC BY-SA 3.0</span></div><div class="method">Champs ciblage, cibles, type de dégâts, bouclier de sort, projectile, ancrage, knockdown, parade, silence, appel à l'aide, portée de ciblage, rayon ; effets = mots-clés liés des descriptions et paliers de chaque sort (jamais des notes), ramenés au vocabulaire de cette page. Règle complète : page Sources, mécanisme « abilityTaxonomy ».</div><a class="url" href="https://wiki.leagueoflegends.com/en-us/Template:Ability_data" target="_blank" rel="noopener">wiki.leagueoflegends.com/en-us/Template:Ability_data</a></div>
+    <div class="source-item"><div class="h"><span class="label">Wiki — page « Crowd control »</span><span class="date">consultée le 12 septembre 2026 · CC BY-SA 3.0</span></div><div class="method">Liste et définitions des types de contrôle de foule (résumé traduit) ; icônes des effets telles qu'affichées en jeu (fichiers image du wiki).</div><a class="url" href="https://wiki.leagueoflegends.com/en-us/Crowd_control" target="_blank" rel="noopener">wiki.leagueoflegends.com/en-us/Crowd_control</a></div>
+    <div class="source-item"><div class="h"><span class="label">Inventaire des valeurs possibles</span><span class="date">2026-09-12</span></div><div class="method">Tranches de portée et choix du vocabulaire : <code>03-competences-inventaire.md</code> (dépôt), établi sur les 865 gabarits et les 692 portées officielles Data Dragon.</div></div>
+  </div>`);
+  document.getElementById('axisNav').innerHTML = nav.join('') + '<a href="#sources">Sources</a>';
+  document.getElementById('content').innerHTML = cards.join('');
+  // Arrivée sur une ancre (#tx-effects-stun depuis une fiche) : mise en évidence.
+  function flash(){ const id = location.hash.slice(1); const t = id && document.getElementById(id); if(!t) return; t.scrollIntoView({ block:'center' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 2000); }
+  window.addEventListener('hashchange', flash); flash();
+})();
+</script>
+</body>
+</html>

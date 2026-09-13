@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bases — LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="bases" data-page="cartes"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+
+<main>
+  <div id="content" style="display:flex; flex-direction:column; gap:12px;"></div>
+</main>
+
+<footer>
+  <p><b>Merci à</b> : <a href="https://op.gg" target="_blank" rel="noopener">op.gg</a> · <a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noopener">Data Dragon</a> · <a href="https://wiki.leagueoflegends.com" target="_blank" rel="noopener">LoL Wiki</a> · <a href="https://lolalytics.com" target="_blank" rel="noopener">lolalytics</a> · <a class="yt-link" href="https://www.youtube.com/channel/UC2t5bjwHdUX4vM2g8TRDq5g" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>League of Legends</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCU-l1ajszDLFd6lWyCs1_GA" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>LoL France</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCbqpZInu-pjnBIy5sbh7Eag" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>3 Minute LoL</a> · <a href="sources.html">[et les autres]</a></p>
+  <p class="legal">LoL by Noob for Noobs est un projet indépendant, sans lien avec Riot Games. LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc. Textes issus du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, pages citées sur la page Sources.</p>
+</footer>
+
+<script src="data/refs.js"></script>
+<script src="data/item_effects.js"></script>
+<script src="data/stat_defs.js"></script>
+<script src="itemstats.js"></script>
+<script src="taxonomy.js"></script>
+<script src="data/fondamentaux.js"></script>
+<script src="data/champions.js"></script>
+<script src="data/sources.js"></script>
+<script>
+(function(){
+  const V = REFS_VERSION;
+  const DD = `https://ddragon.leagueoflegends.com/cdn/${V}/img`;
+  const WIKI = 'https://wiki.leagueoflegends.com/en-us/';
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // Descriptions officielles : balises de mise en forme du client (mainText, stats, passive, active, attention, rules, li, br…)
+  // simplifiées en HTML lisible ; tout le reste du balisage est retiré, le texte est gardé tel quel.
+  function ddHtml(s){
+    if(!s) return '';
+    let t = s.replace(/<br\s*\/?>/gi, '\n').replace(/<li>/gi, '\n• ').replace(/<\/li>/gi, '')
+      .replace(/<(passive|active|attention|keywordMajor|keywordStealth|status|scaleLevel|rarityMythic|rarityLegendary)>/gi, '<b>').replace(/<\/(passive|active|attention|keywordMajor|keywordStealth|status|scaleLevel|rarityMythic|rarityLegendary)>/gi, '</b>')
+      .replace(/<rules>/gi, '<i class="rules">').replace(/<\/rules>/gi, '</i>')
+      .replace(/<stats>/gi, '<span class="dd-stats">').replace(/<\/stats>/gi, '</span>')
+      .replace(/<hr\s*\/?>/gi, '\n');
+    t = t.replace(/<(?!\/?(b|i|span)\b)[^>]+>/g, '');
+    return t.replace(/\n{2,}/g, '\n').trim().replace(/\n/g, '<br>');
+  }
+  // Sources d'une sous-page : src() renvoie un renvoi [n] et note la source ; la liste numérotée est ajoutée en fin de
+  // sous-page par pageWithNotes() (une numérotation par sous-page).
+  let SRC_NOTES = [];
+  const src = (label, url) => { let i = SRC_NOTES.findIndex(x => x.label === label && x.url === url); if(i < 0){ SRC_NOTES.push({ label, url }); i = SRC_NOTES.length - 1; } return `<a class="ref pagenote" href="#src-note-${i + 1}" title="${esc(label)}">[${i + 1}]</a>`; };
+  const pageWithNotes = (pageId, html) => { const notes = SRC_NOTES.length ? `<div class="src-notes" id="src-notes-${pageId}"><b>Sources</b>${SRC_NOTES.map((x, i) => `<div id="src-note-${i + 1}">[${i + 1}] <a href="${x.url}" target="_blank" rel="noopener">${esc(x.label)}</a></div>`).join('')}</div>` : ''; SRC_NOTES = []; return html + notes; };
+  // Un même nom d'objet existe parfois sous deux identifiants dans item.json (variante de mode au prix différent,
+  // ou étape d'évolution d'un familier de jungle), tous marqués Faille : un seul est affiché — le plus petit
+  // identifiant, celui des builds réels (cf. data/sources.js, mécanisme « refs »). canonItem() ramène l'autre dessus.
+  const CANON_BY_NAME = {};
+  Object.keys(ITEMS).map(Number).filter(id => ITEMS[id].sr && ITEMS[id].inStore !== false).forEach(id => { const n = ITEMS[id].name; if(CANON_BY_NAME[n] === undefined || id < CANON_BY_NAME[n]) CANON_BY_NAME[n] = id; });
+  const canonItem = id => CANON_BY_NAME[ITEMS[id] ? ITEMS[id].name : ''] ?? id;
+  const isCanonItem = id => canonItem(id) === id;
+  // Objets d'Arena que Data Dragon marque comme disponibles sur la Faille : écartés d'après les modes du wiki (data/item_effects.js).
+  const onRift = id => !(ITEM_EFFECTS[id] && ITEM_EFFECTS[id].sr === false);
+  const wikiImg = (name, alt) => `<img class="wiki-icon" src="${WIKI}images/${name}" alt="${esc(alt||'')}" loading="lazy">`;
+  const card = (id, title, body) => `<div class="detail-card" id="${id}"><h3 class="section-label">${title}</h3>${body}</div>`;
+
+  const PN261 = 'https://www.leagueoflegends.com/fr-fr/news/game-updates/patch-26-1-notes/';
+  const src261 = (what) => src('Notes de patch 26.1 — ' + what + ' (archive locale : data/patchnotes)', PN261);
+  // Sections de la page officielle « Comment jouer » (data/fondamentaux.js), choisies par titre.
+  function fondaSections(titles){
+    return FONDA.sections.filter(s => titles.includes(s.title)).map(s => `
+      <div class="fonda-sec">
+        <h4>${esc(s.title)}</h4>
+        ${s.intro ? `<p class="fonda-intro">${esc(s.intro).replace(/\n/g,'<br>')}</p>` : ''}
+        <div class="fonda-grid">${s.items.map(it => `
+          <div class="fonda-item">
+            ${it.thumb ? `<img src="${it.thumb}" alt="" loading="lazy">` : ''}
+            <div><div class="fonda-label">${esc(it.title || it.label)}</div><div class="fonda-text">${esc(it.text).replace(/\n/g,'<br>')}</div></div>
+          </div>`).join('')}</div>
+      </div>`).join('') + src(FONDA.source.label + ' (récupéré le ' + FONDA.source.retrieved + ')', FONDA.source.url);
+  }
+  const iconList = rows => `<div class="icon-list">${rows.map(([n, img, page]) => `<a class="icon-entry" href="${WIKI}${page}" target="_blank" rel="noopener" title="Fiche wiki (en) : ${esc(page.replace(/_/g,' '))}">${img ? wikiImg(img, n) : '<span class="wiki-icon ph"></span>'}<span>${esc(n)}</span></a>`).join('')}</div>`;
+  const wikiNote = src('icônes et fiches : wiki.leagueoflegends.com (en) — en anglais, et parfois en retard sur les notes de patch officielles : en cas de doute, les notes de patch font foi', WIKI + 'Monster');
+
+  // ---------- Cartes : la Faille, les voies, les structures ----------
+  function cartesHtml(){
+    const structures = [['Tourelle', 'Turret_icon.png', 'Turret'], ['Inhibiteur', 'Blue_Inhibitor_icon.png', 'Inhibitor'], ['Nexus', null, 'Nexus']];
+    return `
+      <p style="margin:0 0 8px;">Riot explique les bases sur sa page officielle <a href="${FONDA.source.url}" target="_blank" rel="noopener">« Comment jouer »</a> — les titres, textes et illustrations ci-dessous en sont extraits tels quels. Pour aller plus loin, chaque élément renvoie à sa fiche du wiki (en anglais).</p>
+      <div class="map-block">
+        <img class="map-img" src="${DD}/map/map11.png" alt="Faille de l'invocateur (minimap officielle)">
+        <div><b>La Faille de l'invocateur</b> — la carte des parties classées : trois voies (haut, milieu, bas), la jungle entre elles, deux bases avec leur Nexus. ${src('minimap Data Dragon ' + V, 'https://ddragon.leagueoflegends.com/cdn/' + V + '/img/map/map11.png')}${src('wiki : Summoner\'s Rift', WIKI + "Summoner's_Rift")}</div>
+      </div>
+      ${fondaSections(['DÉTRUIRE LA BASE', 'SE FRAYER UN CHEMIN', 'CHOISISSEZ VOTRE VOIE'])}
+      <h4>Structures</h4>${iconList(structures)}
+      <p style="margin:6px 0 0;"><b>Tourelles en 2026</b> : des plaques sur toutes les tourelles sauf celles du Nexus (chaque plaque détruite rapporte des PO, les plaques tombent à un moment donné), PV globalement augmentés, et la <b>Surcroissance cristalline</b> : des cristaux s'accumulent sur une tourelle qui n'est pas attaquée et explosent en dégâts bruts à la première attaque reçue. ${src261('« Tourelles », « Surcroissance cristalline »')}</p>
+      ${wikiNote}`;
+  }
+
+  // ---------- Sbires et monstres : vagues, jungle, objectifs ----------
+  function sbiresHtml(){
+    const minions = [['Sbire de mêlée', 'Blue_Melee_MinionSquare.png', 'Minion'], ['Sbire à distance', 'Blue_Caster_MinionSquare.png', 'Minion'], ['Super sbire', 'Blue_Super_MinionSquare.png', 'Minion']];
+    const camps = [
+      ['Sentinelle bleue (buff bleu)', 'Blue_SentinelSquare.png', 'Blue_Sentinel'], ['Rougeoyeur (buff rouge)', 'Red_BramblebackSquare.png', 'Red_Brambleback'],
+      ['Gromp', 'GrompSquare.png', 'Gromp'], ['Krugs', 'Ancient_KrugSquare.png', 'Krug'], ['Loups', 'Greater_Murk_WolfSquare.png', 'Wolf'], ['Rapaces', 'Crimson_RaptorSquare.png', 'Raptor'],
+      ['Crabe des failles', 'Rift_ScuttlerSquare.png', 'Rift_Scuttler'],
+    ];
+    const epics = [['Larves du Néant', 'VoidgrubSquare.png', 'Voidgrub'], ['Héraut de la Faille', 'Rift_HeraldSquare.png', 'Rift_Herald'],
+      ['Dragons (ex. infernal, des nuées)', 'Infernal_DrakeSquare.png', 'Dragon'], ['Dragon ancestral', 'Elder_DragonSquare.png', 'Elder_Dragon'], ['Baron Nashor', 'Baron_NashorSquare.png', 'Baron_Nashor']];
+    const li = (t, d) => `<li><b>${t}</b> — ${d}</li>`;
+    return `
+      <p style="margin:0 0 8px;">Ce qui se passe sur la carte sans les joueurs : les vagues de sbires, les camps de la jungle et les objectifs épiques. Les chiffres viennent des notes de patch officielles de la saison 2026 (patch 26.1) ; les descriptions des objectifs sont un résumé traduit des fiches du wiki (en anglais, licence CC BY-SA 3.0), recoupé avec 26.1 — en cas de désaccord, la note de patch fait foi.</p>
+      <h4>Sbires</h4>${iconList(minions)}
+      <ul class="field-list" style="margin-top:6px;">
+        ${li('Première vague', 'apparaît à 0:30 ; premier sbire canon à la 3ᵉ vague.')}
+        ${li('Rythme', 'une vague toutes les 30 s, puis toutes les 25 s à partir de 14 min et toutes les 20 s à partir de 30 min.')}
+        ${li('Dégâts aux tourelles', 'les sbires infligent 60 % de leurs dégâts aux tourelles ; vitesse de déplacement 350.')}
+        ${li('Hors de sa voie', 'jusqu\'au niveau 3, les PO et l\'XP des sbires sont réduites de 25 % hors de la voie de sa quête de rôle.')}
+      </ul>
+      ${src261('« Sbires », « Durée du début de partie », « Quêtes de rôle »')}
+      <h4>Camps de la jungle</h4>${iconList(camps)}
+      <div class="table-wrap" style="margin-top:6px;"><table class="matchup-table">
+        <thead><tr><th>Camp</th><th>Apparition</th><th>Réapparition</th><th>PO (grand monstre)</th><th>Ce qu'il donne</th></tr></thead>
+        <tbody>
+          <tr><td><b>Sentinelle bleue</b></td><td class="num">0:55</td><td class="num">5:00</td><td class="num">90</td><td>le <b>buff bleu</b> (ci-dessous)</td></tr>
+          <tr><td><b>Rougeoyeur</b></td><td class="num">0:55</td><td class="num">5:00</td><td class="num">90</td><td>le <b>buff rouge</b> (ci-dessous)</td></tr>
+          <tr><td><b>Loups</b> (1 grand + 2 petits)</td><td class="num">0:55</td><td class="num">2:15</td><td class="num">55</td><td>PO et XP</td></tr>
+          <tr><td><b>Rapaces</b> (1 grand + petits)</td><td class="num">0:55</td><td class="num">2:15</td><td class="num">35</td><td>PO et XP</td></tr>
+          <tr><td><b>Gromp</b></td><td class="num">1:07</td><td class="num">2:15</td><td class="num">80</td><td>PO et beaucoup d'XP</td></tr>
+          <tr><td><b>Krugs</b> (1 ancien + 1 moyen, qui se divisent)</td><td class="num">1:07</td><td class="num">2:15</td><td class="num">15 + petits</td><td>PO et XP</td></tr>
+          <tr><td><b>Crabe des failles</b> (rivière, 2 camps)</td><td class="num">2:55</td><td class="num">2:30</td><td class="num">55 et plus</td><td>PO, XP, et une zone de vision et de vitesse dans la rivière</td></tr>
+        </tbody>
+      </table></div>
+      <ul class="field-list" style="margin-top:6px;">
+        ${li('Pour le jungler', 'il ne subit que 50 % des dégâts des monstres non épiques ; Châtiment fait 600 / 1000 / 1400 dégâts ; son familier de jungle évolue après 15 monstres. Quête de rôle : 35 monstres, puis vitesse dans la jungle et la rivière, PO et XP bonus par grand monstre.')}
+        ${li('Pour les autres', 'jusqu\'au niveau 3, les PO et l\'XP des sbires sont réduites de 25 % hors de sa voie — la jungle n\'est pas la voie de qui joue une ligne.')}
+      </ul>
+      <h4>Les deux buffs</h4>
+      <p style="margin:0 0 6px;">Tuer la Sentinelle bleue ou le Rougeoyeur donne à son tueur un buff de <b>120 s</b>. Si le porteur meurt tué par un champion ennemi, <b>le buff passe au tueur</b> et repart pour sa durée complète — d'où l'intérêt de tuer un adversaire qui le porte, et le risque d'entrer en combat avec. Après la transformation en Faille élémentaire, le monstre devient « draconique » : tué par un jungler, il laisse au sol pendant 60 s un feu follet qu'un allié peut ramasser pour prendre le buff à sa place. Depuis 2026, plus de buff partagé à toute l'équipe après 25 min : le buff est toujours individuel.</p>
+      <ul class="field-list">
+        ${li('Buff bleu', '<b>+10 / 15 / 20 accélération de compétence</b> (niveaux 1 / 6 / 11) et régénération de <b>5 % du mana max + 25 mana toutes les 5 s</b> (ou d\'énergie pour les champions à énergie). Pour un mage ou un jungler à mana : sorts plus souvent et plus longtemps.')}
+        ${li('Buff rouge', 'les attaques de base <b>ralentissent</b> la cible 3 s (10 / 15 / 20 % en mêlée, 5 / 7,5 / 10 % à distance, selon le niveau) et la <b>brûlent</b> de 15 à 54 dégâts bruts au total, en trois fois sur 2 s ; hors combat, <b>régénération</b> de 0,5 / 1 / 1,5 / 3 % des PV max toutes les 5 s (niveaux 1 / 4 / 6 / 11). Pour un jungler : ganks qui collent (le ralentissement) et camps plus vite nettoyés ; l\'infobulle en jeu affiche les valeurs exactes.')}
+      </ul>
+      ${src261('« Ajustements dans la jungle » (buffs individuels, valeurs du buff rouge, dégâts subis par le jungler, Châtiment), « Quêtes de rôle »')}
+      ${src('Notes de patch 26.14 — « Buff bleu » : accélération de compétence 10 ⇒ 10 / 15 / 20 (niveaux 1 / 6 / 11)', 'https://www.leagueoflegends.com/fr-fr/news/game-updates/league-of-legends-patch-26-14-notes/')}
+      ${src('résumé traduit des pages wiki « Crest of Insight », « Crest of Cinders », « Blue Sentinel », « Red Brambleback », camps « Gromp », « Krug », « Murk Wolf », « Raptor », « Rift Scuttler » (en, CC BY-SA 3.0) — PO, apparitions, réapparitions, durée et transfert des buffs, feu follet', WIKI + 'Crest_of_Cinders')}
+      <p class="muted small" style="margin:6px 0 0;">Écarts constatés : le wiki donne 25 % / 12,5 % au dernier palier du ralentissement rouge et 15-60 pour la brûlure ; les notes de patch 26.1 (10 / 15 / 20 %, 5 / 7,5 / 10 %, 15-54) font foi ici, aucune note ultérieure ne les modifiant dans l'archive locale.</p>
+      <h4>Plantes de la jungle</h4>
+      <p style="margin:0 0 6px;">Trois plantes poussent dans la jungle et la rivière. Elles ont 1 PV : une attaque les déclenche aussitôt. Elles apparaissent en bourgeon et mettent 60 s à mûrir ; leurs emplacements sont fixes pour la première pousse, puis varient.</p>
+      <ul class="field-list">
+        ${li('Bourgeon explosif (sauter)', 'explose et <b>projette</b> toutes les unités à 325 unités autour — y compris celui qui l\'a frappé — jusqu\'à 900 unités plus loin, <b>par-dessus les murs</b>. Sert à entrer ou sortir d\'une fosse (dragon, Baron), fuir, ou poursuivre. Il projette aussi les ennemis : le déclencher au bon moment les éjecte d\'un combat. Deux emplacements par quadrant ; les premiers vers 1:15-1:25 (intérieurs) et 9:00-9:30 (extérieurs), réapparition 5 à 7 min.')}
+        ${li('Fruit de miel (se soigner)', 'lâche 5 fruits au sol pendant 30 s ; marcher dessus <b>rend des PV</b> (le plus élevé entre 3,5 % des PV max et 14 à 116 PV selon le niveau, par fruit) et <b>6 % du mana max</b>, au prix d\'un bref ralentissement de 35 %. Ne met pas en combat. Le long des murs de la rivière, d\'abord près des fosses puis vers les voies ; premiers vers 6:00-6:30, réapparition 5,5 à 7 min ; deux au plus par moitié de rivière. Le crabe des failles vient les manger si l\'on n\'est pas plus rapide.')}
+        ${li('Fleur de vision (voir)', 'libère un nuage de pollen en cône dans la direction où l\'on regarde, qui <b>révèle</b> les champions ennemis touchés pendant 3 s et les autres unités (balises comprises) pendant 12 s. Deux emplacements par quadrant près des rampes de rivière ; premières vers 3:00-3:30, une seule par quadrant, réapparition 200-260 s. Depuis 2026, à 15:00 (ou à la Faille élémentaire), de nouveaux emplacements à réapparition rapide (90-120 s) près des voies latérales, des tourelles intérieures et des rochers de la base.')}
+        ${li('Faille élémentaire', 'toutes les transformations sauf Hextech et montagnes ajoutent des plantes (infernale : 10 bourgeons ; nuées : 6 fleurs ; océans : 4 fruits, réapparition 2 min ; Chimtech : 8 fruits et 14 fleurs). Sur la Faille Chimtech, les plantes sont renforcées : portée d\'explosion doublée, fruit sans ralentissement et avec bouclier, fleur qui abîme les balises détectées et accélère les alliés dans le cône.')}
+      </ul>
+      ${src('résumé traduit de la page wiki « Jungle plants » (en, CC BY-SA 3.0)', WIKI + 'Jungle_plants')}
+      ${src261('« Lampes féériques et changements pour la vision » (fleurs de vision)')}
+      <h4>Objectifs épiques</h4>${iconList(epics)}
+      <ul class="field-list" style="margin-top:6px;">
+        ${li('Larves du Néant', 'camp de trois larves ; chacune invoque des mites en combat ; quand l\'une meurt, les autres se soignent puis subissent des dégâts sur la durée ; immunisées aux entraves sauf stase.')}
+        ${li('Héraut de la Faille', 'PV 7000 + 700 par niveau, œil à frapper 6 s ; l\'invoquer fait 50 % de dégâts bonus aux non-champions ; 100 PO au joueur qui l\'achève.')}
+        ${li('Dragons élémentaires', 'six éléments possibles (Chimtech, nuées, Hextech, infernal, montagnes, océans) ; les deux premiers dragons sont de deux éléments différents, puis, après le 2ᵉ dragon tué, le 3ᵉ élément est fixé pour la partie et la carte se transforme en <b>Faille élémentaire</b>. Chaque dragon tué donne à toute l\'équipe un cran de buff de son élément, <b>permanent</b> ; la première équipe à quatre dragons reçoit l\'<b>Âme de dragon</b> de l\'élément dominant, permanente elle aussi (détail ci-dessous). Réapparition 5 min. En 2026, les dragons ont jusqu\'à 35 % de PV en plus quand une équipe approche l\'Âme, et chaque dragon élémentaire réduit de 15 % par cran les dégâts des champions qui en ont déjà tué (60 % à quatre).')}
+        ${li('Dragon ancestral', 'apparaît une fois une Âme prise, à la place des dragons élémentaires (réapparition 6 min). Le tuer donne à toute l\'équipe vivante <b>Aspect du dragon</b> pendant <b>150 s</b> (perdu à la mort) : les dégâts infligés brûlent la cible de 75 à 225 dégâts bruts selon la minute, et tout champion ennemi touché <b>sous 20 % de ses PV est exécuté</b> après 0,5 s. C\'est le buff qui termine les parties.')}
+        ${li('Baron Nashor', 'apparaît à 20:00 ; trois formes tirées au hasard pour la partie (chasseur, territorial, omniscient) qui modifient la fosse ; prend 50 % de dégâts en moins pendant 8 s de la dernière cible qu\'il a frappée ; immunisé aux entraves sauf stase.')}
+        ${li('Résistance', 'en 2026 les monstres épiques ont plus d\'armure et de RM (10 à 30 % plus longs à tuer) ; Baron et dragon ancestral rapportent moins de PO mais plus d\'XP d\'équipe.')}
+      </ul>
+      <h4>Les dragons, élément par élément</h4>
+      <p style="margin:0 0 6px;">Trois effets par élément : le <b>buff par dragon</b> (un cran par dragon tué, cumulable jusqu'à 4, pour toute l'équipe, permanent — seul l'élément dominant peut être cumulé au-delà des deux premiers dragons), l'<b>Âme</b> (à quatre dragons, permanente, toute l'équipe) et la <b>transformation de la carte</b> quand l'élément devient dominant.</p>
+      <div class="table-wrap"><table class="matchup-table">
+        <thead><tr><th>Élément</th><th>Buff par dragon (×1 → ×4, permanent)</th><th>Âme (permanente)</th><th>Faille élémentaire</th></tr></thead>
+        <tbody>
+          <tr><td><b>Infernal</b></td><td>+3 / 6 / 9 / 12 % de dégâts d'attaque et de puissance</td><td>Attaques et sorts déclenchent une explosion autour de la cible (100 + ratios, dégâts adaptatifs, toutes les 3 s)</td><td>Murs près de la fosse brûlés, bourgeons explosifs supplémentaires, braises qui apparaissent par grappes</td></tr>
+          <tr><td><b>Montagnes</b></td><td>+5 / 10 / 15 / 20 % d'armure et de résistance magique</td><td>Après 5 s sans subir de dégâts, un bouclier de 220 + ratios</td><td>Formations rocheuses près des buffs, des rapaces bleus et de l'entrée de la fosse</td></tr>
+          <tr><td><b>Océans</b></td><td>Régénère 2 / 4 / 6 / 8 % des PV manquants toutes les 5 s</td><td>Infliger des dégâts soigne (150 + ratios) et rend du mana sur 4 s ; 30 % d'efficacité contre sbires et monstres</td><td>Buissons agrandis, flaques dans la jungle, fruits de miel supplémentaires</td></tr>
+          <tr><td><b>Nuées</b></td><td>+5 / 10 / 15 / 20 % de résistance aux ralentissements et de vitesse hors combat</td><td>+15 % de vitesse, portée à 60 % pendant 6 s après avoir lancé son ultime (30 s de récupération)</td><td>Courants d'air (+ vitesse) près des buffs, de la fosse et des rapaces ; fleurs de vision supplémentaires</td></tr>
+          <tr><td><b>Hextech</b></td><td>+5 / 10 / 15 / 20 accélération de compétence et +5 / 10 / 15 / 20 % de vitesse d'attaque</td><td>Attaques et sorts frappent d'un éclair (25 à 53 dégâts bruts selon le niveau) qui ralentit et se propage à 3 ennemis (8 s de récupération)</td><td>Quatre paires de portails Hex pour traverser la carte</td></tr>
+          <tr><td><b>Chimtech</b></td><td>+6 / 12 / 18 / 24 % de ténacité et de puissance des soins et boucliers</td><td>Sous 50 % des PV max : +13 % de dégâts infligés et de réduction des dégâts subis</td><td>Plantes de jungle renforcées ; fruits de miel et fleurs de vision supplémentaires</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small" style="margin:6px 0 0;">Lecture pour un débutant : les dragons se cumulent et ne s'effacent pas — quatre dragons infernaux, c'est +12 % de dégâts pour toute l'équipe jusqu'à la fin, plus une Âme. C'est pourquoi le premier dragon tombe tôt et pourquoi l'équipe en retard aux dragons doit contester avant le quatrième. Les ratios exacts des Âmes (bonus d'AD, de PA, de PV) sont sur la page wiki.</p>
+      ${src('résumé traduit de la page wiki « Dragon Slayer » (buffs, Âmes, Aspect du dragon) et des pages « Dragon » et « Elder Dragon » (Faille élémentaire, timers) (en, CC BY-SA 3.0)', WIKI + 'Dragon_Slayer')}
+      <p class="muted small" style="margin:6px 0 0;">Retirés du jeu en 2026 : <b>Atakhan</b>, les roses sanglantes et les exploits de force — le wiki peut encore les décrire.</p>
+      ${src261('« Changements apportés aux objectifs épiques », « Atakhan, roses sanglantes… »')}
+      ${src('résumé traduit des pages wiki « Voidgrub », « Rift Herald », « Dragon », « Baron Nashor » (en, CC BY-SA 3.0)', WIKI + 'Dragon')}
+      ${wikiNote}`;
+  }
+
+  // ---------- Champion : progression, compétences, classes, type de dégâts, courbe ----------
+  function championHtml(){
+    const mech = id => GLOBAL_SOURCES.find(s => s.id === id);
+    const classes = {}; CHAMPIONS.forEach(c => c.class.split(' / ').forEach(t => { classes[t] = (classes[t] || 0) + 1; }));
+    const EN = { Combattant:'Fighter', Tank:'Tank', Mage:'Mage', Assassin:'Assassin', Tireur:'Marksman', Soutien:'Support' };
+    const rows = Object.entries(classes).sort((a,b)=>b[1]-a[1]).map(([t, n]) => `<tr><td><b>${esc(t)}</b> <span class="muted">(${EN[t] || ''})</span></td><td class="num">${n}</td></tr>`).join('');
+    const dmg = { AD:0, AP:0, Mixte:0 }; CHAMPIONS.forEach(c => { dmg[c.damageType] = (dmg[c.damageType] || 0) + 1; });
+    const rule = id => { const m = mech(id); return m ? `<p class="muted small" style="margin:4px 0 0;">Règle déclarée (mécanisme <code>${id}</code>, page Sources) : ${esc(m.method)}</p>` : ''; };
+    return `
+      <p style="margin:0 0 8px;">Comment un champion progresse pendant une partie, d'après la page officielle « Comment jouer », puis les trois étiquettes que cet outil met sur chaque champion : sa classe (officielle), son type de dégâts et sa courbe de puissance (dérivés, règles explicites).</p>
+      ${fondaSections(['RENFORCEZ VOTRE CHAMPION', 'DÉVERROUILLEZ VOS COMPÉTENCES'])}
+      <h4>Classes (étiquettes officielles Riot)</h4>
+      <p style="margin:0 0 6px;">Six classes, attribuées par Riot à chaque champion (une ou deux par champion, dans l'ordre donné par Riot). Ce sont les catégories du client et du site officiel, traduites sans interprétation. Lecture rapide : <b>Tank</b> encaisse et engage · <b>Combattant</b> tient le duel en mêlée · <b>Assassin</b> élimine une cible isolée · <b>Mage</b> fait des dégâts magiques à distance · <b>Tireur</b> fait des dégâts physiques continus à distance · <b>Soutien</b> protège et contrôle. Étiquettes larges : deux au plus, sans pondération — l'outil les affiche sur la fiche, pas dans les listes.</p>
+      <div class="table-wrap" style="max-width:420px;"><table class="matchup-table"><thead><tr><th>Classe</th><th>Champions qui la portent</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${rule('class')}
+      ${src('Data Dragon fr_FR ' + DDRAGON_VERSION + ' — champ tags de championFull.json', 'https://ddragon.leagueoflegends.com/cdn/' + DDRAGON_VERSION + '/data/fr_FR/championFull.json')}
+      <h4>Type de dégâts : AD / AP / Mixte</h4>
+      <p style="margin:0 0 6px;"><span class="pill pill-dmg ad">AD</span> dégâts physiques (réduits par l'armure) · <span class="pill pill-dmg ap">AP</span> dégâts magiques (réduits par la résistance magique) · <span class="pill pill-dmg mixte">Mixte</span> les deux à parts égales. Répartition actuelle : AD ${dmg.AD} · AP ${dmg.AP} · Mixte ${dmg.Mixte}. Dérivé des deux notes officielles Riot (physique / magie sur 10) que chaque champion porte — survoler la pastille sur une fiche les affiche. Cette règle simplifie les cas hybrides. Voir Calcul des dégâts pour ce que ça change face à l'armure et à la RM.</p>
+      ${rule('damageType')}
+      <h4>Courbe de puissance : Early / Mid / Late / Stable</h4>
+      <p style="margin:0 0 6px;"><span class="pill pill-power early">Early</span> fort en début de partie · <span class="pill pill-power mid">Mid</span> au milieu · <span class="pill pill-power late">Late</span> en fin de partie · <span class="pill pill-power stable">Stable</span> pas de phase dominante. Dérivé du taux de victoire du champion par tranche de durée de partie (Émeraude+, lolalytics), par rôle : une phase est retenue quand son taux de victoire dépasse la moyenne du champion d'au moins un point. La fiche champion montre la courbe complète.</p>
+      ${rule('powerCurve')}`;
+  }
+
+  // ---------- Vision : la vue, les balises, les bibelots, les Lampes féériques ----------
+  function visionHtml(){
+    const ids = Object.keys(ITEMS).map(Number).filter(id => { const it = ITEMS[id]; return it.sr && it.inStore !== false && isCanonItem(id) && (it.tags.includes('Vision') || it.tags.includes('Trinket')); }).sort((a,b) => ITEMS[a].gold - ITEMS[b].gold);
+    const wards = [['Balise camouflée (bibelot jaune)', 'Stealth_Ward_icon.png'], ['Balise de contrôle', 'Control_Ward_icon.png'], ['Balise de longue-vue (bibelot bleu)', 'Farsight_Ward_icon.png']];
+    const li = (t, d) => `<li><b>${t}</b> — ${d}</li>`;
+    return `
+      <p style="margin:0 0 8px;">La vision, c'est ce que ton équipe voit de la carte : tout le reste est dans le <b>brouillard de guerre</b>. Voir un ennemi, c'est connaître sa position et sa direction ; ne pas être vu, c'est pouvoir surprendre. Poser et détruire des balises est donc une part essentielle du jeu, pour tous les rôles et pas seulement le support. Règles ci-dessous : résumé traduit des pages du wiki (en anglais, CC BY-SA 3.0), recoupé avec les notes de patch officielles 2026 ; descriptions des objets : officielles (Data Dragon).</p>
+      <h4>Qui voit quoi</h4>
+      <ul class="field-list">
+        ${li('Portée de vue', 'chaque unité voit autour d\'elle : champions, familiers, super-sbires et tourelles à 1350 unités ; sbires à 1200 ; balises à 900 ; balise de longue-vue à 500. La vue ne traverse pas les murs (sauf mention contraire) ni les hautes herbes : un ennemi dans un buisson n\'est visible que si on y a de la vision.')}
+        ${li('Ce qui révèle', 'une unité alliée dans la zone, une balise, certains sorts et objets. Les ennemis <i>camouflés</i> ou <i>invisibles</i> demandent une détection (balise de contrôle, Brouilleur oraculaire) — une balise ordinaire ne suffit pas.')}
+        ${li('Ce que voit l\'ennemi', 'ses propres balises sont invisibles pour toi tant que tu ne les détectes pas ; une balise camouflée n\'est visible que la seconde où elle est posée. Le score de vision de la fin de partie compte la vision donnée et la vision retirée à l\'adversaire.')}
+      </ul>
+      ${src('résumé traduit de la page wiki « Sight » (en, CC BY-SA 3.0)', WIKI + 'Sight')}
+      <h4>Les balises</h4>
+      <div class="icon-list">${wards.map(([n, img]) => `<span class="icon-entry">${wikiImg(img, n)}<span>${esc(n)}</span></span>`).join('')}</div>
+      <ul class="field-list" style="margin-top:6px;">
+        ${li('Balise camouflée', 'posée par le bibelot jaune (celui de départ, remis d\'office si on sort de la base sans bibelot) et par les objets de support. Invisible après une seconde, 900 de portée, 3 PV, durée limitée ; <b>3 balises au plus</b> par joueur (camouflées et de support ensemble), la plus ancienne disparaît. En détruire une rapporte 10 PO à l\'ennemi. Recharge du bibelot : 210 → 90 s selon le niveau.')}
+        ${li('Balise de contrôle', 'achetée en boutique (75 PO ; 40 PO et un emplacement dédié une fois la quête de rôle de support accomplie). <b>Visible</b>, 4 PV, ne disparaît pas d\'elle-même ; une seule posée à la fois. Elle <b>révèle et désactive</b> les balises et pièges ennemis dans sa zone et révèle les champions camouflés (par balayages). À poser où l\'ennemi balise d\'habitude : abords des fosses du dragon et du Baron, passages du jungler.')}
+        ${li('Balise de longue-vue', 'bibelot bleu (niveau 9) : pose une balise à grande distance (4000), visible, permanente, 500 de portée, 1 PV — pour vérifier un objectif ou un buisson sans y aller. Quand elle voit un champion ennemi, elle élargit sa vue puis s\'autodétruit.')}
+        ${li('Brouilleur oraculaire', 'bibelot rouge : un drone t\'escorte 8 s (26.1 : 6 ⇒ 8 s) et <b>détecte</b> ce qui est invisible autour de toi — balises camouflées (révélées et désactivées), pièges, champions camouflés. Deux charges. C\'est l\'outil pour nettoyer la vision adverse avant un objectif ou une manœuvre.')}
+      </ul>
+      ${src('résumé traduit des pages wiki « Ward », « Stealth Ward », « Control Ward », « Farsight Alteration », « Oracle Lens » (en, CC BY-SA 3.0)', WIKI + 'Ward')}
+      ${src('Notes de patch 26.1 (« Autres changements pour la vision ») et 26.3 (recharge de la Balise camouflée 170-90 ⇒ 210-90 s)', 'https://www.leagueoflegends.com/fr-fr/news/game-updates/patch-26-3-notes/')}
+      <h4>Lampes féériques et fleurs de vision (2026)</h4>
+      <ul class="field-list">
+        ${li('Lampe féérique', 'un cercle de champignons lumineux au sol. Poser <b>n\'importe quelle balise</b> dessus en fait une superbalise : rayon de vision +25 % et, pendant 45 s, une <b>zone de vision supplémentaire</b> dont la forme dépend de l\'emplacement, qui traverse les hautes herbes. L\'ennemi ne sait pas qu\'il y est vu, sauf s\'il a un détecteur dans la zone ou signale directement la balise. Une balise alliée déjà sur la lampe est remplacée. Pour le score de vision : +25 %.')}
+        ${li('Où', 'dès le début : une près de chaque portail de base (4, vision sur la jungle voisine), une dans les hautes herbes de chaque île près des voies du haut et du bas (2, vision sur la rivière), une dans les hautes herbes de rivière près du milieu (2). Après la transformation en Faille élémentaire : une près de chaque voie latérale par quadrant (4, vision sur le chemin de jungle le long de la voie) — celles qui servent au split-push.')}
+        ${li('Fleurs de vision', 'plante de la jungle qui, frappée, révèle une zone. Réapparition 200-260 s ; à 15:00 (ou à la Faille élémentaire), de nouveaux emplacements à réapparition rapide (90-120 s) : sur chaque rive près des voies latérales, derrière chaque tourelle intérieure latérale, près des rochers de la base.')}
+      </ul>
+      ${src261('« Lampes féériques et changements pour la vision »')}
+      <h4>Tout ce qui se rapporte à la vision dans la boutique</h4>
+      <div class="ref-grid">${ids.map(id => itemCard(id, 'vision-item-')).join('')}</div>
+      ${src('descriptions : Data Dragon fr_FR ' + V, 'https://ddragon.leagueoflegends.com/cdn/' + V + '/data/fr_FR/item.json')}`;
+  }
+
+  // ---------- Objets ----------
+  // `idPrefix` : les objets de vision sont aussi listés sur la sous-page Vision — leurs cartes y portent un autre id,
+  // l'ancre #item-<id> (depuis une fiche champion) vise toujours la sous-page Objets.
+  // Icônes des effets de l'objet (data/item_effects.js, vocabulaire taxonomy.js) : chaque icône mène à son explication.
+  const effectsRow = id => { const e = ITEM_EFFECTS[id]; if(!e || !e.keys.length) return ''; const order = [].concat(...TAXONOMY.itemEffects.groups.map(g => g.keys)); return `<div class="tx-row" style="margin:4px 0 2px;">${e.keys.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b)).map(k => taxIconHtml('itemEffects', k)).join('')}<a class="tx-help" href="objets-effets.html" title="Explication des icônes d'effets">?</a></div>`; };
+  function itemCard(id, idPrefix){
+    const it = ITEMS[id];
+    return `<div class="ref-card" id="${idPrefix || 'item-'}${id}"><img src="${DD}/item/${it.icon}" alt="" loading="lazy"><div><div class="ref-name">${esc(it.name)} <span class="ref-gold">${it.gold} PO</span></div>${it.plaintext ? `<div class="ref-plain">${esc(it.plaintext)}</div>` : ''}${effectsRow(id)}<div class="ref-desc">${ddHtml(it.description)}</div></div></div>`;
+  }
+  function objetsHtml(){
+    const all = Object.keys(ITEMS).map(Number).filter(id => { const it = ITEMS[id]; return it.sr && it.inStore !== false && it.gold > 0 && isCanonItem(id) && onRift(id); });
+    const has = (id, t) => ITEMS[id].tags.includes(t);
+    const groups = [
+      ['Bottes', all.filter(id => has(id,'Boots'))],
+      ['Consommables et vision', all.filter(id => !has(id,'Boots') && (has(id,'Consumable') || has(id,'Vision') || has(id,'Trinket')))],
+      ['Objets complets', all.filter(id => !has(id,'Boots') && !has(id,'Consumable') && !has(id,'Vision') && !has(id,'Trinket') && !ITEMS[id].into)],
+      ['Composants (se transforment en objets complets)', all.filter(id => !has(id,'Boots') && !has(id,'Consumable') && !has(id,'Vision') && !has(id,'Trinket') && ITEMS[id].into)],
+    ];
+    const effOrder = [].concat(...TAXONOMY.itemEffects.groups.map(g => g.keys));
+    const effRows = TAXONOMY.itemEffects.groups.map(g => `<div class="lex-cat">${esc(g.title)}</div>` + g.keys.map(k => { const n = all.filter(id => (ITEM_EFFECTS[id] || {}).keys && ITEM_EFFECTS[id].keys.includes(k)).length; return n ? `<label class="lex-row"><input type="checkbox" data-eff="${k}"><span class="lex-term">${esc(TAXONOMY.itemEffects.items[k].label)}</span><span class="lex-count">${n}</span></label>` : ''; }).join('')).join('');
+    const statRows = [...ItemStats.CATEGORIES, ['autres', 'Autres', []]].map(([cid, title]) => { const rows = ItemStats.statList.filter(e => ItemStats.catOf(e.term) === cid && [...e.items].some(id => all.includes(id))); return rows.length ? `<div class="lex-cat">${esc(title)}</div>` + rows.map(e => `<label class="lex-row"><input type="checkbox" data-stat="${esc(e.term)}"><span class="lex-term">${esc((STAT_DEFS[e.term] || {}).label || e.term)}</span><span class="lex-count">${[...e.items].filter(id => all.includes(id)).length}</span></label>`).join('') : ''; }).join('');
+    const filterPanel = `<details class="item-filter" id="itemFilter"><summary>Filtrer par effet ou par statistique</summary>
+      <div class="item-filter-cols"><div><div class="lex-cat" style="margin-top:0;">Effets</div>${effRows}</div><div><div class="lex-cat" style="margin-top:0;">Statistiques</div>${statRows}</div></div>
+      <div class="item-filter-line" id="itemFilterLine">Cocher un ou plusieurs effets et statistiques : seuls les objets qui ont tout ce qui est coché restent affichés.</div>
+      <button type="button" class="lex-reset" id="itemFilterReset">Tout décocher</button></details>`;
+    return filterPanel + `<p style="margin:0 0 8px;">${all.length} objets achetables sur la Faille de l'invocateur, avec leur description officielle. Les fiches champion renvoient ici (cliquer un objet dans un build). Un objet présent sous deux identifiants dans les données officielles (variante de mode, étape d'évolution d'un familier) n'est affiché qu'une fois ; les objets propres à l'Arena et à la partie rapide (objets Gardien, Jus chapi-chapo) sont écartés d'après les modes du wiki. Sous le nom de chaque objet, les icônes de ses <a href="objets-effets.html">effets</a>.</p>` +
+      groups.map(([t, ids]) => `<h4>${t} (${ids.length})</h4><div class="ref-grid">${ids.sort((a,b)=>ITEMS[a].gold-ITEMS[b].gold || ITEMS[a].name.localeCompare(ITEMS[b].name)).map(id => itemCard(id)).join('')}</div>`).join('') +
+      src('Data Dragon fr_FR ' + V + ' — item.json', 'https://ddragon.leagueoflegends.com/cdn/' + V + '/data/fr_FR/item.json');
+  }
+
+  // ---------- Runes ----------
+  function runesHtml(){
+    const styles = Object.keys(RUNE_STYLES).map(Number);
+    const SLOT = ['Rune clé', 'Rangée 1', 'Rangée 2', 'Rangée 3'];
+    const trees = styles.map(sid => {
+      const st = RUNE_STYLES[sid];
+      const runes = Object.keys(RUNES).map(Number).filter(id => RUNES[id].style === sid).sort((a,b) => RUNES[a].slot - RUNES[b].slot);
+      let lastSlot = -1;
+      return `<h4><img class="style-icon" src="https://ddragon.leagueoflegends.com/cdn/img/${st.icon}" alt=""> ${esc(st.name)}</h4><div class="ref-grid">${runes.map(id => { const r = RUNES[id]; const head = r.slot !== lastSlot ? `<div class="slot-head">${SLOT[r.slot] || ''}</div>` : ''; lastSlot = r.slot; return head + `<div class="ref-card${r.slot===0?' keystone':''}" id="rune-${id}"><img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" alt="" loading="lazy"><div><div class="ref-name">${esc(r.name)}</div><div class="ref-desc">${ddHtml(r.longDesc || r.shortDesc)}</div></div></div>`; }).join('')}</div>`;
+    }).join('');
+    const shards = Object.keys(SHARDS).map(Number).sort((a,b)=>a-b).map(id => `<div class="ref-card" id="rune-${id}"><div><div class="ref-name">${esc(SHARDS[id].name)}</div><div class="ref-desc">${ddHtml(SHARDS[id].longDesc || SHARDS[id].shortDesc)}</div></div></div>`).join('');
+    return `<p style="margin:0 0 8px;">Une page de runes = une rune clé + 3 runes de l'arbre principal, 2 runes d'un arbre secondaire, et 3 fragments de statistiques. Les fiches champion montrent la page la plus jouée et celle au meilleur taux de victoire.</p>${trees}<h4>Fragments</h4><div class="ref-grid">${shards}</div>` +
+      src('Data Dragon fr_FR ' + V + ' — runesReforged.json', 'https://ddragon.leagueoflegends.com/cdn/' + V + '/data/fr_FR/runesReforged.json') + src('fragments : Community Dragon fr_fr — perks.json', 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/fr_fr/v1/perks.json');
+  }
+
+  // ---------- Sorts d'invocateur ----------
+  function sortsHtml(){
+    const ids = Object.keys(SPELLS).map(Number).filter(id => SPELLS[id].modes.includes('CLASSIC')).sort((a,b) => SPELLS[a].name.localeCompare(SPELLS[b].name));
+    return `<p style="margin:0 0 8px;">Deux sorts d'invocateur par partie, choisis avant le début, hors du kit du champion. Ceux disponibles en partie classique (Faille de l'invocateur) :</p><div class="ref-grid">${ids.map(id => { const s = SPELLS[id]; return `<div class="ref-card" id="spell-${id}"><img src="${DD}/spell/${s.icon}" alt="" loading="lazy"><div><div class="ref-name">${esc(s.name)} <span class="ref-gold">${s.cooldown ? 'récupération ' + s.cooldown + ' s' : ''}${s.level > 1 ? ' · niveau ' + s.level : ''}</span></div><div class="ref-desc">${ddHtml(s.description)}</div></div></div>`; }).join('')}</div>` +
+      src('Data Dragon fr_FR ' + V + ' — summoner.json', 'https://ddragon.leagueoflegends.com/cdn/' + V + '/data/fr_FR/summoner.json');
+  }
+
+  const PAGES = [
+    ['cartes', 'Cartes — la Faille, les voies, les structures', cartesHtml],
+    ['vision', 'Vision — voir sans être vu : balises, bibelots, Lampes féériques', visionHtml],
+    ['sbires', 'Sbires et monstres — vagues, jungle, objectifs', sbiresHtml],
+    ['champion', 'Champion — progression, classes, type de dégâts, courbe de puissance', championHtml],
+    ['objets', 'Objets', objetsHtml],
+    ['runes', 'Runes', runesHtml],
+    ['sorts', "Sorts d'invocateur", sortsHtml],
+  ];
+  if(isPublicEdition()) PAGES.splice(0, PAGES.length, ...PAGES.filter(p => p[0] === 'objets'));  // édition publique : seule la sous-page Objets
+  document.getElementById('content').innerHTML = PAGES.map(([id, title, fn]) => `<div class="page" data-page="${id}" hidden>` + card(id, title, pageWithNotes(id, fn())) + '</div>').join('');
+
+  // Une sous-page à la fois (#/cartes, #/objets…). Une ancre d'élément (#item-6692 depuis une fiche
+  // champion, #rune-…, #spell-…) ouvre la sous-page qui le contient et met la carte en évidence.
+  const ANCHOR_PAGE = { item:'objets', rune:'runes', spell:'sorts' };
+  function route(){
+    const hash = location.hash.slice(1);
+    let page = (hash.match(/^\/(\w+)$/) || [])[1];
+    let anchor = hash.match(/^(item|rune|spell)-\d+$/) ? hash : null;
+    if(anchor && anchor.startsWith('item-')) anchor = 'item-' + canonItem(parseInt(anchor.slice(5), 10));
+    if(anchor) page = ANCHOR_PAGE[anchor.split('-')[0]];
+    if(!PAGES.some(p => p[0] === page)) page = PAGES[0][0];
+    document.querySelectorAll('#content .page').forEach(el => { el.hidden = el.dataset.page !== page; });
+    AppNav.render('bases', page);
+    if(anchor){
+      const t = document.getElementById(anchor);
+      if(t){ t.scrollIntoView({ block:'center' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 2000); }
+    } else window.scrollTo(0, 0);
+  }
+  // Filtre de la sous-page Objets : effets (data/item_effects.js) et statistiques (itemstats.js), cumulés (ET).
+  (function(){
+    const panel = document.getElementById('itemFilter'); if(!panel) return;
+    const apply = () => {
+      const effs = [...panel.querySelectorAll('input[data-eff]:checked')].map(i => i.dataset.eff);
+      const stats = [...panel.querySelectorAll('input[data-stat]:checked')].map(i => i.dataset.stat);
+      let shown = 0, total = 0;
+      document.querySelectorAll('#content .page[data-page="objets"] .ref-card').forEach(card => {
+        const id = parseInt(card.id.replace(/^item-/, ''), 10); total++;
+        const e = ITEM_EFFECTS[id] || { keys: [] }, st = ItemStats.itemStats[id] || new Set();
+        const ok = effs.every(k => e.keys.includes(k)) && stats.every(t => st.has(t));
+        card.hidden = !ok; if(ok) shown++;
+      });
+      document.querySelectorAll('#content .page[data-page="objets"] h4').forEach(h => { const grid = h.nextElementSibling; if(grid) h.hidden = ![...grid.querySelectorAll('.ref-card')].some(c => !c.hidden); });
+      const n = effs.length + stats.length;
+      document.getElementById('itemFilterLine').textContent = n ? `${shown} objet${shown > 1 ? 's' : ''} sur ${total} ont tout ce qui est coché.` : 'Cocher un ou plusieurs effets et statistiques : seuls les objets qui ont tout ce qui est coché restent affichés.';
+      panel.querySelectorAll('label.lex-row').forEach(l => { const inp = l.querySelector('input'); if(inp.checked){ l.classList.remove('off'); return; } const cards = [...document.querySelectorAll('#content .page[data-page="objets"] .ref-card')].filter(c => !c.hidden); const id = c => parseInt(c.id.replace(/^item-/, ''), 10); l.classList.toggle('off', !cards.some(c => inp.dataset.eff ? ((ITEM_EFFECTS[id(c)] || { keys: [] }).keys.includes(inp.dataset.eff)) : (ItemStats.itemStats[id(c)] || new Set()).has(inp.dataset.stat))); });
+    };
+    panel.addEventListener('change', apply);
+    document.getElementById('itemFilterReset').addEventListener('click', () => { panel.querySelectorAll('input').forEach(i => { i.checked = false; }); apply(); });
+  })();
+  window.addEventListener('hashchange', route); route();
+})();
+</script>
+</body>
+</html>

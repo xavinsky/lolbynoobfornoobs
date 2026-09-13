@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources — LoL Champion Analytics</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="sources" data-page="fiche"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+<script>
+  // Sous-menu : la sous-page courante suit l'ancre (#fiche, #origine, #specifiques).
+  (function(){ const f = () => { const h = location.hash.slice(1); if(['fiche','valeurs','origine','specifiques'].includes(h)) AppNav.render('sources', h); }; window.addEventListener('hashchange', f); f(); })();
+</script>
+
+<main>
+  <div class="detail-card">
+    <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Sources</h2>
+    <p style="margin:6px 0 0;">D'où vient chaque information affichée, et à quelle date elle a été récupérée. Ci-dessous, une <b>fiche-type</b> (valeurs remplacées par des <code>xxxxx</code>) telle qu'elle apparaît en vue Liste puis en vue Champion : chaque élément porte un renvoi <b>[n]</b> vers l'origine de la donnée, listée après. Ces mécanismes s'appliquent à tous les champions de la même façon ; quand une fiche déroge sur un point précis, elle porte sa propre source spécifique, visible sur cette fiche uniquement.</p>
+  </div>
+
+  <h3 class="section-label mock-title" id="fiche">Vue Liste — une ligne de la liste</h3>
+  <div id="mockList"></div>
+
+  <h3 class="section-label mock-title">Vue Champion — la fiche détail</h3>
+  <div id="mockDetail" style="display:flex; flex-direction:column; gap:12px;"></div>
+
+  <h3 class="section-label mock-title" id="valeurs">Ce que veut dire chaque valeur</h3>
+  <div class="detail-card sources-card">
+    <p style="margin:0 0 8px;">Chaque valeur affichée par l'outil, avec sa signification exacte, la règle de calcul quand il y en a une, et le mécanisme d'origine [n]. Les pourcentages de jeu (WR, PR, Ban) viennent de parties classées Solo/Duo au palier Émeraude et au-dessus, toutes régions, sur le patch indiqué dans les sources.</p>
+    <div id="legendList"></div>
+  </div>
+
+  <h3 class="section-label mock-title" id="origine">Origine des données</h3>
+  <div id="sourcesList" style="display:flex; flex-direction:column; gap:10px;"></div>
+
+  <div class="detail-card sources-card" id="specifiques">
+    <h3 class="section-label">Sources spécifiques (par champion)</h3>
+    <p style="margin:0 0 8px;">Quand une donnée précise ne vient pas du mécanisme général (exemple : un rôle absent des tableaux tier-list habituels mais retrouvé via une autre page ; des conseils officiels écartés parce qu'ils décrivent un sort disparu), elle est déclarée directement sur le champion concerné (champ <code>sourceNotes</code> dans <code>data/champions.js</code>) avec son propre lien et sa propre date — et affichée sur sa fiche détail avec un renvoi [n], jamais seulement ici.</p>
+    <p style="margin:0;">Champions ayant actuellement une source spécifique : <span id="specificList"></span></p>
+  </div>
+</main>
+
+<footer>
+  <p><b>Merci à</b> : <a href="https://op.gg" target="_blank" rel="noopener">op.gg</a> · <a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noopener">Data Dragon</a> · <a href="https://wiki.leagueoflegends.com" target="_blank" rel="noopener">LoL Wiki</a> · <a href="https://lolalytics.com" target="_blank" rel="noopener">lolalytics</a> · <a class="yt-link" href="https://www.youtube.com/channel/UC2t5bjwHdUX4vM2g8TRDq5g" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>League of Legends</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCU-l1ajszDLFd6lWyCs1_GA" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>LoL France</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCbqpZInu-pjnBIy5sbh7Eag" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>3 Minute LoL</a> · <a href="sources.html">[et les autres]</a></p>
+  <p class="legal">LoL by Noob for Noobs est un projet indépendant, sans lien avec Riot Games. LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc. Textes issus du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, pages citées sur la page Sources.</p>
+</footer>
+
+<script src="data/champions.js"></script>
+<script src="data/sources.js"></script>
+<script src="taxonomy.js"></script>
+<script>
+(function(){
+  function frDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+  }
+  // Les textes de méthode sont du texte brut (ils peuvent citer une balise comme `<ref>`) : échappés,
+  // jamais interprétés comme du HTML.
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  // Renvois [n] : numérotés dans l'ordre où on les rencontre sur la fiche-type (liste puis détail).
+  // Un mécanisme réutilisé garde son numéro.
+  const REFS = new Map();
+  function ref(id){
+    const src = GLOBAL_SOURCES.find(s => s.id === id);
+    if(!src) return '';
+    if(!REFS.has(id)) REFS.set(id, { n: REFS.size + 1, src });
+    const r = REFS.get(id);
+    return `<a class="ref" href="#" data-ref="${r.n}" title="${esc(src.label)}">[${r.n}]</a>`;
+  }
+  const ROLE_ICON = { top:'Top_icon.png', mid:'Middle_icon.png' };
+  const roleIcon = (role, lg) => `<img class="role-icon${lg ? ' role-icon-lg' : ''}" src="https://wiki.leagueoflegends.com/en-us/images/${ROLE_ICON[role]}" alt="">`;
+  const tips = (cls) => `<ul class="field-list${cls ? ' ' + cls : ''}"><li>Xxxxx xxx <kbd class="key" title="Xxxxx xxxx">Q</kbd> xxxx xxxxx xx xxxx.</li><li>Xxxx xxxxx <kbd class="key" title="Xxxxx xxxx">R</kbd> xxx xxxxxx.</li></ul>`;
+
+  document.getElementById('mockList').innerHTML = `
+    <div class="tbl"><div class="champ">
+      <div class="champ-head">
+        <span class="champ-rank">1</span>
+        <span class="c-name"><button class="champ-name" type="button"><span class="ph ph-icon"></span>Xxxxx</button>${ref('championIcon')}</span>
+        <span><span class="pill pill-dmg ad">XX</span>${ref('damageType')}</span>
+        <span><span class="pill pill-power early">Xxxxx</span>${ref('powerCurve')}</span>
+        <span class="c-roles"><span class="pill pill-role cur">${roleIcon('top', true)} <b>X</b> <span class="n">PR <b>xx.x%</b></span></span>
+        <span class="pill pill-role">${roleIcon('mid', true)} <b>X</b> <span class="n">PR xx.x%</span></span>${ref('roles')}${ref('roleIcons')}</span>
+        <span><span class="stat">WR xx.x% · PR xx.x% · <span class="ban">Ban xx.x%</span></span>${ref('rolesCombined')}</span>
+        <button class="champ-toggle" type="button">▾ détails</button>
+      </div>
+      <div class="champ-body">
+        <div><span class="field-label menace">Points forts${ref('analysis')}</span>${tips()}</div>
+        <div><span class="field-label contre">Contre${ref('analysis')}</span>${tips('contre')}</div>
+      </div>
+    </div></div>`;
+
+  const abilityRows = ['P','Q','W','E','R'].map(l => `
+        <div class="ability-row${l === 'R' ? ' active' : ''}"><span class="ph ph-ability"></span><span class="letter">${l}</span><span class="aname">Xxxxx xxxx</span></div>`).join('');
+  document.getElementById('mockDetail').innerHTML = `
+    <div class="detail-card">
+      <div class="detail-top">
+        <span class="ph ph-detail-icon"></span>${ref('championIcon')}
+        <div>
+          <h2>Xxxxx</h2>
+          <div class="detail-title">Xxxxx xxx xxxxx${ref('abilities')}</div>
+          <div class="detail-badges">
+            <span class="pill pill-dmg ap">XX</span>${ref('damageType')}
+            <span class="pill pill-power early">Xxxxx</span>${ref('powerCurve')}
+            <span class="champ-class" style="align-self:center;">Xxxxx / Xxxxx</span>${ref('class')}
+            <span class="pill pill-rework">Kit changé le xx xxxx xxxx</span>${ref('reworks')}
+          </div>
+        </div>
+        <span class="spacer"></span>
+        <span class="champ-link">Fiche officielle ↗</span>
+      </div>
+      <div class="roleline" style="margin-top:12px;">
+        <span class="pill pill-role">${roleIcon('top')}Top <b>X</b> <span class="n">WR xx.x% · PR xx.x% · Ban xx.x%</span></span>
+        <span class="pill pill-role">${roleIcon('mid')}Mid <b>X</b> <span class="n">WR xx.x% · PR xx.x% · Ban xx.x%</span></span>${ref('roles')}${ref('roleIcons')}
+      </div>
+      <div class="champ-body" style="margin-top:12px;">
+        <div><span class="field-label menace">Points forts${ref('analysis')}</span>${tips()}</div>
+        <div><span class="field-label contre">Contre${ref('analysis')}</span>${tips('contre')}</div>
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <h3 class="section-label">Compétences — cliquer pour voir l'animation${ref('abilities')}${ref('icons')}${ref('abilityVideos')}</h3>
+      <div class="abilities-layout">
+        <div class="abilities-left">
+          <div class="abilities-list">${abilityRows}</div>
+          <div class="ability-desc-full"><div class="h"><span class="letter">R</span><span class="name">Xxxxx xxxx</span></div><div class="desc">Xxxxx xxx xxxxx xx xxxx xxxxx, xxx xxxx xxxxxx xx xxxxx xxx xxxx.</div></div>
+          <div class="tx-row"><span class="tx-group">${taxIconHtml('targeting','direction')}</span><span class="tx-sep"></span><span class="tx-group">${taxIconHtml('affects','enemies')}</span><span class="tx-sep"></span><span class="tx-group">${taxIconHtml('damage','magic')}</span><span class="tx-sep"></span><span class="tx-group">${taxIconHtml('range','long',{cls:'pill pill-range',text:'longue · xxxx'})}</span><span class="tx-sep"></span><span class="tx-group">${taxIconHtml('effects','stun')}${taxIconHtml('effects','slow')}</span><span class="tx-sep"></span><span class="tx-group">${taxIconHtml('interaction','projectile')}</span>${ref('abilityTaxonomy')}<a class="tx-help" href="competences.html" title="Explication de toutes les icônes">?</a></div>
+          <div class="mech-props"><span class="mech-prop"><b>Incantation</b> x.xx s</span><span class="mech-prop"><b>Récupération</b> xx to xx s</span>${ref('mechanics')}</div>
+          <details class="mech-notes"><summary>Mécaniques détaillées — wiki, traduites (x)${ref('mechanics')}${ref('mechanicsFr')}</summary><ul><li>Xxxxx xxx xxxxx xx xxxx xxxxx xxxx xx xxxxx.</li></ul><p class="muted small" style="margin:6px 0 0;">Traduction de Xxxxx — Xxxxx xxxx (wiki League of Legends, CC BY-SA 3.0), par un modèle de traduction local, non relue.</p><details class="mech-en"><summary>Texte d'origine (anglais)</summary><ul><li>Xxxxx xxx xxxxx xx xxxx xxxxx.</li></ul></details></details>
+        </div>
+        <div class="video-stage"><span class="ph ph-video"></span><div class="caption">R — Xxxxx xxxx</div></div>
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <h3 class="section-label">Vidéos de présentation${ref('championVideos')}</h3>
+      <div class="mock-video-row"><span class="pill pill-lang">xx</span> <span class="pill pill-kind official">officiel</span> <span>Xxxxx xxx xxxxx — Xxxxx</span> <span class="video-duration">x:xx</span> <span class="stat">publié le xx xxxx xxxx</span></div>
+    </div>
+
+    <div class="detail-card">
+      <h3 class="section-label">Mise à jour du personnage par Riot — xx xxxx xxxx${ref('reworks')}${ref('releaseDate')}</h3>
+      <div class="rework-history">
+        <div class="rework-item"><div><span class="rework-date">xx xxxx xxxx</span><span class="rework-type">Xxxxx Update</span><a class="rework-source">[source]</a></div></div>
+        <div class="rework-item cosmetic"><div><span class="rework-date">xx xxxx xxxx</span><span class="rework-type">Visual Update</span><span class="rework-cosmetic-tag">cosmétique</span><a class="rework-source">[source]</a></div></div>
+      </div>
+      <div class="rework-item release"><div><span class="rework-date">xx xxxx xxxx</span><span class="rework-type">Sortie du champion</span></div></div>
+    </div>
+
+    <div class="detail-card">
+      <h3 class="section-label">Courbe de puissance — Top${ref('powerCurve')}${ref('stats')}</h3>
+      <span class="ph ph-chart"></span>
+      <p class="muted small" style="margin:6px 0 0;">Puissance relative par tranche de durée de partie (WR de la tranche ÷ WR moyen du champion), tranches 0-15 … 40+ min ; phases Early / Mid / Late étiquetées quand elles dépassent la moyenne d'au moins 1 point sur au moins 500 parties.</p>
+    </div>
+    <div class="detail-card sources-card">
+      <h3 class="section-label">Sources spécifiques à cette fiche</h3>
+      <div class="source-item specific"><div class="h"><span class="num">[n]</span><span class="label">Spécifique à Xxxxx — champ « xxxx »</span><span class="date">récupéré le xx xxxx xxxx</span></div><div class="method">Xxxxx xxx xxxxx xx xxxx — présent seulement sur les fiches qui dérogent au mécanisme général (voir liste plus bas).</div></div>
+    </div>`;
+
+  // ---------- Légende des valeurs : signification, règle, mécanisme ----------
+  // `pub` = false : valeur absente de l'édition publique (sections non publiées), légende masquée dans public/.
+  const LEGEND = [
+    { where: 'Liste', name: 'N° (rang dans la liste)', text: "Position du champion dans la liste après tri (menu « Trier ») et filtres : ce n'est pas un classement de force, seulement l'ordre d'affichage." },
+    { where: 'Liste et fiche', name: 'Nom, titre, icône', text: 'Nom et titre officiels en français, icône officielle.', mech: ['abilities', 'championIcon'] },
+    { where: 'Liste et fiche', name: 'AD / AP / Mixte', text: "Type de dégâts dominant, dérivé des notes officielles Riot « attaque » et « magie » (0 à 10) : attaque > magie → AD, magie > attaque → AP, égalité → Mixte. Le survol de la pastille montre les deux notes.", mech: ['damageType'] },
+    { where: 'Liste et fiche', name: 'Early / Mid / Late / Stable', text: "Phases de partie où le champion gagne plus que sa moyenne, calculées sur la durée finale des parties du rôle affiché (rôle filtré en liste, rôle sélectionné sur la fiche) : Early = parties de 15 à 25 min, Mid = 25 à 35, Late = 35 et plus. Une phase est retenue si son taux de victoire dépasse la moyenne du champion d'au moins 1 point sur au moins 500 parties ; « Stable » si aucune. Une étiquette combinée (« Early-Mid ») vaut pour les deux phases.", mech: ['powerCurve', 'stats'] },
+    { where: 'Liste et fiche', name: 'Pastilles de rôle (Top, Jungle, Mid, Bot, Sup)', text: "Rôles où le champion est réellement joué, avec pour chacun : la lettre de tier (S+ à D, classement du site source pour ce rôle), WR = taux de victoire des parties du champion à ce rôle, PR = part des parties du rôle où il est choisi, Ban = part des parties où il est banni. Un rôle absent n'est pas « jamais joué » : il est sous le seuil de volume du site source.", mech: ['roles', 'roleIcons'] },
+    { where: 'Liste', name: 'WR · PR · Ban de la ligne (hors pastilles)', text: "Valeurs toutes lignes confondues, calculées à l'affichage : PR = somme des PR de chaque rôle joué ; WR = moyenne des WR des rôles pondérée par leur PR ; Ban = une seule valeur par champion (on bannit un champion, pas un rôle), celle du rôle le plus joué.", mech: ['rolesCombined'] },
+    { where: 'Liste et fiche', name: 'Points forts / Contre (« détails »)', text: "Conseils officiels Riot copiés tels quels : « en jouant avec » ce champion → Points forts (ce qu'il cherche à faire, donc à quoi s'attendre en face), « en jouant contre » → Contre. Un conseil qui cite un sort ou un objet qui n'existe plus n'est pas affiché ; le retrait est noté dans les sources spécifiques du champion. Pour les champions sans conseils officiels, les conseils viennent des vidéos de présentation et le disent sous le bloc.", mech: ['analysis', 'analysisVideo'] },
+    { where: 'Fiche', name: 'Ban x %', text: "Taux de ban du champion, une seule valeur (celle du rôle le plus joué).", mech: ['rolesCombined', 'roles'] },
+    { where: 'Fiche', name: 'Classe (Combattant, Mage…)', text: "Classification officielle Riot, traduite sans interprétation ; deux classes quand Riot en donne deux.", mech: ['class'] },
+    { where: 'Fiche', name: '« Kit changé le … » / « Kit d’origine »', text: "Date de la dernière mise à jour qui a changé les sorts du champion (refonte, Mid-Scope, mise à jour de classe), d'après la liste des mises à jour de champions du wiki ; les retouches de chiffres (buffs, nerfs) ne comptent pas.", mech: ['reworks'] },
+    { where: 'Fiche', name: 'Croissance permanente : Q, W…', text: "Sorts qui accumulent des effets définitifs au fil de la partie (stacks qui ne retombent pas : Nasus Q, Veigar passif…), d'après la classification des compétences.", mech: ['abilityTaxonomy'] },
+    { where: 'Fiche — Compétences', name: 'Nom, description, icône, animation des sorts', text: "Textes et icônes officiels ; l'animation est le clip officiel du sort, lancé sans le son.", mech: ['abilities', 'icons', 'abilityVideos'] },
+    { where: 'Fiche — Compétences', name: 'Icônes sous le sort (ciblage, cible, dégâts, portée, effets)', text: "Classification de chaque sort selon un vocabulaire fixe : comment on le vise (auto, direction, unité, zone…), qui il touche, type de dégâts, portée en paliers (corps à corps, courte, moyenne, longue, très longue, globale), effets (étourdissement, ruée, bouclier, soin, blessures graves…). Le survol donne la définition, le clic ouvre la page Compétences.", mech: ['abilityTaxonomy', 'mechanics'] },
+    { where: 'Fiche — Compétences', name: 'Incantation, récupération, coût', text: "Temps d'incantation, délai de récupération (par rang) et coût du sort, d'après la fiche du sort sur le wiki.", mech: ['mechanics'] },
+    { where: 'Fiche — Compétences', name: 'Mécaniques détaillées (traduites)', text: "Notes de mécanique du wiki (interactions, exceptions, ce qui interrompt le sort), traduites en français par un modèle de traduction local ; l'anglais d'origine reste consultable en dessous. Licence CC BY-SA 3.0, page d'origine citée.", mech: ['mechanics', 'mechanicsFr'] },
+    { where: 'Fiche — Vidéos', name: 'Langue, type (officiel / communautaire), durée, date', text: "Vidéos de présentation trouvées sur des chaînes précises (Riot France, Riot global, une chaîne communautaire identifiée), avec leur durée et leur date de publication — à comparer avec la date du dernier changement de kit pour juger si la vidéo est à jour.", mech: ['championVideos'] },
+    { where: 'Fiche — Mise à jour', name: 'Historique des mises à jour, date de sortie', text: "Chaque mise à jour du champion listée par le wiki avec sa date, son type et le lien vers l'annonce ou les notes de patch d'origine ; « cosmétique » = apparence seulement. La date de sortie vient de la liste des champions du wiki.", mech: ['reworks', 'releaseDate'] },
+    { where: 'Fiche — Courbe de puissance', name: 'Courbe par tranche de durée', text: "Pour le rôle sélectionné : parties et victoires par tranche de durée (0-15, 15-20, 20-25, 25-30, 30-35, 35-40, 40+ min). La courbe trace la puissance relative = WR de la tranche ÷ WR moyen du champion, avec une ligne de référence à 1 ; la tranche 0-15 (parties abandonnées) est ignorée pour les étiquettes.", mech: ['powerCurve', 'stats'] },
+    { where: 'Fiche — Objets', name: 'Départ, cœur, bottes, 4e-5e-6e objet, objets les plus achetés', text: "Objets les plus choisis par les joueurs du champion à ce rôle, avec la part des parties où l'objet est acheté et le taux de victoire de ces parties. Un WR élevé sur peu de parties ne prouve rien (règle de significativité).", mech: ['stats', 'refs', 'matchups'], pub: false },
+    { where: 'Fiche — Runes, sorts', name: 'Page de runes, sorts d’invocateur, ordre des sorts', text: "Page de runes la plus jouée et page au meilleur WR, paire de sorts d'invocateur la plus jouée, priorité et ordre de montée des sorts, avec parties et WR.", mech: ['stats', 'refs'], pub: false },
+    { where: 'Fiche — Matchups', name: 'WR contre chaque adversaire, parties, ±', text: "Taux de victoire du champion contre chaque adversaire au même rôle et nombre de parties ; « ± » = marge d'incertitude à 95 % (98 ÷ √parties). Un écart est significatif si |WR − 50| dépasse cette marge ; sinon la ligne est grisée.", mech: ['stats', 'matchups'], pub: false },
+    { where: 'Fiche — Contre-pick, Mon roster', name: 'Meilleurs contre lui, mal couvert, à apprendre', text: "Contre-pick : WR de chaque champion jouable au rôle contre celui-ci, lu dans sa propre fiche de matchups. Roster : adversaires du rôle à PR ≥ 1 % ; « mal couvert » = aucun de mes champions ★ n'a de WR significatif au-dessus de 50 % contre lui ; « à apprendre » = champions classés par Σ (WR − 50) × PR sur les adversaires mal couverts.", mech: ['matchups'], pub: false },
+    { where: 'Bases — Objets', name: 'Statistiques, prix, recette, icônes d’effet', text: "Données officielles Data Dragon (statistiques, prix, composants) ; disponibilité sur la Faille et effets nommés (à l'impact, soin, vision…) d'après la base d'objets du wiki, classés selon le vocabulaire de la page Effets des objets.", mech: ['refs', 'itemEffects'] },
+    { where: 'Page Effets et statistiques des objets', name: 'Définition d\u2019une statistique, objets qui la donnent', text: "Terme lu dans les lignes « statistiques » des descriptions officielles des objets ; définition résumée de la page du wiki qui définit la statistique ; objets = ceux de la Faille dont la description donne cette statistique.", mech: ['refs', 'statDefs'] },
+    { where: 'Pages Compétences et Effets et statistiques des objets', name: 'Compteurs, trois exemples, liste complète', text: "Pour chaque catégorie, le nombre de sorts (ou d'objets) qui la portent, trois exemples (champions les plus joués, ou objets les plus chers) et la liste complète repliée.", mech: ['abilityTaxonomy', 'itemEffects'] },
+  ];
+  const showLegend = LEGEND.filter(l => l.pub !== false || !isPublicEdition());
+  document.getElementById('legendList').innerHTML = showLegend.map(l => `
+    <div class="source-item"><div class="h"><span class="label">${esc(l.name)}</span><span class="date">${esc(l.where)}</span></div>
+      <div class="method">${esc(l.text)}${(l.mech || []).map(ref).join('')}</div></div>`).join('');
+
+  // Tous les mécanismes, ceux rencontrés sur la fiche-type et la légende d'abord (dans l'ordre des [n]), puis
+  // les éventuels autres. Édition publique : seuls les mécanismes des pages publiées.
+  const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate'];
+  for(const s of GLOBAL_SOURCES) if(!isPublicEdition() || PUBLIC_MECH.includes(s.id)) ref(s.id);
+  document.getElementById('sourcesList').innerHTML = [...REFS.values()].map(({ n, src: s }) => `
+    <div class="detail-card sources-card" id="src-${n}">
+      <div class="source-item" style="padding-top:0;">
+        <div class="h"><span class="num">[${n}]</span><span class="label" style="font-size:1.1em;">${esc(s.label)}</span>${s.retrieved ? `<span class="date">récupéré le ${frDate(s.retrieved)}</span>` : '<span class="date">lien live, non daté (toujours l\'état actuel)</span>'}</div>
+        <div class="method" style="margin-top:6px;">${esc(s.method)}</div>
+        ${s.url ? `<a class="url" href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : ''}
+        ${s.patch ? `<div class="method">Patch au moment de la récupération : <strong>${esc(s.patch)}</strong></div>` : ''}
+        ${s.version ? `<div class="method">Version Data Dragon utilisée : <strong>${esc(s.version)}</strong></div>` : ''}
+        ${s.caveat ? `<div class="caveat">${esc(s.caveat)}</div>` : ''}
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('a.ref').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.getElementById('src-' + a.dataset.ref);
+      if(!target) return;
+      target.scrollIntoView({ behavior:'smooth', block:'center' });
+      target.classList.add('flash');
+      setTimeout(() => target.classList.remove('flash'), 1500);
+    });
+  });
+
+  const withNotes = CHAMPIONS.filter(c => c.sourceNotes && c.sourceNotes.length);
+  document.getElementById('specificList').innerHTML = withNotes.length
+    ? withNotes.map(c => `<a href="index.html#/champ/${encodeURIComponent(c.id)}">${esc(c.name)}</a> (${[...new Set(c.sourceNotes.map(n => n.field))].map(esc).join(', ')})`).join(' · ')
+    : 'aucun pour le moment';
+})();
+</script>
+</body>
+</html>

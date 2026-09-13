@@ -1,0 +1,193 @@
+// Vocabulaire de classification des compétences (cf. data/sources.js, mécanisme "abilityTaxonomy") :
+// pour chaque axe, les valeurs possibles avec leur libellé, leur explication en français et leur icône.
+// Consommé par competences.html (page d'explication) et index.html (rangée d'icônes sous chaque sort).
+// Icônes : fichiers du wiki League of Legends (icônes des effets telles qu'en jeu, hotlink) quand elles
+// existent, sinon un pictogramme SVG maison (tracé 24×24, couleur courante).
+const TAXONOMY = (() => {
+  const W = 'https://wiki.leagueoflegends.com/en-us/images/';
+  const P = d => ({ svg: d });
+  const I = f => ({ img: W + f });
+  const TAX = {
+    targeting: { title: 'Ciblage — comment on vise', key: 'targeting', items: {
+      auto:      { label: 'Automatique', desc: "S'active sans viser : autour de soi, sur soi, ou sur la prochaine attaque. Rien à esquiver, sauf en sortant de la zone.", icon: P('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2" fill="currentColor"/>') },
+      direction: { label: 'Direction', desc: "Lancé dans une direction (skillshot) : le projectile ou la ligne peut être esquivé en bougeant.", icon: P('<path d="M4 12h14M13 6l6 6-6 6"/>') },
+      unit:      { label: 'Unité ciblée', desc: "Sur une cible désignée : ne rate pas tant que la cible reste visible et à portée. Seuls un bouclier de sort, l'invulnérabilité ou l'intouchabilité l'annulent.", icon: P('<circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>') },
+      location:  { label: 'Zone au sol', desc: "Sur un point visé au sol : l'effet arrive là où l'on a cliqué, souvent après un délai — on peut sortir de la zone.", icon: P('<path d="M12 21s-6-6.2-6-11a6 6 0 0 1 12 0c0 4.8-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>') },
+      proximity: { label: 'Proximité', desc: "Touche ce qui est à portée autour du lanceur ou d'un point, sans viser.", icon: P('<circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="9" stroke-dasharray="3 2"/>') },
+      vector:    { label: 'Vecteur', desc: "Deux clics : un point de départ puis une direction (ex. Rumble, Taliyah).", icon: P('<circle cx="5" cy="17" r="2" fill="currentColor"/><path d="M7 15l11-9M13 6h5v5"/>') },
+      passive:   { label: 'Passif', desc: "Aucun lancement : l'effet est permanent ou se déclenche tout seul sous condition.", icon: P('<circle cx="12" cy="12" r="8" stroke-dasharray="2 2"/><path d="M9 8v8M9 8h3.5a2.5 2.5 0 0 1 0 5H9"/>') },
+      varied:    { label: 'Variable', desc: "Le ciblage dépend du contexte (sort copié, arme équipée).", icon: P('<path d="M4 6h16M4 12h10M4 18h6"/>') },
+    }},
+    affects: { title: 'Cibles — qui est touché', key: 'affects', items: {
+      enemies:    { label: 'Ennemis', desc: "Touche les ennemis : champions, et selon le sort sbires et monstres.", icon: P('<path d="M5 19l10-10M12 5l7 7M8 16l-3 3M15 4l5 5"/>') },
+      self:       { label: 'Soi-même', desc: "Agit sur le lanceur : bonus, déplacement, soin, transformation.", icon: P('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>') },
+      allies:     { label: 'Alliés', desc: "Agit sur des alliés : soin, bouclier, vitesse, déplacement.", icon: P('<circle cx="8" cy="8" r="3.5"/><circle cx="16.5" cy="9" r="3"/><path d="M2 21a6 6 0 0 1 12 0M12 21a5 5 0 0 1 10 0"/>') },
+      structures: { label: 'Structures', desc: "Peut toucher les tourelles ou les inhibiteurs (rare).", icon: P('<path d="M8 21V9l4-4 4 4v12M5 21h14M10 21v-5h4v5"/>') },
+      terrain:    { label: 'Terrain', desc: "Crée, modifie ou traverse le terrain.", icon: P('<path d="M3 20l6-10 4 6 3-4 5 8z"/>') },
+      wards:      { label: 'Balises', desc: "Agit sur les balises.", icon: P('<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/>') },
+      monsters:   { label: 'Monstres', desc: "Vise spécifiquement les monstres de la jungle.", icon: P('<path d="M6 20V9l3-4h6l3 4v11M9 20v-4h6v4M9 11h.01M15 11h.01"/>') },
+      none:       { label: 'Aucune', desc: "Ne cible rien : information ou effet d'interface.", icon: P('<path d="M6 12h12"/>') },
+    }},
+    damage: { title: 'Type de dégâts', key: 'damage', items: {
+      physical: { label: 'Physiques', desc: "Réduits par l'armure de la cible.", pill: 'pill-dmg ad', short: 'AD' },
+      magic:    { label: 'Magiques', desc: "Réduits par la résistance magique.", pill: 'pill-dmg ap', short: 'AP' },
+      true:     { label: 'Bruts', desc: "Ni l'armure ni la résistance magique ne les réduisent.", pill: 'pill-dmg true', short: 'Bruts' },
+    }},
+    range: { title: 'Portée — à quelle distance', key: 'range', items: {
+      self:   { label: 'Sur soi', desc: "≤ 150 unités : sur le lanceur ou au contact.", short: 'soi' },
+      melee:  { label: 'Mêlée', desc: "151 à 450 unités : la portée d'attaque d'un combattant (125-175) et un peu plus.", short: 'mêlée' },
+      short:  { label: 'Courte', desc: "451 à 700 unités : la portée d'attaque des tireurs (550-650) — on est à portée l'un de l'autre.", short: 'courte' },
+      medium: { label: 'Moyenne', desc: "701 à 1000 unités : au-delà de la portée d'attaque, dans l'écran.", short: 'moyenne' },
+      long:   { label: 'Longue', desc: "1001 à 1500 unités : jusqu'à la limite de vue d'un champion (1350).", short: 'longue' },
+      vlong:  { label: 'Très longue', desc: "1501 à 5000 unités : au-delà de l'écran.", short: 'très longue' },
+      global: { label: 'Globale', desc: "Toute la carte.", short: 'globale' },
+    }},
+    interaction: { title: 'Interactions — ce qui peut contrer le sort', key: 'interaction', items: {
+      projectile:  { label: 'Projectile', desc: "Un projectile : un mur de vent (Yasuo, Samira, Braum) l'arrête.", icon: P('<circle cx="16" cy="12" r="3"/><path d="M3 9h7M3 12h6M3 15h7"/>') },
+      spellShield: { label: 'Bouclier de sort', desc: "Bloqué par un bouclier de sort (Sivir E, Nocturne W, Bandeau de Banshee).", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>') },
+      grounded:    { label: 'Ancrage', desc: "Un ancrage au sol (Cassiopeia W, Singed W) empêche ce déplacement.", icon: P('<circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13c0 4 3 7 7 7s7-3 7-7M8 11h8"/>') },
+      knockdown:   { label: 'Knockdown', desc: "Ce déplacement est interrompu par un knockdown (Poppy W).", icon: P('<path d="M12 4v10M8 10l4 4 4-4M4 20h16"/>') },
+      parry:       { label: 'Parade', desc: "Une parade (Fiora W, Pantheon E, Samira W) le bloque.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 16L16 8"/>') },
+      silence:     { label: 'Interrompu par un silence', desc: "Un silence coupe le sort en cours.", icon: P('<path d="M4 4l16 16M9 9v6l4 3V6l-2 1.5"/>') },
+      callforhelp: { label: 'Appel à l\'aide', desc: "Toucher un champion avec ce sort fait réagir les sbires et monstres proches de sa cible.", icon: P('<path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/>') },
+    }},
+    effects: { title: 'Effets', key: 'effects', groups: [
+      { id: 'cc', title: 'Contrôle de foule — la cible perd le contrôle', keys: ['stun','airborne','suppression','stasis','sleep','polymorph','suspension','taunt','charm','fear','flee','berserk','root','slow','ground','knockdown','kinematics','silence','disarm','blind','cripple','nearsight','disrupt'] },
+      { id: 'protection', title: 'Protections et soins', keys: ['heal','shield','untargetable','invulnerable','cleanse','tenacity','slow-resist','cc-immune','unstoppable','resurrection'] },
+      { id: 'mobility', title: 'Déplacements', keys: ['dash','blink','ghosted','attach','tether'] },
+      { id: 'vision', title: 'Vision et furtivité', keys: ['sight','true-sight','stealth','ward'] },
+      { id: 'damage', title: 'Dégâts particuliers', keys: ['execute','dot','poison','grievous','brittle'] },
+      { id: 'attack', title: 'Attaques de base', keys: ['on-hit','attack-reset','spellblade','crit','energized'] },
+      { id: 'summon', title: 'Invocations', keys: ['pet','clone'] },
+      { id: 'growth', title: 'Cumuls — ce qui s\'accumule', keys: ['stacking','stacks'] },
+    ], items: {
+      stun:        { label: 'Étourdissement', desc: "La cible ne peut ni bouger, ni attaquer, ni lancer de sort pendant la durée.", icon: I('Stun_icon.png') },
+      airborne:    { label: 'Projection', desc: "La cible est projetée (en l'air, en arrière, sur le côté ou tirée vers le lanceur) : elle ne peut rien faire pendant le vol, et la ténacité ne réduit pas la durée.", icon: I('Airborne_icon.png') },
+      suppression: { label: 'Suppression', desc: "Comme un étourdissement, mais aussi sans sorts d'invocateur — seule la Purge de Purificateur ou un objet la lève.", icon: I('Suppression_icon.png') },
+      stasis:      { label: 'Stase', desc: "L'unité ne peut rien faire mais est intouchable et invulnérable (Sablier de Zhonya, Bard R).", icon: I('Stasis_icon.png') },
+      sleep:       { label: 'Sommeil', desc: "La cible s'endort (souvent après une somnolence qui la ralentit) et reste hors jeu tant qu'on ne la frappe pas.", icon: I('Sleep_icon.png') },
+      polymorph:   { label: 'Métamorphose', desc: "La cible devient une bestiole : réduite au silence, désarmée, ralentie.", icon: I('Polymorph_icon_WR.png') },
+      suspension:  { label: 'Suspension', desc: "Étourdissement qui se présente comme une projection en l'air.", icon: I('Stun_icon.png') },
+      taunt:       { label: 'Provocation', desc: "La cible est forcée d'attaquer le lanceur.", icon: I('Taunt_icon.png') },
+      charm:       { label: 'Charme', desc: "La cible marche vers le lanceur, ralentie, sans pouvoir agir.", icon: I('Charm_icon.png') },
+      fear:        { label: 'Peur', desc: "La cible fuit dans une direction aléatoire, ralentie, sans pouvoir agir.", icon: I('Fear_icon.png') },
+      flee:        { label: 'Fuite forcée', desc: "La cible s'éloigne tout droit du lanceur, ralentie.", icon: I('Flee_icon.png') },
+      berserk:     { label: 'Frénésie', desc: "La cible attaque l'unité la plus proche, alliée ou non.", icon: I('Berserk_icon.png') },
+      root:        { label: 'Immobilisation', desc: "La cible ne peut plus se déplacer ni utiliser de sort de mobilité, mais peut attaquer et lancer ses autres sorts.", icon: I('Root_icon.png') },
+      slow:        { label: 'Ralentissement', desc: "Vitesse de déplacement réduite pendant la durée.", icon: I('Slow_icon.png') },
+      ground:      { label: 'Ancrage au sol', desc: "La cible ne peut plus utiliser de sort de mobilité (dash, saut, Flash).", icon: P('<circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13c0 4 3 7 7 7s7-3 7-7M8 11h8"/>') },
+      knockdown:   { label: 'Knockdown', desc: "Interrompt le déplacement en cours de la cible et la remet au sol.", icon: I('Knockdown_icon.png') },
+      kinematics:  { label: 'Traction', desc: "La cible est traînée vers une unité ou un point.", icon: I('Kinematics_icon.png') },
+      silence:     { label: 'Silence', desc: "La cible ne peut plus lancer de sorts ni utiliser d'objets actifs.", icon: I('Silence_icon.png') },
+      disarm:      { label: 'Désarmement', desc: "La cible ne peut plus faire d'attaques de base.", icon: I('Disarm_icon.png') },
+      blind:       { label: 'Aveuglement', desc: "Les attaques de base de la cible ratent pendant la durée.", icon: I('Blind_icon.png') },
+      cripple:     { label: 'Handicap', desc: "Vitesse d'attaque de la cible réduite.", icon: I('Cripple_icon.png') },
+      nearsight:   { label: 'Myopie', desc: "Le champ de vision de la cible est réduit et elle perd la vision de ses alliés.", icon: I('Nearsight_icon.png') },
+      disrupt:     { label: 'Interruption', desc: "Interrompt les sorts canalisés de la cible.", icon: P('<path d="M4 12h5l2-5 3 10 2-5h4"/>') },
+      heal:        { label: 'Soin', desc: "Rend des points de vie, au lanceur ou à des alliés.", icon: P('<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>') },
+      shield:      { label: 'Bouclier', desc: "Absorbe des dégâts avant les points de vie, pendant une durée.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>') },
+      untargetable:{ label: 'Intouchable', desc: "Ne peut plus être ciblé par les attaques et les sorts ciblés ; les zones peuvent encore toucher selon le cas.", icon: I('Untargetable_icon.png') },
+      invulnerable:{ label: 'Invulnérable', desc: "Ne subit plus de dégâts pendant la durée.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8l1.2 2.6 2.8.3-2 1.9.6 2.8L12 14.2l-2.6 1.4.6-2.8-2-1.9 2.8-.3z" fill="currentColor"/>') },
+      cleanse:     { label: 'Purge', desc: "Retire les contrôles de foule (ou certains d'entre eux) en cours.", icon: P('<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/>') },
+      tenacity:    { label: 'Ténacité', desc: "Réduit la durée des contrôles de foule subis (sauf projections et suppression).", icon: I('Tenacity_icon.png') },
+      'slow-resist':{ label: 'Résistance aux ralentissements', desc: "Réduit ou annule les ralentissements subis.", icon: P('<path d="M4 20h10l2-6H8l-4 6zM8 14V6h4l2 3h4l2 5"/><path d="M15 4l5 5"/>') },
+      'cc-immune': { label: 'Immunité aux contrôles', desc: "Aucun contrôle de foule ne s'applique pendant la durée.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>') },
+      unstoppable: { label: 'Inarrêtable', desc: "Le déplacement ne peut pas être interrompu ni dévié par un contrôle (Malphite R, Sion R).", icon: P('<path d="M4 12h9M9 7l5 5-5 5M14 7l5 5-5 5"/>') },
+      resurrection:{ label: 'Résurrection', desc: "Revient à la vie, ou continue d'agir un moment après la mort.", icon: P('<path d="M12 20V8M8 12l4-4 4 4M5 20h14"/>') },
+      dash:        { label: 'Dash', desc: "Déplacement rapide au sol vers un point, une direction ou une cible ; peut être arrêté par un ancrage ou un knockdown.", icon: P('<path d="M3 12h10M9 7l5 5-5 5"/><path d="M16 7l5 5-5 5" stroke-dasharray="2 2"/>') },
+      blink:       { label: 'Téléportation courte', desc: "Disparaît et réapparaît plus loin instantanément (comme Flash) : rien ne peut l'interrompre.", icon: P('<path d="M13 2L5 14h6l-1 8 9-13h-6z"/>') },
+      ghosted:     { label: 'Traverse les unités', desc: "Passe à travers les sbires et les champions pendant la durée.", icon: P('<path d="M6 21v-9a6 6 0 0 1 12 0v9l-2-2-2 2-2-2-2 2-2-2z" stroke-dasharray="2 1.5"/>') },
+      attach:      { label: 'Attache', desc: "Se lie à une unité et la suit.", icon: P('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/>') },
+      tether:      { label: 'Lien', desc: "Un lien relie le lanceur et la cible ; l'effet s'applique s'il n'est pas rompu à temps.", icon: P('<circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h10" stroke-dasharray="2 2"/>') },
+      sight:       { label: 'Vision', desc: "Révèle une zone ou une cible.", icon: I('Sight_icon.png') },
+      'true-sight':{ label: 'Vision pure', desc: "Révèle aussi les unités camouflées ou invisibles.", icon: I('True_Sight_icon.png') },
+      stealth:     { label: 'Furtivité', desc: "Devient invisible ou camouflé (indétectable au-delà d'une courte distance) pendant la durée.", icon: P('<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"/><path d="M4 4l16 16"/>') },
+      ward:        { label: 'Balise', desc: "Pose une balise ou un objet qui donne de la vision.", icon: I('Stealth_Ward_icon.png') },
+      execute:     { label: 'Exécution', desc: "Dégâts qui augmentent quand la cible a peu de PV, ou qui achèvent sous un seuil.", icon: P('<circle cx="12" cy="10" r="6"/><path d="M9 16v4M15 16v4M10 10h.01M14 10h.01M10 13h4"/>') },
+      dot:         { label: 'Dégâts sur la durée', desc: "Les dégâts s'appliquent par tics pendant plusieurs secondes.", icon: P('<path d="M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1 1 2 2 4 1-1-2-1-4 0-6z"/>') },
+      poison:      { label: 'Poison', desc: "Dégâts sur la durée de type poison (interactions propres : Cassiopeia, Twitch, Teemo).", icon: P('<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>') },
+      grievous:    { label: 'Hémorragie (blessures graves)', desc: "Les soins reçus par la cible sont réduits.", icon: I('Grievous_Wounds_icon.png') },
+      brittle:     { label: 'Fragilité', desc: "Le prochain contrôle de foule subi dure plus longtemps (Ornn).", icon: P('<path d="M4 20L20 4M8 8l2 2M14 14l2 2M12 4v3M4 12h3"/>') },
+      'on-hit':    { label: 'Effets à l\'impact', desc: "Applique les effets à l'impact (objets, runes, passifs) comme une attaque de base.", icon: P('<circle cx="12" cy="12" r="8"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/><circle cx="12" cy="12" r="2" fill="currentColor"/>') },
+      'attack-reset':{ label: 'Reset d\'attaque', desc: "Annule le temps de recharge de l'attaque en cours : une attaque de plus tout de suite.", icon: P('<path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5"/>') },
+      spellblade:  { label: 'Lame spectrale', desc: "Déclenche les effets « Lame spectrale » des objets (Force de la trinité, Éclat de lame).", icon: P('<path d="M5 19l10-10M12 5l7 7M15 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/>') },
+      crit:        { label: 'Coup critique', desc: "Peut faire un coup critique, ou en garantit un.", icon: P('<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>') },
+      energized:   { label: 'Énergisé', desc: "Déclenche les effets « Énergisé » (Tempête de Rapidfire, Tueur d'ombres).", icon: P('<circle cx="12" cy="12" r="9"/><path d="M13 6l-4 7h4l-1 5 4-7h-4z"/>') },
+      pet:         { label: 'Familier', desc: "Invoque une unité contrôlable ou autonome.", icon: P('<circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="5" cy="13" r="2"/><circle cx="19" cy="13" r="2"/><path d="M12 12c3 0 5 3 5 5a3 3 0 0 1-3 3c-1 0-1.5-.5-2-.5s-1 .5-2 .5a3 3 0 0 1-3-3c0-2 2-5 5-5z"/>') },
+      clone:       { label: 'Clone', desc: "Crée une copie du champion.", icon: P('<rect x="3" y="3" width="12" height="12"/><path d="M9 21h12V9"/>') },
+      stacking:    { label: 'Croissance permanente', desc: "Le sort accumule des charges qui ne se perdent pas (éliminations, sbires, objectifs, évolutions) : le champion devient plus fort pour le reste de la partie. Plus la partie dure, plus il pèse — à surveiller sur la durée.", icon: P('<rect x="4" y="15" width="16" height="4"/><rect x="6" y="10" width="12" height="4"/><rect x="8" y="5" width="8" height="4"/><path d="M15 3c1-1.5 3-1.5 4 0s3 1.5 4 0" transform="translate(-4 -1) scale(.6)"/>') },
+      stacks:      { label: 'Charges temporaires', desc: "Un compteur qui monte sur la cible ou sur le lanceur et retombe au bout de quelques secondes : l'effet fort arrive à la Nᵉ charge (3ᵉ attaque, 5ᵉ coup…). Reculer avant la dernière charge, ou la faire expirer, désamorce le sort.", icon: P('<rect x="4" y="15" width="16" height="4"/><rect x="6" y="10" width="12" height="4"/><rect x="8" y="5" width="8" height="4" stroke-dasharray="2 2"/>') },
+    }},
+  };
+  // ---------- Effets des objets (page Effets des objets, cartes de la sous-page Objets) — mécanisme "itemEffects" ----------
+  // Même icône que l'effet de sort quand la notion est la même (ralentissement, bouclier, soin, purge…).
+  const S = k => TAX.effects.items[k];
+  TAX.itemEffects = { title: 'Effets des objets', key: 'itemEffects', groups: [
+    { id: 'damage', title: 'Dégâts supplémentaires', keys: ['on-hit','spellblade','energized','crit','cleave','dot','execute','bonus-damage'] },
+    { id: 'weaken', title: 'Affaiblir la cible', keys: ['grievous','armor-shred','mr-shred','slow','root','cripple','shield-break','airborne'] },
+    { id: 'protect', title: 'Se protéger', keys: ['shield','heal','vamp','damage-reduction','thorns','spell-shield','cleanse','tenacity','stasis','invulnerable','untargetable','resurrection'] },
+    { id: 'mobility', title: 'Se déplacer', keys: ['move-speed','dash','ghosted','stealth'] },
+    { id: 'vision', title: 'Vision', keys: ['ward','sight'] },
+    { id: 'economy', title: 'Ressources, croissance, économie', keys: ['mana-charge','mana-to-power','amplify','stacking','stacks','gold','jungle','spell-haste','cooldown','consumable'] },
+    { id: 'team', title: 'Alliés et structures', keys: ['ally-buff','structure'] },
+  ], items: {
+    'on-hit':       { label: 'Effet à l\'impact', desc: "Chaque attaque de base applique un effet supplémentaire (dégâts, ralentissement…). Se cumule avec les autres objets à l'impact ; profite aux champions qui attaquent beaucoup.", icon: S('on-hit').icon },
+    spellblade:     { label: 'Lame enchantée', desc: "Après un sort, la prochaine attaque de base fait des dégâts bonus. Un seul objet Lame enchantée compte à la fois.", icon: S('spellblade').icon },
+    energized:      { label: 'Énergisé', desc: "Se déplacer et attaquer charge l'objet ; à pleine charge, la prochaine attaque déclenche un effet (dégâts, portée, ralentissement).", icon: S('energized').icon },
+    crit:           { label: 'Coup critique', desc: "Chance de coup critique ou dégâts critiques modifiés — la base des tireurs.", icon: S('crit').icon },
+    cleave:         { label: 'Fendoir', desc: "Les attaques (ou l'actif) frappent aussi les ennemis autour de la cible : vagues de sbires et combats groupés.", icon: P('<path d="M4 14c4-1 6-4 8-8 2 4 4 7 8 8-4 1-6 3-8 6-2-3-4-5-8-6z"/><path d="M12 6v14"/>') },
+    dot:            { label: 'Brûlure', desc: "Dégâts sur la durée (par seconde) : immolation autour de soi, brûlure après un sort ou une attaque.", icon: S('dot').icon },
+    execute:        { label: 'Exécution', desc: "Achève une cible sous un seuil de PV, ou frappe plus fort une cible affaiblie.", icon: S('execute').icon },
+    'bonus-damage': { label: 'Dégâts bonus', desc: "L'effet inflige des dégâts supplémentaires (physiques, magiques ou bruts) sous condition : après un sort, tous les X secondes, contre les sbires…", icon: P('<path d="M5 19l10-10M12 5l7 7"/><path d="M17 3l1.2 2.6 2.8.3-2 1.9.6 2.8L17 9.2l-2.6 1.4.6-2.8-2-1.9 2.8-.3z" fill="currentColor"/>') },
+    grievous:       { label: 'Hémorragie (blessures graves)', desc: "Réduit les soins et la régénération de la cible : la réponse aux champions qui se soignent beaucoup.", icon: S('grievous').icon },
+    'armor-shred':  { label: 'Réduction d\'armure', desc: "Retire de l'armure à la cible, pour toute l'équipe (à la différence de la pénétration, qui ne compte que pour soi).", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 12l3 3 5-6" stroke-dasharray="2 2"/><path d="M4 4l16 16"/>') },
+    'mr-shred':     { label: 'Réduction de RM', desc: "Retire de la résistance magique à la cible, pour toute l'équipe.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 9c1-1 5-1 6 0M9 15c1 1 5 1 6 0"/><path d="M4 4l16 16"/>') },
+    slow:           { label: 'Ralentissement', desc: "Ralentit la cible (à l'impact, après un sort, ou en zone).", icon: S('slow').icon },
+    root:           { label: 'Immobilisation', desc: "Immobilise la cible (actif ou effet de zone).", icon: S('root').icon },
+    cripple:        { label: 'Vitesse d\'attaque réduite', desc: "Réduit la vitesse d'attaque des ennemis proches ou de l'attaquant : contre les champions qui vivent de leurs attaques.", icon: S('cripple').icon },
+    'shield-break': { label: 'Anti-bouclier', desc: "Réduit ou brise les boucliers de la cible.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" stroke-dasharray="3 2"/><path d="M9 9l6 6M15 9l-6 6"/>') },
+    airborne:       { label: 'Projection', desc: "Projette les ennemis (actif).", icon: S('airborne').icon },
+    shield:         { label: 'Bouclier', desc: "Accorde un bouclier, souvent quand les PV tombent sous un seuil (Lien vital) ou après un sort.", icon: S('shield').icon },
+    heal:           { label: 'Soin ou régénération', desc: "Rend des PV : régénération, soin après élimination, soin d'un allié.", icon: S('heal').icon },
+    vamp:           { label: 'Vol de vie', desc: "Une part des dégâts infligés est rendue en PV (vol de vie, omnivampirisme).", icon: P('<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M12 10v6M9 13h6"/>') },
+    'damage-reduction': { label: 'Réduction des dégâts', desc: "Réduit les dégâts subis (d'un type, d'une source, ou tous) pendant une durée ou sous condition.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 12h8"/>') },
+    thorns:         { label: 'Épines', desc: "Renvoie des dégâts à qui vous attaque.", icon: P('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8l-2 3h4l-2 3M8 10l-2-1M16 10l2-1"/>') },
+    'spell-shield': { label: 'Bouclier de sort', desc: "Bloque le prochain sort ennemi (une fois toutes les X secondes).", icon: TAX.interaction.items.spellShield.icon },
+    cleanse:        { label: 'Purge', desc: "Retire les contrôles de foule en cours, sur soi ou sur un allié.", icon: S('cleanse').icon },
+    tenacity:       { label: 'Ténacité', desc: "Réduit la durée des contrôles de foule subis.", icon: S('tenacity').icon },
+    stasis:         { label: 'Stase', desc: "Devient intouchable et invulnérable, sans pouvoir agir, pendant quelques secondes.", icon: S('stasis').icon },
+    invulnerable:   { label: 'Invulnérabilité', desc: "Ne subit plus de dégâts pendant l'effet.", icon: S('invulnerable').icon },
+    untargetable:   { label: 'Intouchable', desc: "Ne peut plus être ciblé pendant l'effet.", icon: S('untargetable').icon },
+    resurrection:   { label: 'Résurrection', desc: "Revient à la vie après un coup fatal.", icon: S('resurrection').icon },
+    'move-speed':   { label: 'Vitesse de déplacement', desc: "Vitesse bonus, permanente, hors combat, ou déclenchée par une action.", icon: P('<path d="M4 20h10l2-6H8l-4 6zM8 14V6h4l2 3h4l2 5"/>') },
+    dash:           { label: 'Dash', desc: "Un déplacement rapide sur activation (Ceinture-roquette).", icon: S('dash').icon },
+    ghosted:        { label: 'Traverse les unités', desc: "Passe à travers sbires et champions pendant l'effet.", icon: S('ghosted').icon },
+    stealth:        { label: 'Furtivité', desc: "Camouflage ou invisibilité, pour soi ou pour ce que l'objet pose.", icon: S('stealth').icon },
+    ward:           { label: 'Balises', desc: "Pose des balises ou en donne des charges : la vision de l'équipe.", icon: S('ward').icon },
+    sight:          { label: 'Vision', desc: "Révèle une zone, une cible, ou les balises ennemies.", icon: S('sight').icon },
+    'mana-charge':  { label: 'Flux de mana', desc: "Chaque sort qui touche augmente le mana max, jusqu'à un plafond : l'objet grandit en jouant.", icon: P('<path d="M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-5 4-7 6-11z"/><path d="M12 10v6M9 13h6"/>') },
+    'mana-to-power':{ label: 'Mana converti', desc: "Une part du mana devient de la puissance ou des dégâts d'attaque, ou sert de bouclier.", icon: P('<path d="M7 3c2 4 5 6 5 11a5 5 0 0 1-10 0c0-5 3-7 5-11z"/><path d="M14 12h7M18 9l3 3-3 3"/>') },
+    amplify:        { label: 'Amplification', desc: "Augmente en pourcentage une statistique ou les soins reçus (Coiffe de Rabadon, Visage spirituel).", icon: P('<path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/>') },
+    stacking:       { label: 'Croissance permanente', desc: "L'objet gagne des charges qui restent pour toute la partie (éliminations, sbires, temps, PV max) et devient plus fort — certains en perdent à la mort (Mejai).", icon: S('stacking').icon },
+    stacks:         { label: 'Charges temporaires', desc: "Un compteur qui monte à chaque attaque ou sort et retombe après quelques secondes : l'effet fort arrive à la Nᵉ charge.", icon: S('stacks').icon },
+    cooldown:       { label: 'Délai de récupération', desc: "Rembourse ou réduit le délai d'un sort (souvent l'ultime).", icon: P('<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M4 12a8 8 0 0 1 2-5"/>') },
+    gold:           { label: 'Or', desc: "Rapporte des PO : objets de support, or par élimination.", icon: P('<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.5 2.5 1.5-1 1.5-2.5 2-2.5 1-2.5 2 1 1.5 2.5 1.5 2.5-.5 2.5-1.5"/>') },
+    jungle:         { label: 'Jungle', desc: "Familier de jungle et effets contre les monstres : réservé au jungler.", icon: S('pet').icon },
+    'spell-haste':  { label: 'Hâte de sorts d\'invocateur', desc: "Réduit le délai des sorts d'invocateur (Flash, Téléportation…).", icon: P('<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="5"/><path d="M12 9v3l2 1"/>') },
+    consumable:     { label: 'Consommable', desc: "S'utilise et disparaît : potions, élixirs.", icon: P('<path d="M9 3h6v4l3 4v7a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-7l3-4z"/><path d="M8 14h8"/>') },
+    'ally-buff':    { label: 'Pour les alliés', desc: "L'effet profite aux alliés : soin, bouclier, vitesse, purge — les objets de support.", icon: TAX.affects.items.allies.icon },
+    structure:      { label: 'Contre les structures', desc: "Dégâts ou effets accrus contre les tourelles et les inhibiteurs (split push).", icon: TAX.affects.items.structures.icon },
+  }};
+  return TAX;
+})();
+// Tranche de portée (unités du jeu) — cf. 03-competences-inventaire.md §7.
+function rangeBucket(n){ return n == null ? null : n <= 150 ? 'self' : n <= 450 ? 'melee' : n <= 700 ? 'short' : n <= 1000 ? 'medium' : n <= 1500 ? 'long' : n <= 5000 ? 'vlong' : 'global'; }
+// Icône d'une valeur : <a> vers la page Compétences, infobulle = libellé + explication.
+function taxIconHtml(axis, key, opts){
+  const it = TAXONOMY[axis] && TAXONOMY[axis].items[key]; if(!it) return '';
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const text = (opts && opts.text) || (opts && opts.short ? it.short || it.label : null);
+  const inner = it.icon ? (it.icon.img ? `<img src="${it.icon.img}" alt="">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${it.icon.svg}</svg>`) : '';
+  const cls = 'tx' + (it.pill ? ' pill ' + it.pill : '') + (opts && opts.cls ? ' ' + opts.cls : '');
+  return `<a class="${cls}" href="competences.html#tx-${axis}-${key}" title="${esc(it.label)} — ${esc(it.desc)}">${inner}${text ? `<span>${esc(text)}</span>` : (it.pill ? esc(it.short) : '')}</a>`;
+}
