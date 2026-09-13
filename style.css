@@ -149,7 +149,7 @@
   .roleline{ display:flex; gap:6px; flex-wrap:wrap; margin-top:5px; }
   .pill-role{ background:var(--surface2); color:var(--text); border:1px solid var(--border); font-weight:600; }
   .pill-role > b{ color:var(--muted); font-weight:700; margin:0 4px; }
-  .pill-role .n{ font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--muted); }
+  .pill-role .n{ font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--muted); margin-left:5px; }   /* la pastille est en flex : l'espace du texte n'y compte pas */
   .pill-role .n b{ font-weight:700; }
   .pill-role.cur{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
   button.pill-role.selectable{ cursor:pointer; font-family:var(--body-font); }
