@@ -77,6 +77,15 @@ const GLOBAL_SOURCES = [
     caveat: null
   },
   {
+    id: "tierIcons",
+    label: "Emblèmes des paliers (sélecteur Fer / Bronze / Argent / Or)",
+    fields: [],
+    method: "Images officielles des emblèmes de rang du client League of Legends, servies par Community Dragon (miroir des fichiers du client, plugin rcp-fe-lol-static-assets, dossier ranked-emblem : emblem-iron.png, emblem-bronze.png, emblem-silver.png, emblem-gold.png), chargées depuis le site ; le nom du palier s'affiche au survol. Ce sont les emblèmes que Riot montre sur sa page « Ranked Tiers, Divisions, and Queues ».",
+    url: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/",
+    retrieved: "2026-09-14",
+    caveat: "Images hébergées par un tiers (Community Dragon) et propriété de Riot Games ; un palier non coché est affiché en gris."
+  },
+  {
     id: "abilityVideos",
     label: "Animations vidéo des compétences",
     method: "CDN vidéo officiel de Riot Games (riotcdn.net) — lien calculé à l'affichage (pas stocké), motif d'URL déterministe à partir de l'identifiant numérique Riot du champion (clé sur 4 chiffres). Toujours l'animation actuelle du sort, y compris après une refonte.",

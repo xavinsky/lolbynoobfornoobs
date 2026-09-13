@@ -142,7 +142,9 @@
     return { tier: null, wr: wr / g, pr: pr / an, ban: br / an, games: g, src: 'tiers' };
   }
   function tiersLabel(){ return TIER_KEYS.filter(k => state.tiers.includes(k[0])).map(k => k[1]).join(' + '); }
-  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''}>${l}</button>`).join('') + `<span class="tier-label">${RT ? `patch ${escHtml(RT.patch || '')}` : 'référence Émeraude+'}</span>`; }
+  // Emblèmes officiels des paliers (Community Dragon, mécanisme « tierIcons ») ; le nom du palier au survol.
+  const tierIconUrl = k => `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-${k}.png`;
+  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''} title="${l}${state.tiers.includes(k) ? ' — coché' : ''}" aria-label="${l}"><img class="tier-icon" src="${tierIconUrl(k)}" alt="${l}"></button>`).join('') + `<span class="tier-label">${RT ? `patch ${escHtml(RT.patch || '')}` : 'référence Émeraude+'}</span>`; }
   function bindTierSel(box, onChange){
     box.innerHTML = tierSelHtml();
     box.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => {

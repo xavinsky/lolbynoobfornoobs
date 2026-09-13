@@ -531,3 +531,6 @@
   footer p.legal{ font-size:.78em; color:#fff; opacity:.9; margin-top:6px; }
   .tier-sel .tier-label{ font-size:.8em; color:var(--muted); padding:0 8px; align-self:center; font-family:var(--mono); }
   .tier-sel.detail-tiers{ margin-top:8px; }
+  .tier-sel button{ padding:2px 6px; }
+  .tier-sel img.tier-icon{ width:26px; height:26px; display:block; object-fit:contain; filter:grayscale(1); opacity:.45; }
+  .tier-sel button.on img.tier-icon{ filter:none; opacity:1; }
