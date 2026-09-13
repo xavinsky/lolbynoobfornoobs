@@ -30,6 +30,6 @@ python3 script/update_tiers.py
 
 ## Licences
 
-Code et textes du site : [licence MIT](LICENSE). Les textes traduits ou résumés du wiki League of Legends restent sous [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), page d'origine citée. Les données de jeu, noms, icônes et vidéos appartiennent à Riot Games.
+Code et textes du site : [licence MIT](LICENSE). Le fichier `LICENSE` détaille aussi les contenus tiers et leurs conditions : textes traduits ou résumés du wiki League of Legends sous [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) (page d'origine citée), données de jeu, icônes et vidéos de Riot Games, chiffres de lolalytics et d'op.gg, conseils extraits de vidéos YouTube citées.
 
 LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.

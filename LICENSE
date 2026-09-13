@@ -19,3 +19,41 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+----------------------------------------------------------------------
+
+Contenus tiers (non couverts par la licence MIT ci-dessus)
+
+La licence MIT couvre le code du site (pages, scripts, feuille de style)
+et les textes rédigés pour le site. Le site inclut aussi des contenus
+qui appartiennent à d'autres et gardent leurs propres conditions :
+
+1. Wiki League of Legends (https://wiki.leagueoflegends.com) — les notes
+   de mécaniques des sorts, leur classification, les définitions des
+   statistiques, les effets des objets et l'historique des mises à jour
+   sont traduits ou résumés depuis le wiki. Ils sont sous licence
+   Creative Commons Attribution - Partage dans les mêmes conditions 3.0
+   (CC BY-SA 3.0, https://creativecommons.org/licenses/by-sa/3.0/) : toute
+   réutilisation doit citer le wiki et rester sous cette licence. La page
+   d'origine est citée sur le site pour chaque contenu concerné.
+
+2. Riot Games — noms, descriptions et icônes des champions, des sorts,
+   des objets, des runes et des sorts d'invocateur (Data Dragon), clips
+   des compétences et vidéos de présentation appartiennent à Riot Games,
+   Inc. et sont utilisés dans le cadre de sa politique pour les projets
+   de fans (« Legal Jibber Jabber », https://www.riotgames.com/en/legal).
+   LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect
+   the views or opinions of Riot Games or anyone officially involved in
+   producing or managing Riot Games properties. Riot Games, and all
+   associated properties are trademarks or registered trademarks of Riot
+   Games, Inc.
+
+3. lolalytics (https://lolalytics.com) et op.gg (https://op.gg) — taux
+   de victoire, de pick et de ban, statistiques par rôle et par palier :
+   chiffres relevés sur ces sites, cités avec leur date sur la page
+   Sources du site.
+
+4. 3 Minute League of Legends et League of Legends - France (YouTube) —
+   les conseils extraits des vidéos de présentation citent la vidéo et
+   la minute du passage ; les vidéos elles-mêmes restent la propriété
+   de leurs auteurs.
