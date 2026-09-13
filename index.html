@@ -29,7 +29,7 @@
 
     <div class="toolbar">
       <input type="search" id="search" placeholder="Chercher…" autocomplete="off">
-      <div class="segmented tier-sel" id="tierSel" title="Paliers pris en compte pour WR, pick et ban (parties classées Solo/Duo de ces paliers, combinées au prorata de leurs parties) ; aucun palier coché = référence Émeraude+"></div>
+      <div class="segmented tier-sel" id="tierSel" title="Paliers pris en compte pour WR, pick et ban (parties classées Solo/Duo de ces paliers, combinées au prorata de leurs parties) ; tout décocher = les quatre"></div>
       <div class="segmented" id="dmgFilter">
         <button data-dmg="all" class="on">Tout</button>
         <button data-dmg="AD">AD</button>
@@ -120,14 +120,14 @@
   // WR = moyenne des rôles pondérée par leur PR. Ban = une seule valeur : on bannit un champion, pas
   // un rôle — la source la répète sur chaque rôle avec de petits écarts de moment de mesure, on garde
   // celle du rôle principal (cf. sources.js, mécanisme "rolesCombined").
-  // ---------- Paliers affichés (WR / PR / Ban) : Fer, Bronze, Argent, Or, cochables ; aucun coché = référence Émeraude+ ----------
+  // ---------- Paliers affichés (WR / PR / Ban) : Fer, Bronze, Argent, Or, cochables ; tout décocher = les quatre ----------
   const TIER_KEYS = [['iron', 'Fer'], ['bronze', 'Bronze'], ['silver', 'Argent'], ['gold', 'Or']];
-  function loadTiers(){ try{ const v = JSON.parse(localStorage.getItem('docTiers')); return Array.isArray(v) ? v.filter(t => TIER_KEYS.some(k => k[0] === t)) : TIER_KEYS.map(k => k[0]); }catch(e){ return TIER_KEYS.map(k => k[0]); } }
+  function loadTiers(){ try{ const v = JSON.parse(localStorage.getItem('docTiers')); const t = Array.isArray(v) ? v.filter(t => TIER_KEYS.some(k => k[0] === t)) : []; return t.length ? t : TIER_KEYS.map(k => k[0]); }catch(e){ return TIER_KEYS.map(k => k[0]); } }
   function saveTiers(){ try{ localStorage.setItem('docTiers', JSON.stringify(state.tiers)); }catch(e){} }
   const RT = (typeof ROLES_TIERS !== 'undefined') ? ROLES_TIERS : null;
   // Chiffres d'un champion à un rôle pour les paliers cochés : WR pondéré par les parties du champion, PR et Ban pondérés
-  // par les parties analysées du palier (mécanisme « rolesTiers ») ; sans palier coché ou sans donnée, la référence
-  // Émeraude+ de champions.js (mécanisme « roles »), avec sa lettre de tier.
+  // par les parties analysées du palier (mécanisme « rolesTiers ») ; sans fichier de paliers, la référence Émeraude+
+  // de champions.js (mécanisme « roles »), avec sa lettre de tier.
   function roleStat(ch, role){
     const ref = ch.roles[role]; if(!ref) return null;
     if(!RT || !state.tiers.length) return { ...ref, src: 'ref' };
@@ -141,13 +141,15 @@
     if(!g) return { tier: null, wr: NaN, pr: 0, ban: NaN, games: 0, src: 'tiers', missing: true };
     return { tier: null, wr: wr / g, pr: pr / an, ban: br / an, games: g, src: 'tiers' };
   }
-  function tiersLabel(){ return state.tiers.length ? TIER_KEYS.filter(k => state.tiers.includes(k[0])).map(k => k[1]).join(' + ') : 'Émeraude+ (référence)'; }
-  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''}>${l}</button>`).join('') + `<span class="tier-label">${RT ? (state.tiers.length ? `patch ${escHtml(RT.patch || '')}` : 'référence Émeraude+') : 'référence Émeraude+'}</span>`; }
+  function tiersLabel(){ return TIER_KEYS.filter(k => state.tiers.includes(k[0])).map(k => k[1]).join(' + '); }
+  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''}>${l}</button>`).join('') + `<span class="tier-label">${RT ? `patch ${escHtml(RT.patch || '')}` : 'référence Émeraude+'}</span>`; }
   function bindTierSel(box, onChange){
     box.innerHTML = tierSelHtml();
     box.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.tier; const i = state.tiers.indexOf(t); if(i >= 0) state.tiers.splice(i, 1); else state.tiers.push(t);
-      state.tiers = TIER_KEYS.map(k => k[0]).filter(k => state.tiers.includes(k)); saveTiers();
+      state.tiers = TIER_KEYS.map(k => k[0]).filter(k => state.tiers.includes(k));
+      if(!state.tiers.length) state.tiers = TIER_KEYS.map(k => k[0]);   // tout décocher = les quatre paliers (pas de référence Émeraude+ ici)
+      saveTiers();
       document.querySelectorAll('.tier-sel').forEach(el => { el.innerHTML = tierSelHtml(); }); document.querySelectorAll('.tier-sel').forEach(el => bindTierSel(el, onChange));
       onChange();
     }));
@@ -1011,7 +1013,7 @@
           <a class="champ-link" href="${champPageUrl(ch)}" target="_blank" rel="noopener">Fiche officielle ↗</a>
         </div>
         <div class="roleline" style="margin-top:12px;">${rolelineHtml()}</div>
-        <div class="segmented tier-sel detail-tiers" title="Paliers pris en compte pour WR, pick et ban ; aucun palier coché = référence Émeraude+"></div>
+        <div class="segmented tier-sel detail-tiers" title="Paliers pris en compte pour WR, pick et ban ; tout décocher = les quatre"></div>
         ${analysisBlockHtml(ch, 'margin-top:12px;')}
       </div>
 

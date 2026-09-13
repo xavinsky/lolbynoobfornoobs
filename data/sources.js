@@ -13,7 +13,7 @@
 const GLOBAL_SOURCES = [
   {
     id: "roles",
-    label: "Tier / Winrate / Pickrate / Banrate par ligne — référence Émeraude+ (affichée quand aucun palier n'est coché)",
+    label: "Tier / Winrate / Pickrate / Banrate par ligne — référence Émeraude+ (repli si le fichier des paliers manque)",
     fields: ["roles[*].tier", "roles[*].wr", "roles[*].pr", "roles[*].ban"],
     method: "Tableaux tier-list par rôle d'op.gg (Ranked Solo/Duo, bracket Émeraude+ uniquement), un tableau par ligne (Haut/Jungle/Mid/ADC/Support), lus et retranscrits manuellement.",
     url: "https://op.gg/lol/champions",
@@ -34,7 +34,7 @@ const GLOBAL_SOURCES = [
     id: "rolesTiers",
     label: "WR / Pick / Ban par palier (Fer, Bronze, Argent, Or — sélecteur de paliers)",
     fields: ["data/roles_tiers.js : ROLES_TIERS.champions[clé][rôle][palier] (wr, pr, br, games, grade), ROLES_TIERS.tiers[palier].lanes[rôle].analysed"],
-    method: "Généré par script/update_tiers.py (livré avec le site, Python seul) à partir des pages « tier list » de lolalytics, une page par palier et par rôle (Ranked Solo/Duo, toutes régions, patch courant), lues en une requête HTTP chacune et décodées sans exécuter de JavaScript : par champion et rôle, taux de victoire, de pick et de ban, nombre de parties ; par palier et rôle, nombre de parties analysées. Sur le site, les paliers cochés (Fer, Bronze, Argent, Or) sont combinés : WR = moyenne des WR pondérée par les parties du champion à chaque palier ; pick et ban = moyennes pondérées par les parties analysées de chaque palier. Aucun palier coché = référence Émeraude+ (mécanisme « roles »). La date et le patch sont ceux inscrits dans le fichier généré.",
+    method: "Généré par script/update_tiers.py (livré avec le site, Python seul) à partir des pages « tier list » de lolalytics, une page par palier et par rôle (Ranked Solo/Duo, toutes régions, patch courant), lues en une requête HTTP chacune et décodées sans exécuter de JavaScript : par champion et rôle, taux de victoire, de pick et de ban, nombre de parties ; par palier et rôle, nombre de parties analysées. Sur le site, les paliers cochés (Fer, Bronze, Argent, Or) sont combinés : WR = moyenne des WR pondérée par les parties du champion à chaque palier ; pick et ban = moyennes pondérées par les parties analysées de chaque palier. Tout décocher revient à cocher les quatre : le site s'adresse aux joueurs de ces paliers, la référence Émeraude+ (mécanisme « roles ») ne sert qu'en l'absence du fichier de paliers. La date et le patch sont ceux inscrits dans le fichier généré.",
     url: "https://lolalytics.com/lol/tierlist/?lane=top&tier=gold",
     retrieved: "2026-09-14",
     caveat: "Le WR moyen d'un palier n'est pas 50 % (les joueurs Fer gagnent ≈ 44 % de leurs parties classées, les Or ≈ 50 %) : un WR lu à un palier se compare aux autres champions du même palier, pas à 50. Un champion peu joué à un palier a peu de parties : le chiffre est alors instable (« — » s'il n'en a aucune). Pas de lettre de tier en mode paliers (les notes du site source ne se combinent pas)."
