@@ -532,5 +532,5 @@
   .tier-sel .tier-label{ font-size:.8em; color:var(--muted); padding:0 8px; align-self:center; font-family:var(--mono); }
   .tier-sel.detail-tiers{ margin-top:8px; }
   .tier-sel button{ padding:2px 7px; display:flex; align-items:center; }
-  .tier-sel img.tier-icon{ width:30px; height:30px; display:block; object-fit:contain; filter:grayscale(1); opacity:.5; }
-  .tier-sel button.on img.tier-icon{ filter:none; opacity:1; }
+  .tier-sel img.tier-icon{ width:30px; height:30px; display:block; object-fit:contain; opacity:.55; }
+  .tier-sel button.on img.tier-icon{ opacity:1; }

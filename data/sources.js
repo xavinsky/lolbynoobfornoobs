@@ -83,7 +83,7 @@ const GLOBAL_SOURCES = [
     method: "Images officielles des emblèmes de rang du client League of Legends, servies par Community Dragon (miroir des fichiers du client, plugin rcp-fe-lol-static-assets, dossier ranked-mini-crests : iron.png, bronze.png, silver.png, gold.png — les écussons 80 × 80 utilisés par le client dans ses listes), chargées depuis le site ; le nom du palier s'affiche au survol. Ce sont les emblèmes que Riot montre sur sa page « Ranked Tiers, Divisions, and Queues ».",
     url: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/",
     retrieved: "2026-09-14",
-    caveat: "Images hébergées par un tiers (Community Dragon) et propriété de Riot Games ; un palier non coché est affiché en gris."
+    caveat: "Images hébergées par un tiers (Community Dragon) et propriété de Riot Games ; un palier non coché est affiché atténué, en couleur."
   },
   {
     id: "abilityVideos",
