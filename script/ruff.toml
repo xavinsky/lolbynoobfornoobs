@@ -1,0 +1,6 @@
+# Configuration du linter pour le script livré avec le site : `ruff check script/` et `ruff format --check script/`.
+line-length = 120
+target-version = "py39"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "C4", "SIM", "PL", "RUF", "FURB"]
