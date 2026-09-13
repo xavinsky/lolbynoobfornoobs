@@ -529,8 +529,11 @@
   .mech-video b{ font-size:.86em; color:var(--muted); }
   .mech-video ul{ margin:4px 0 0; padding-left:18px; }
   footer p.legal{ font-size:.78em; color:#fff; opacity:.9; margin-top:6px; }
-  .tier-sel .tier-label{ font-size:.8em; color:var(--muted); padding:0 8px; align-self:center; font-family:var(--mono); }
-  .tier-sel.detail-tiers{ margin-top:8px; }
-  .tier-sel button{ padding:2px 7px; display:flex; align-items:center; }
-  .tier-sel img.tier-icon{ width:30px; height:30px; display:block; object-fit:contain; opacity:.55; }
+  /* Sélecteur de paliers de l'en-tête (nav.js) : même habillage que le contrôle de zoom */
+  .tier-sel{ display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.25); border-radius:6px; overflow:hidden; margin-left:4px; }
+  .tier-sel button{ background:transparent; border:none; border-left:1px solid rgba(255,255,255,.2); padding:2px 7px; cursor:pointer; display:flex; align-items:center; }
+  .tier-sel button:first-child{ border-left:none; }
+  .tier-sel button:hover{ background:var(--menuH-hover); }
+  .tier-sel button.on{ background:rgba(255,255,255,.18); }
+  .tier-sel img.tier-icon{ width:28px; height:28px; display:block; object-fit:contain; opacity:.45; }
   .tier-sel button.on img.tier-icon{ opacity:1; }

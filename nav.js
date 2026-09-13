@@ -32,6 +32,33 @@
     if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
   }
   applyZoom();
+  // Paliers pris en compte pour les taux (Fer, Bronze, Argent, Or) : réglage de tout le site, dans l'en-tête.
+  // Mémorisé (localStorage docTiers) et transmis dans l'URL (`?tiers=`) comme le zoom ; tout décocher = les quatre.
+  const TIERS = [['iron', 'Fer'], ['bronze', 'Bronze'], ['silver', 'Argent'], ['gold', 'Or']];
+  const ALL_TIERS = TIERS.map(t => t[0]);
+  const tierIconUrl = k => `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${k}.png`;
+  function readTiers(){
+    const m = window.location.search.match(/[?&]tiers=([a-z,]+)/);
+    let t = m ? m[1].split(',') : null;
+    if(!t){ try{ t = JSON.parse(localStorage.getItem('docTiers')); }catch(e){} }
+    t = Array.isArray(t) ? ALL_TIERS.filter(k => t.includes(k)) : [];
+    return t.length ? t : ALL_TIERS.slice();
+  }
+  let tiers = readTiers();
+  function saveTiers(){ try{ localStorage.setItem('docTiers', JSON.stringify(tiers)); }catch(e){} }
+  saveTiers();
+  function tiersLabel(){ return TIERS.filter(t => tiers.includes(t[0])).map(t => t[1]).join(' + '); }
+  function tierSelHtml(){
+    return `<div class="tier-sel" title="Paliers pris en compte pour les taux de victoire, de pick et de ban, sur tout le site ; tout décocher = les quatre">${TIERS.map(([k, l]) => `<button type="button" data-tier="${k}"${tiers.includes(k) ? ' class="on"' : ''} title="${l}${tiers.includes(k) ? ' — coché' : ''}" aria-label="${l}"><img class="tier-icon" src="${tierIconUrl(k)}" alt="${l}"></button>`).join('')}</div>`;
+  }
+  function toggleTier(k){
+    tiers = tiers.includes(k) ? tiers.filter(x => x !== k) : ALL_TIERS.filter(x => tiers.includes(x) || x === k);
+    if(!tiers.length) tiers = ALL_TIERS.slice();
+    saveTiers();
+    const h = document.querySelector('header.masthead');
+    if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
+    window.dispatchEvent(new CustomEvent('tierschange', { detail: tiers.slice() }));
+  }
   const SECTIONS = [
     { id:'champion', label:'Champion', href:'index.html#/list', subs:[
       { id:'list', label:'Liste', href:'index.html#/list' },
@@ -76,6 +103,7 @@
     const id = lastChamp(), q = [];
     if(id && !forIndex) q.push('last=' + encodeURIComponent(id));
     if(zoom !== 1) q.push('zoom=' + zoom);
+    if(tiers.length !== ALL_TIERS.length) q.push('tiers=' + tiers.join(','));
     return q.length ? '?' + q.join('&') : '';
   }
   function withLast(href, id){
@@ -92,12 +120,13 @@
     const main = SECTIONS.map(s => `<a href="${withLast(s.href, id)}"${s.id === cur.id ? ' class="on"' : ''}>${s.label}</a>`).join('');
     const subs = cur.subs.map(s => `<a href="${withLast(s.href, id)}" data-sub="${s.id}"${s.id === page ? ' class="on"' : ''}>${s.label}</a>`).join('');
     const zoomCtl = `<div class="zoom-ctl" title="Taille du texte (mémorisée, suivie de page en page)"><button type="button" data-zoom="-" aria-label="Réduire le texte">A−</button><button type="button" data-zoom="0" title="Taille normale">${Math.round(zoom * 100)} %</button><button type="button" data-zoom="+" aria-label="Agrandir le texte">A+</button></div>`;
-    header.innerHTML = `<div class="mast-row"><h1>LoL <span class="tagline">by Noob for Noobs</span></h1><nav class="app-nav">${main}</nav>${zoomCtl}</div><nav class="sub-menu">${subs}</nav>`;
+    header.innerHTML = `<div class="mast-row"><h1>LoL <span class="tagline">by Noob for Noobs</span></h1><nav class="app-nav">${main}</nav>${tierSelHtml()}${zoomCtl}</div><nav class="sub-menu">${subs}</nav>`;
+    header.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => toggleTier(b.dataset.tier)));
     header.querySelectorAll('button[data-zoom]').forEach(b => b.addEventListener('click', () => {
       const k = b.dataset.zoom; setZoom(k === '+' ? zoom + ZOOM_STEP : k === '-' ? zoom - ZOOM_STEP : 1);
     }));
   }
-  window.AppNav = { render, lastChamp, params };
+  window.AppNav = { render, lastChamp, params, tiers: () => tiers.slice(), tiersLabel, TIERS };
   const h = document.querySelector('header.masthead');
   if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
 })();

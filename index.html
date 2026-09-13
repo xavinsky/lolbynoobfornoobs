@@ -29,7 +29,6 @@
 
     <div class="toolbar">
       <input type="search" id="search" placeholder="Chercher…" autocomplete="off">
-      <div class="segmented tier-sel" id="tierSel" title="Paliers pris en compte pour WR, pick et ban (parties classées Solo/Duo de ces paliers, combinées au prorata de leurs parties) ; tout décocher = les quatre"></div>
       <div class="segmented" id="dmgFilter">
         <button data-dmg="all" class="on">Tout</button>
         <button data-dmg="AD">AD</button>
@@ -120,10 +119,7 @@
   // WR = moyenne des rôles pondérée par leur PR. Ban = une seule valeur : on bannit un champion, pas
   // un rôle — la source la répète sur chaque rôle avec de petits écarts de moment de mesure, on garde
   // celle du rôle principal (cf. sources.js, mécanisme "rolesCombined").
-  // ---------- Paliers affichés (WR / PR / Ban) : Fer, Bronze, Argent, Or, cochables ; tout décocher = les quatre ----------
-  const TIER_KEYS = [['iron', 'Fer'], ['bronze', 'Bronze'], ['silver', 'Argent'], ['gold', 'Or']];
-  function loadTiers(){ try{ const v = JSON.parse(localStorage.getItem('docTiers')); const t = Array.isArray(v) ? v.filter(t => TIER_KEYS.some(k => k[0] === t)) : []; return t.length ? t : TIER_KEYS.map(k => k[0]); }catch(e){ return TIER_KEYS.map(k => k[0]); } }
-  function saveTiers(){ try{ localStorage.setItem('docTiers', JSON.stringify(state.tiers)); }catch(e){} }
+  // ---------- Paliers affichés (WR / PR / Ban) : réglage de tout le site, dans l'en-tête (nav.js, AppNav.tiers) ----------
   const RT = (typeof ROLES_TIERS !== 'undefined') ? ROLES_TIERS : null;
   // Chiffres d'un champion à un rôle pour les paliers cochés : WR pondéré par les parties du champion, PR et Ban pondérés
   // par les parties analysées du palier (mécanisme « rolesTiers ») ; sans fichier de paliers, la référence Émeraude+
@@ -141,21 +137,7 @@
     if(!g) return { tier: null, wr: NaN, pr: 0, ban: NaN, games: 0, src: 'tiers', missing: true };
     return { tier: null, wr: wr / g, pr: pr / an, ban: br / an, games: g, src: 'tiers' };
   }
-  function tiersLabel(){ return TIER_KEYS.filter(k => state.tiers.includes(k[0])).map(k => k[1]).join(' + '); }
-  // Emblèmes officiels des paliers (Community Dragon, mécanisme « tierIcons ») ; le nom du palier au survol.
-  const tierIconUrl = k => `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${k}.png`;
-  function tierSelHtml(){ return TIER_KEYS.map(([k, l]) => `<button type="button" data-tier="${k}"${state.tiers.includes(k) ? ' class="on"' : ''} title="${l}${state.tiers.includes(k) ? ' — coché' : ''}" aria-label="${l}"><img class="tier-icon" src="${tierIconUrl(k)}" alt="${l}"></button>`).join(''); }
-  function bindTierSel(box, onChange){
-    box.innerHTML = tierSelHtml();
-    box.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => {
-      const t = b.dataset.tier; const i = state.tiers.indexOf(t); if(i >= 0) state.tiers.splice(i, 1); else state.tiers.push(t);
-      state.tiers = TIER_KEYS.map(k => k[0]).filter(k => state.tiers.includes(k));
-      if(!state.tiers.length) state.tiers = TIER_KEYS.map(k => k[0]);   // tout décocher = les quatre paliers (pas de référence Émeraude+ ici)
-      saveTiers();
-      document.querySelectorAll('.tier-sel').forEach(el => { el.innerHTML = tierSelHtml(); }); document.querySelectorAll('.tier-sel').forEach(el => bindTierSel(el, onChange));
-      onChange();
-    }));
-  }
+  function tiersLabel(){ return AppNav.tiersLabel(); }
   const fmtPct = v => isNaN(v) ? '—' : v.toFixed(1) + '%';
   function combinedStatsFor(ch){
     const rs = rolesOf(ch).map(role => roleStat(ch, role)).filter(r => r && !r.missing);
@@ -626,8 +608,8 @@
     renderList();
   });
   document.getElementById('search').addEventListener('input', e => { state.q = e.target.value; renderList(); });
-  state.tiers = loadTiers();
-  bindTierSel(document.getElementById('tierSel'), () => renderList());
+  state.tiers = AppNav.tiers();
+  window.addEventListener('tierschange', () => { state.tiers = AppNav.tiers(); if(!document.getElementById('view-list').hidden) renderList(); else { const ch = state.detailId && findChamp(state.detailId); if(ch) renderDetail(ch); } });
   document.getElementById('sortSel').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
 
   // ---------- Vue détail ----------
@@ -970,6 +952,7 @@
   }
 
   function renderDetail(ch){
+    state.detailId = ch.id;
     setLastChampId(ch.id);
     REFS = new Map();
     state.detailLane = defaultLane(ch);
@@ -1015,7 +998,6 @@
           <a class="champ-link" href="${champPageUrl(ch)}" target="_blank" rel="noopener">Fiche officielle ↗</a>
         </div>
         <div class="roleline" style="margin-top:12px;">${rolelineHtml()}</div>
-        <div class="segmented tier-sel detail-tiers" title="Paliers pris en compte pour WR, pick et ban ; tout décocher = les quatre"></div>
         ${analysisBlockHtml(ch, 'margin-top:12px;')}
       </div>
 
@@ -1066,7 +1048,6 @@
     // pour comprendre ce que fait la fiche.
     selectAbility(abilityKeys.find(k => ch.abilities[k] && k === 'r') || abilityKeys.find(k => ch.abilities[k]));
 
-    document.querySelectorAll('#detailContent .tier-sel').forEach(el => bindTierSel(el, () => renderDetail(ch)));
     initCollapsibles();
     initRefLinks();
     initStars(document.getElementById('detailContent'), ch);
