@@ -12,8 +12,8 @@
 <script src="edition.js"></script>
 <script src="nav.js"></script>
 <script>
-  // Sous-menu : la sous-page courante suit l'ancre (#fiche, #origine, #specifiques).
-  (function(){ const f = () => { const h = location.hash.slice(1); if(['fiche','valeurs','origine','specifiques'].includes(h)) AppNav.render('sources', h); }; window.addEventListener('hashchange', f); f(); })();
+  // Sous-menu : la sous-page courante suit l'ancre (#fiche, #origine, #specifiques, #apropos).
+  (function(){ const f = () => { const h = location.hash.slice(1); if(['fiche','valeurs','origine','specifiques','merci','contribuer','apropos'].includes(h)) AppNav.render('sources', h); }; window.addEventListener('hashchange', f); f(); })();
 </script>
 
 <main>
@@ -42,12 +42,72 @@
     <p style="margin:0 0 8px;">Quand une donnée précise ne vient pas du mécanisme général (exemple : un rôle absent des tableaux tier-list habituels mais retrouvé via une autre page ; des conseils officiels écartés parce qu'ils décrivent un sort disparu), elle est déclarée directement sur le champion concerné (champ <code>sourceNotes</code> dans <code>data/champions.js</code>) avec son propre lien et sa propre date — et affichée sur sa fiche détail avec un renvoi [n], jamais seulement ici.</p>
     <p style="margin:0;">Champions ayant actuellement une source spécifique : <span id="specificList"></span></p>
   </div>
-</main>
 
-<footer>
-  <p><b>Merci à</b> : <a href="https://op.gg" target="_blank" rel="noopener">op.gg</a> · <a href="https://developer.riotgames.com/docs/lol#data-dragon" target="_blank" rel="noopener">Data Dragon</a> · <a href="https://wiki.leagueoflegends.com" target="_blank" rel="noopener">LoL Wiki</a> · <a href="https://lolalytics.com" target="_blank" rel="noopener">lolalytics</a> · <a class="yt-link" href="https://www.youtube.com/channel/UC2t5bjwHdUX4vM2g8TRDq5g" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>League of Legends</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCU-l1ajszDLFd6lWyCs1_GA" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>LoL France</a> · <a class="yt-link" href="https://www.youtube.com/channel/UCbqpZInu-pjnBIy5sbh7Eag" target="_blank" rel="noopener"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5 L20 10 L11 14.5 Z" fill="#fff"/></svg>3 Minute LoL</a> · <a href="sources.html">[et les autres]</a></p>
-  <p class="legal">LoL by Noob for Noobs est un projet indépendant, sans lien avec Riot Games. LoL by Noob for Noobs isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc. Textes issus du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, pages citées sur la page Sources.</p>
-</footer>
+  <h3 class="section-label mock-title" id="merci">Remerciements</h3>
+  <div class="detail-card sources-card">
+    <p class="credits-thanks">❤️ Un immense merci à toutes ces sources : sans elles, ce site n'existerait pas. ❤️</p>
+    <div style="overflow-x:auto;"><table class="credits-table">
+      <thead><tr><th>Source</th><th>Volume estimé</th><th>Références</th><th>Ce qu'elle apporte</th></tr></thead>
+      <tbody id="creditsTable"></tbody>
+    </table></div>
+  </div>
+
+  <h3 class="section-label mock-title" id="contribuer">Contribuer</h3>
+  <div class="detail-card sources-card">
+    <p class="credits-thanks">Toute contribution est la bienvenue ❤️</p>
+    <p style="margin:0 0 8px;">Ce site est fait par un noob : il a besoin de ceux qui connaissent le jeu, et aussi des autres débutants. Tout aide, même un petit détail :</p>
+    <ul style="margin:0 0 10px; padding-left:18px;">
+      <li>une erreur à corriger, sur un chiffre, une explication, une traduction ou un détail de la page ;</li>
+      <li>une meilleure explication d'un counter ou d'une mécanique, ou une source à ajouter ;</li>
+      <li>une idée de nouvelle page ou de fonctionnalité ;</li>
+      <li>une envie de participer à une nouvelle fonctionnalité, au code ou aux données ;</li>
+      <li>une simple remarque sur ce qui est clair ou pas quand on débute.</li>
+    </ul>
+    <p style="margin:0 0 6px;" id="contribTally"></p>
+    <p style="margin:0 0 6px;">Pour ceux qui ont un compte GitHub, ou pour proposer du code : <a href="https://github.com/xavinsky/lolbynoobfornoobs/issues" target="_blank" rel="noopener">les issues du dépôt</a>. Une issue est publique : tout le monde peut la lire et y répondre.</p>
+    <p class="muted small" style="margin:0;">Sur chaque fiche champion et chaque counter, le lien « ✍️ Signaler une erreur ou proposer mieux » ouvre le formulaire avec la page concernée déjà indiquée.</p>
+  </div>
+
+  <h3 class="section-label mock-title" id="apropos">À propos du site</h3>
+  <div class="detail-card sources-card">
+    <h3 class="section-label">Qui fait le site</h3>
+    <p class="noob-warning">⚠️ <b>Fait par un noob de LoL.</b> Je débute : ce site peut contenir des erreurs, des approximations ou des conclusions fausses. Vérifiez par vous-même, et les sources de chaque donnée sont là pour ça.</p>
+    <p style="margin:0 0 8px;">Frustré par le manque d'explications claires quand j'ai débuté sur ce jeu, sur le pourquoi et le comment de plein de choses, j'ai décidé d'investiguer (ça, je sais faire :) et de proposer le résultat de mes investigations aux autres noobs. D'où LoL by Noob for Noobs. Je ne prétends pas avoir la moindre connaissance de LoL : je ne fais qu'agréger les différentes sources de données que je juge intéressantes pour m'expliquer le jeu et m'aider à évoluer.</p>
+    <p style="margin:0 0 8px;">— <a href="https://xavinsky.github.io/" target="_blank" rel="noopener">xavinsky</a></p>
+    <h3 class="section-label">Indépendance</h3>
+    <p style="margin:0 0 8px;">Projet de fan indépendant, sans lien avec Riot Games ni avec les sites cités. Les noms, descriptions, icônes et vidéos de League of Legends appartiennent à Riot Games et sont utilisés dans le cadre de sa <a href="https://www.riotgames.com/en/legal" target="_blank" rel="noopener">politique pour les projets de fans</a>.</p>
+    <p style="margin:0 0 8px;" lang="en">LoL by Noob for Noobs was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+    <h3 class="section-label">Licences</h3>
+    <ul style="margin:0; padding-left:18px;">
+      <li>Code et textes rédigés pour le site : licence MIT (fichier <a href="https://github.com/xavinsky/lolbynoobfornoobs/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a>).</li>
+      <li>Textes traduits ou résumés du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, page d'origine citée à chaque contenu.</li>
+      <li>Explications de matchups tirées de Namu Wiki : <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, contributeurs de Namu Wiki, traduction automatique.</li>
+      <li>Chiffres de lolalytics et d'op.gg : relevés sur ces sites et cités avec leur date dans l'origine des données ci-dessus.</li>
+      <li data-needs="tally">Messages envoyés par le formulaire de contribution : reçus par le service Tally (entreprise belge, données stockées en Europe), lus seulement pour améliorer le site.</li>
+      <li>Conseils tirés de vidéos YouTube : chaque conseil cite sa vidéo et la minute du passage ; les vidéos restent à leurs auteurs.</li>
+    </ul>
+  </div>
+</main>
+<script>
+  // tableau des remerciements : même liste que le pied de page (nav.js, AppNav.CREDITS)
+  (function(){
+    const vol = ko => ko >= 100 ? (ko / 1024).toFixed(1).replace('.', ',') + ' Mo' : ko + ' Ko';
+    document.getElementById('creditsTable').innerHTML = AppNav.CREDITS.map((c, i) =>
+      `<tr><td>${AppNav.creditLink(c)}</td><td class="num">${vol(c.ko)}</td><td class="num">${c.refs.toLocaleString('fr-FR')}</td><td>${c.what}</td></tr>`).join('');
+  })();
+  if(!AppNav.CONTRIBUTE.tally) document.querySelectorAll('[data-needs="tally"]').forEach(el => el.remove());
+  // page d'où vient le visiteur (lien « Contribuer » du footer) : transmise au formulaire à la place de la section elle-même
+  const fromQ = new URLSearchParams(location.search);
+  const fromCtx = fromQ.get('depuis') ? { page: fromQ.get('depuisPage') || 'inconnue', url: fromQ.get('depuis') } : { page: 'contribuer' };
+  // lien principal de contribution : formulaire sans compte s'il est configuré (nav.js, CONTRIBUTE.tally), sinon issue GitHub
+  document.getElementById('contribTally').innerHTML = AppNav.CONTRIBUTE.tally
+    ? `<b>Sans compte :</b> ${AppNav.reportLink(fromCtx, 'Écrire une remarque ou une proposition')} (formulaire Tally). Le message n'est pas publié : il n'est lu que par l'auteur du site.`
+    : `<b>Écrire une remarque :</b> ${AppNav.reportLink(fromCtx, 'ouvrir une issue GitHub')}.`;
+  // éléments réservés à l'édition privée (contenus absents de l'édition publique)
+  if(window.isPublicEdition && window.isPublicEdition()) document.querySelectorAll('[data-edition="private"]').forEach(el => el.remove());
+</script>
+
+<footer></footer>
 
 <script src="data/champions.js"></script>
 <script src="data/sources.js"></script>
@@ -167,13 +227,14 @@
   const LEGEND = [
     { where: 'Liste', name: 'N° (rang dans la liste)', text: "Position du champion dans la liste après tri (menu « Trier ») et filtres : ce n'est pas un classement de force, seulement l'ordre d'affichage." },
     { where: 'Liste et fiche', name: 'Nom, titre, icône', text: 'Nom et titre officiels en français, icône officielle.', mech: ['abilities', 'championIcon'] },
+    { where: 'Liste', name: 'Pastille « Récent »', text: "Champion sorti récemment, dont les statistiques reposent sur peu de patchs : liste tenue à la main dans la page (Locke, Zaahen, Yunara, Mel).", mech: ['releaseDate'] },
     { where: 'Liste et fiche', name: 'AD / AP / Mixte', text: "Type de dégâts dominant, dérivé des notes officielles Riot « attaque » et « magie » (0 à 10) : attaque > magie → AD, magie > attaque → AP, égalité → Mixte. Le survol de la pastille montre les deux notes.", mech: ['damageType'] },
-    { where: 'Liste et fiche', name: 'Early / Mid / Late / Stable', text: "Phases de partie où le champion gagne plus que sa moyenne, calculées sur la durée finale des parties du rôle affiché (rôle filtré en liste, rôle sélectionné sur la fiche) : Early = parties de 15 à 25 min, Mid = 25 à 35, Late = 35 et plus. Une phase est retenue si son taux de victoire dépasse la moyenne du champion d'au moins 1 point sur au moins 500 parties ; « Stable » si aucune. Une étiquette combinée (« Early-Mid ») vaut pour les deux phases.", mech: ['powerCurve', 'stats'] },
+    { where: 'Liste et fiche', name: 'Early / Mid / Late / Stable', text: "Phases de partie où le champion gagne plus que sa moyenne, calculées sur la durée finale des parties du rôle affiché (rôle filtré en liste, rôle sélectionné sur la fiche) : Early = parties de 15 à 25 min, Mid = 25 à 35, Late = 35 et plus. Une phase est retenue si son taux de victoire dépasse la moyenne du champion d'au moins 1 point sur au moins 500 parties ; « Stable » si aucune. Une étiquette combinée (« Early-Mid ») vaut pour les deux phases. Ces étiquettes utilisent les parties classées Émeraude+ du patch des statistiques, pas le sélecteur de paliers ; la moyenne de référence compte toutes les durées de partie.", mech: ['powerCurve', 'stats'] },
     { where: 'En-tête (tout le site)', name: 'Sélecteur de paliers (Fer, Bronze, Argent, Or)', text: "Les paliers cochés déterminent les WR, pick et ban affichés : parties classées Solo/Duo de ces paliers, combinées au prorata de leurs parties (WR pondéré par les parties du champion, pick et ban par les parties analysées du palier). Tout décocher revient à cocher les quatre. Le choix est mémorisé dans le navigateur ; les emblèmes sont ceux du client, le nom du palier apparaît au survol.", mech: ['rolesTiers', 'tierIcons', 'roles'] },
     { where: 'Liste et fiche', name: 'Pastilles de rôle (Top, Jungle, Mid, Bot, Sup)', text: "Rôles où le champion est réellement joué, avec pour chacun : WR = taux de victoire des parties du champion à ce rôle, PR = part des parties du rôle où il est choisi, Ban = part des parties où il est banni, aux paliers cochés (pas de lettre de tier : les notes du site source ne se combinent pas). Un rôle absent n'est pas « jamais joué » : il est sous le seuil de volume du site source ; « — » = aucune partie à ces paliers.", mech: ['rolesTiers', 'roles', 'roleIcons'] },
-    { where: 'Liste', name: 'WR · PR · Ban de la ligne (hors pastilles)', text: "Valeurs toutes lignes confondues, calculées à l'affichage : PR = somme des PR de chaque rôle joué ; WR = moyenne des WR des rôles pondérée par leur PR ; Ban = une seule valeur par champion (on bannit un champion, pas un rôle), celle du rôle le plus joué.", mech: ['rolesCombined'] },
+    { where: 'Liste', name: 'WR · PR · Ban de la ligne (hors pastilles)', text: "Valeurs toutes lignes confondues aux paliers cochés, calculées à l'affichage : PR = somme des PR de chaque rôle joué ; WR = moyenne des WR des rôles pondérée par leur PR ; Ban = une seule valeur par champion (on bannit un champion, pas un rôle), celle de son rôle le plus joué (rôle au plus fort taux de pick dans la référence Émeraude+).", mech: ['rolesCombined'] },
     { where: 'Liste et fiche', name: 'Points forts / Contre (« détails »)', text: "Conseils officiels Riot copiés tels quels : « en jouant avec » ce champion → Points forts (ce qu'il cherche à faire, donc à quoi s'attendre en face), « en jouant contre » → Contre. Un conseil qui cite un sort ou un objet qui n'existe plus n'est pas affiché ; le retrait est noté dans les sources spécifiques du champion. Pour les champions sans conseils officiels, les conseils viennent des vidéos de présentation et le disent sous le bloc.", mech: ['analysis', 'analysisVideo'] },
-    { where: 'Fiche', name: 'Ban x %', text: "Taux de ban du champion, une seule valeur (celle du rôle le plus joué).", mech: ['rolesCombined', 'roles'] },
+    { where: 'Fiche', name: 'Ban x %', text: "Taux de ban du champion aux paliers cochés, une seule valeur : celle de son rôle le plus joué (rôle au plus fort taux de pick dans la référence Émeraude+).", mech: ['rolesCombined', 'roles'] },
     { where: 'Fiche', name: 'Classe (Combattant, Mage…)', text: "Classification officielle Riot, traduite sans interprétation ; deux classes quand Riot en donne deux.", mech: ['class'] },
     { where: 'Fiche', name: '« Kit changé le … » / « Kit d’origine »', text: "Date de la dernière mise à jour qui a changé les sorts du champion (refonte, Mid-Scope, mise à jour de classe), d'après la liste des mises à jour de champions du wiki ; les retouches de chiffres (buffs, nerfs) ne comptent pas.", mech: ['reworks'] },
     { where: 'Fiche', name: 'Croissance permanente : Q, W…', text: "Sorts qui accumulent des effets définitifs au fil de la partie (stacks qui ne retombent pas : Nasus Q, Veigar passif…), d'après la classification des compétences.", mech: ['abilityTaxonomy'] },
@@ -183,10 +244,12 @@
     { where: 'Fiche — Compétences', name: 'Mécaniques détaillées (traduites)', text: "Notes de mécanique du wiki (interactions, exceptions, ce qui interrompt le sort), traduites en français par un modèle de traduction local ; l'anglais d'origine reste consultable en dessous. Licence CC BY-SA 3.0, page d'origine citée.", mech: ['mechanics', 'mechanicsFr'] },
     { where: 'Fiche — Vidéos', name: 'Langue, type (officiel / communautaire), durée, date', text: "Vidéos de présentation trouvées sur des chaînes précises (Riot France, Riot global, une chaîne communautaire identifiée), avec leur durée et leur date de publication — à comparer avec la date du dernier changement de kit pour juger si la vidéo est à jour.", mech: ['championVideos'] },
     { where: 'Fiche — Mise à jour', name: 'Historique des mises à jour, date de sortie', text: "Chaque mise à jour du champion listée par le wiki avec sa date, son type et le lien vers l'annonce ou les notes de patch d'origine ; « cosmétique » = apparence seulement. La date de sortie vient de la liste des champions du wiki.", mech: ['reworks', 'releaseDate'] },
-    { where: 'Fiche — Courbe de puissance', name: 'Courbe par tranche de durée', text: "Pour le rôle sélectionné : parties et victoires par tranche de durée (0-15, 15-20, 20-25, 25-30, 30-35, 35-40, 40+ min). La courbe trace la puissance relative = WR de la tranche ÷ WR moyen du champion, avec une ligne de référence à 1 ; la tranche 0-15 (parties abandonnées) est ignorée pour les étiquettes.", mech: ['powerCurve', 'stats'] },
-    { where: 'Fiche — Objets', name: 'Départ, cœur, bottes, 4e-5e-6e objet, objets les plus achetés', text: "Objets les plus choisis par les joueurs du champion à ce rôle, avec la part des parties où l'objet est acheté et le taux de victoire de ces parties. Un WR élevé sur peu de parties ne prouve rien (règle de significativité).", mech: ['stats', 'refs', 'matchups'], pub: false },
-    { where: 'Fiche — Runes, sorts', name: 'Page de runes, sorts d’invocateur, ordre des sorts', text: "Page de runes la plus jouée et page au meilleur WR, paire de sorts d'invocateur la plus jouée, priorité et ordre de montée des sorts, avec parties et WR.", mech: ['stats', 'refs'], pub: false },
-    { where: 'Fiche — Matchups', name: 'WR contre chaque adversaire, parties, ±', text: "Taux de victoire du champion contre chaque adversaire au même rôle et nombre de parties ; « ± » = marge d'incertitude à 95 % (98 ÷ √parties). Un écart est significatif si |WR − 50| dépasse cette marge ; sinon la ligne est grisée.", mech: ['stats', 'matchups'], pub: false },
+    { where: 'Fiche — Courbe de puissance', name: 'Courbe par tranche de durée', text: "Pour le rôle sélectionné : parties et victoires par tranche de durée (0-15, 15-20, 20-25, 25-30, 30-35, 35-40, 40+ min). La courbe trace la puissance relative = WR de la tranche ÷ WR moyen du champion, avec une ligne de référence à 1 ; la tranche 0-15 (parties abandonnées) est ignorée pour les étiquettes. Parties classées Émeraude+ du patch des statistiques, indépendamment du sélecteur de paliers.", mech: ['powerCurve', 'stats'] },
+    { where: 'Fiche — Objets', name: 'Départ, cœur, bottes, 4e-5e-6e objet, objets les plus achetés', text: "Objets les plus choisis par les joueurs du champion à ce rôle, avec la part des parties où l'objet est acheté et le taux de victoire de ces parties. Un WR élevé sur peu de parties ne prouve rien (règle de significativité). Parties classées Émeraude+ du patch des statistiques, indépendamment du sélecteur de paliers.", mech: ['stats', 'refs', 'matchups'], pub: false },
+    { where: 'Fiche — Runes, sorts', name: 'Page de runes, sorts d’invocateur, ordre des sorts', text: "Page de runes la plus jouée et page au meilleur WR, paire de sorts d'invocateur la plus jouée, priorité et ordre de montée des sorts, avec parties et WR ; parties classées Émeraude+ du patch des statistiques.", mech: ['stats', 'refs'], pub: false },
+    { where: 'Fiche — Matchups', name: 'WR contre chaque adversaire, parties, ±', text: "Taux de victoire du champion contre chaque adversaire au même rôle et nombre de parties ; « ± » = marge d'incertitude à 95 % (98 ÷ √parties). Un écart est significatif si |WR − 50| dépasse cette marge ; sinon la ligne est grisée. Parties classées Émeraude+ du patch des statistiques.", mech: ['stats', 'matchups'], pub: false },
+    { where: 'Champion — Counters', name: 'Écart, parties, netteté (net, marqué, probable)', text: "Écart = points de victoire gagnés ou perdus contre l'adversaire au-delà de ce que prévoient les forces des deux champions (Delta 2 de lolalytics), en parties classées Master+ cumulées depuis le dernier changement de kit des deux champions ; parties = duels mesurés ; netteté selon la borne basse de l'écart (écart moins 98/√parties) : net ≥ 3, marqué ≥ 2, probable ≥ 1.", mech: ['countersPage'] },
+    { where: 'Champion — Counters', name: 'Plusieurs sources, tient à bas niveau, avis de Namu Wiki', text: "« Plusieurs sources » : écart aussi significatif en Diamant+ et Émeraude+ sur 30 jours ; « tient à bas niveau » : même sens de Bronze à Or ; « Namu Wiki d'accord / en désaccord / fiches contradictoires » : les fiches Namu Wiki qui citent le duel classent-elles l'adversaire du côté de la mesure (toutes, aucune, l'une mais pas l'autre) ; « cas particulier » : cité sans être classé ; « non expliqué » : aucune fiche ne cite le duel ; la mesure fait foi pour le sens. Explications traduites automatiquement.", mech: ['countersPage'] },
     { where: 'Fiche — Contre-pick, Mon roster', name: 'Meilleurs contre lui, mal couvert, à apprendre', text: "Contre-pick : WR de chaque champion jouable au rôle contre celui-ci, lu dans sa propre fiche de matchups. Roster : adversaires du rôle à PR ≥ 1 % ; « mal couvert » = aucun de mes champions ★ n'a de WR significatif au-dessus de 50 % contre lui ; « à apprendre » = champions classés par Σ (WR − 50) × PR sur les adversaires mal couverts.", mech: ['matchups'], pub: false },
     { where: 'Bases — Objets', name: 'Statistiques, prix, recette, icônes d’effet', text: "Données officielles Data Dragon (statistiques, prix, composants) ; disponibilité sur la Faille et effets nommés (à l'impact, soin, vision…) d'après la base d'objets du wiki, classés selon le vocabulaire de la page Effets des objets.", mech: ['refs', 'itemEffects'] },
     { where: 'Page Effets et statistiques des objets', name: 'Définition d\u2019une statistique, objets qui la donnent', text: "Terme lu dans les lignes « statistiques » des descriptions officielles des objets ; définition résumée de la page du wiki qui définit la statistique ; objets = ceux de la Faille dont la description donne cette statistique.", mech: ['refs', 'statDefs'] },
@@ -199,7 +262,7 @@
 
   // Tous les mécanismes, ceux rencontrés sur la fiche-type et la légende d'abord (dans l'ordre des [n]), puis
   // les éventuels autres. Édition publique : seuls les mécanismes des pages publiées.
-  const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'rolesTiers', 'tierIcons', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate'];
+  const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'rolesTiers', 'tierIcons', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate', 'countersPage'];
   for(const s of GLOBAL_SOURCES) if(!isPublicEdition() || PUBLIC_MECH.includes(s.id)) ref(s.id);
   document.getElementById('sourcesList').innerHTML = [...REFS.values()].map(({ n, src: s }) => `
     <div class="detail-card sources-card" id="src-${n}">

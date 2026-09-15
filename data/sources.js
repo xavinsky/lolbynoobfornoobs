@@ -277,5 +277,14 @@ const GLOBAL_SOURCES = [
     url: "https://wiki.leagueoflegends.com/en-us/List_of_champions",
     retrieved: "2026-09-08",
     caveat: "173/173 champions matchés — aucun trou connu."
+  },
+  {
+    id: "countersPage",
+    label: "Page Counters : matchups Master+ et explications Namu Wiki traduites",
+    fields: ["counters_page"],
+    method: "Généré par tools/counters_page_data.py. Matchups : data/counters_window_master_plus.json (lolalytics, parties classées Master, Grandmaster et Challenger, toutes régions, cumulées patch par patch depuis le dernier changement de kit des deux champions) ; écart = Delta 2 de lolalytics (WR du duel moins le WR attendu d'après les forces des deux champions) ; paire retenue si l'écart est significatif vu des deux champions et que sa borne basse (|écart| − 98/√parties) vaut au moins 1 ; netteté : net (borne basse ≥ 3), marqué (≥ 2), probable (≥ 1) ; « plusieurs sources » = paire aussi significative en Diamant+ et Émeraude+ sur 30 jours (data/counters_solid.json) ; « tient à bas niveau » = même sens de Bronze à Or (data/counters_by_tier.json). Explications : section « 상성 » (matchups) de la page de chaque champion sur Namu Wiki, lue dans le navigateur au rythme d'un lecteur, traduite en français par traduire-html (modèle local gemma4:12b, noms officiels du jeu imposés par glossaire Data Dragon) ; pour chaque adversaire, camp (à l'aise / en difficulté), famille d'adversaires et note. Avis Namu Wiki : les camps des fiches qui citent le duel vont tous dans le sens de l'écart mesuré (d'accord), tous à l'inverse (en désaccord), ou l'une dans le sens et l'autre non (fiches contradictoires) ; structure lue sur la section coréenne, textes sur la traduction alignée. Chaque duel indique sa source : mesure lolalytics (paliers, patchs, date de relevé, lien vers la page du duel) et fiches Namu Wiki des deux champions avec leur date de lecture.",
+    url: "https://namu.wiki",
+    retrieved: "2026-09-14",
+    caveat: "Traduction automatique : erreurs de sens possibles (sujet inversé, nom de sort mal rendu). Contenu Namu Wiki sous licence CC BY-NC-SA 2.0 KR, contributeurs de Namu Wiki."
   }
 ];
