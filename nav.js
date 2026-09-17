@@ -32,6 +32,37 @@
     if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
   }
   applyZoom();
+  // Thème (système / clair / sombre) : la feuille de style porte déjà les deux palettes, l'une sous
+  // prefers-color-scheme, l'autre sous [data-theme] ; le bouton de l'en-tête force l'une des deux ou rend la
+  // main au navigateur. Mémorisé (localStorage docTheme) et transmis dans l'URL (`?theme=`) comme le zoom.
+  const THEMES = ['system', 'light', 'dark'];
+  const THEME_LABEL = { system: 'Thème : celui du navigateur', light: 'Thème : clair', dark: 'Thème : sombre' };
+  // Soleil, lune, et demi-disque pour « celui du navigateur ».
+  const THEME_ICON = {
+    light: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2"/><g stroke-width="1.5" stroke-linecap="round"><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13"/></g></svg>',
+    dark: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.4 10.3A5.8 5.8 0 0 1 5.7 2.6a5.9 5.9 0 1 0 7.7 7.7z"/></svg>',
+    system: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke-width="1.6"/><path d="M8 2a6 6 0 0 1 0 12z"/></svg>'
+  };
+  function readTheme(){
+    const m = window.location.search.match(/[?&]theme=(\w+)/);
+    let v = m && m[1];
+    if(!THEMES.includes(v)){ try{ v = localStorage.getItem('docTheme'); }catch(e){} }
+    return THEMES.includes(v) ? v : 'system';
+  }
+  let theme = readTheme();
+  function applyTheme(){
+    if(theme === 'system') delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = theme;
+    try{ localStorage.setItem('docTheme', theme); }catch(e){}
+  }
+  // Avant tout rendu : la page ne doit pas s'afficher un instant dans l'autre palette.
+  applyTheme();
+  function cycleTheme(){
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    applyTheme();
+    const h = document.querySelector('header.masthead');
+    if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
+  }
   // Paliers pris en compte pour les taux (Fer, Bronze, Argent, Or) : réglage de tout le site, dans l'en-tête.
   // Mémorisé (localStorage docTiers) et transmis dans l'URL (`?tiers=`) comme le zoom ; tout décocher = les quatre.
   const TIERS = [['iron', 'Fer'], ['bronze', 'Bronze'], ['silver', 'Argent'], ['gold', 'Or']];
@@ -107,6 +138,7 @@
     const id = lastChamp(), q = [];
     if(id && !forIndex) q.push('last=' + encodeURIComponent(id));
     if(zoom !== 1) q.push('zoom=' + zoom);
+    if(theme !== 'system') q.push('theme=' + theme);
     if(tiers.length !== ALL_TIERS.length) q.push('tiers=' + tiers.join(','));
     return q.length ? '?' + q.join('&') : '';
   }
@@ -123,8 +155,11 @@
     const cur = SECTIONS.find(s => s.id === section) || SECTIONS[0];
     const main = SECTIONS.map(s => `<a href="${withLast(s.href, id)}"${s.id === cur.id ? ' class="on"' : ''}>${s.label}</a>`).join('');
     const subs = cur.subs.map(s => `<a href="${withLast(s.href, id)}" data-sub="${s.id}"${s.id === page ? ' class="on"' : ''}>${s.label}</a>`).join('');
+    const themeCtl = `<button type="button" class="theme-ctl" data-theme-btn title="${THEME_LABEL[theme]} — cliquer pour changer" aria-label="${THEME_LABEL[theme]}">${THEME_ICON[theme]}</button>`;
     const zoomCtl = `<div class="zoom-ctl" title="Taille du texte (mémorisée, suivie de page en page)"><button type="button" data-zoom="-" aria-label="Réduire le texte">A−</button><button type="button" data-zoom="0" title="Taille normale">${Math.round(zoom * 100)} %</button><button type="button" data-zoom="+" aria-label="Agrandir le texte">A+</button></div>`;
-    header.innerHTML = `<div class="mast-row"><h1>LoL <span class="tagline">by Noob for Noobs</span></h1><nav class="app-nav">${main}</nav>${tierSelHtml()}${zoomCtl}</div><nav class="sub-menu">${subs}</nav>`;
+    header.innerHTML = `<div class="mast-row"><h1>LoL <span class="tagline">by Noob for Noobs</span></h1><nav class="app-nav">${main}</nav>${tierSelHtml()}${themeCtl}${zoomCtl}</div><nav class="sub-menu">${subs}</nav>`;
+    const tb = header.querySelector('[data-theme-btn]');
+    if(tb) tb.addEventListener('click', cycleTheme);
     header.querySelectorAll('button[data-tier]').forEach(b => b.addEventListener('click', () => toggleTier(b.dataset.tier)));
     header.querySelectorAll('button[data-zoom]').forEach(b => b.addEventListener('click', () => {
       const k = b.dataset.zoom; setZoom(k === '+' ? zoom + ZOOM_STEP : k === '-' ? zoom - ZOOM_STEP : 1);
@@ -263,6 +298,67 @@
   function reportLink(ctx, label){
     return `<a class="report-link" href="${contributeUrl(ctx).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" target="_blank" rel="noopener">✍️ ${label || 'Signaler une erreur ou proposer mieux'}</a>`;
   }
+
+  // ---------- Infobulles ----------
+  // L'infobulle native du navigateur met environ une seconde à apparaître, ne se met pas en forme et se coupe
+  // sur les textes longs (caractéristiques et effets des sorts en comptent de deux lignes). Celle-ci paraît à
+  // l'instant du survol.
+  //
+  // Aucun balisage à changer : l'attribut title de n'importe quel élément est déplacé dans data-tip au survol,
+  // ce qui supprime l'infobulle native tout en gardant le texte. Le déplacement se refait à chaque survol, car
+  // certains rendus réassignent title après coup (chips de rôle de la fiche champion).
+  const tipEl = document.createElement('div');
+  tipEl.className = 'tip';
+  tipEl.hidden = true;
+  let tipFor = null;
+  function tipText(el){
+    const t = el.getAttribute('title');
+    if(t !== null){
+      el.removeAttribute('title');
+      if(t.trim()) el.dataset.tip = t;
+      // Un élément sans texte visible perdrait son nom accessible avec title : on le lui rend.
+      if(t.trim() && !el.getAttribute('aria-label') && !el.textContent.trim()) el.setAttribute('aria-label', t);
+    }
+    return el.dataset.tip || '';
+  }
+  function placeTip(el){
+    const r = el.getBoundingClientRect(), m = 6;
+    tipEl.style.left = '0px'; tipEl.style.top = '0px';   // mesure sans contrainte de bord
+    const t = tipEl.getBoundingClientRect();
+    let x = r.left + r.width / 2 - t.width / 2;
+    x = Math.max(m, Math.min(x, window.innerWidth - t.width - m));
+    // Sous l'élément, sauf s'il n'y a pas la place : alors au-dessus.
+    const y = (r.bottom + m + t.height <= window.innerHeight || r.top - m - t.height < 0) ? r.bottom + m : r.top - m - t.height;
+    tipEl.style.left = Math.round(x) + 'px';
+    tipEl.style.top = Math.round(y) + 'px';
+  }
+  function showTip(el){
+    const txt = tipText(el);
+    if(!txt){ hideTip(); return; }
+    if(el === tipFor && tipEl.textContent === txt) return;   // rien de changé : ne pas repositionner pour rien
+    tipFor = el;
+    tipEl.textContent = txt;
+    if(!tipEl.parentNode) document.body.appendChild(tipEl);
+    tipEl.hidden = false;
+    placeTip(el);
+  }
+  function hideTip(){ tipFor = null; tipEl.hidden = true; }
+  function tipHost(node){
+    return node && node.nodeType === 1 ? node.closest('[title], [data-tip]') : null;
+  }
+  document.addEventListener('pointerover', e => {
+    const host = tipHost(e.target);
+    // Même sur l'élément déjà survolé : son title a pu être réassigné entre-temps, et il doit repasser dans
+    // data-tip, sans quoi l'infobulle native reparaîtrait.
+    host ? showTip(host) : hideTip();
+  });
+  document.addEventListener('pointerdown', hideTip);
+  document.addEventListener('focusin', e => { const host = tipHost(e.target); host ? showTip(host) : hideTip(); });
+  document.addEventListener('focusout', hideTip);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') hideTip(); });
+  // Au défilement l'infobulle ne suit pas l'élément : on la retire plutôt que de la laisser flotter.
+  window.addEventListener('scroll', hideTip, { passive: true, capture: true });
+  window.addEventListener('resize', hideTip);
 
   window.AppNav = { render, lastChamp, params, tiers: () => tiers.slice(), tiersLabel, TIERS, CREDITS, creditLink, CONTRIBUTE, contributeUrl, reportLink };
   const h = document.querySelector('header.masthead');

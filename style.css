@@ -47,7 +47,13 @@
   header.masthead .mast-row{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
   header.masthead h1{ color:var(--menuH-text); font-size:1.4rem; padding:10px 0; }
   /* Zoom du texte (A− / A+), à droite du menu principal — l'en-tête lui-même ne change pas de taille (rem) */
-  .zoom-ctl{ margin-left:auto; display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.25); border-radius:6px; overflow:hidden; }
+  /* Thème : bouton unique qui fait le tour de système → clair → sombre, devant le réglage de taille du texte. */
+  .theme-ctl{ margin-left:auto; display:inline-flex; align-items:center; justify-content:center; padding:4px 7px;
+    color:var(--menuH-text); background:transparent; border:1px solid rgba(255,255,255,.25); border-radius:6px; cursor:pointer; }
+  .theme-ctl:hover{ background:var(--menuH-hover); }
+  .theme-ctl svg{ width:15px; height:15px; display:block; fill:currentColor; stroke:currentColor; }
+  .theme-ctl svg [stroke-width]{ stroke:currentColor; fill:none; }
+  .zoom-ctl{ margin-left:6px; display:inline-flex; align-items:center; border:1px solid rgba(255,255,255,.25); border-radius:6px; overflow:hidden; }
   .zoom-ctl button{ font-family:var(--body-font); font-size:.8rem; font-weight:700; color:var(--menuH-text); background:transparent; border:none; border-left:1px solid rgba(255,255,255,.2); padding:4px 9px; cursor:pointer; min-width:2.4em; }
   .zoom-ctl button:first-child{ border-left:none; }
   .zoom-ctl button:hover{ background:var(--menuH-hover); }
@@ -622,3 +628,14 @@
   /* Lien de contribution (nav.js, AppNav.reportLink) */
   a.report-link{ font-weight:700; }
   .report-line{ margin:0; text-align:right; }
+
+  /* Infobulle immédiate (nav.js), à la place de l'infobulle native : celle du navigateur tarde d'une seconde,
+     ne se met pas en forme et tronque les textes longs. Elle ne reçoit pas le pointeur pour ne jamais gêner le
+     survol de ce qu'elle décrit. */
+  .tip{
+    position:fixed; z-index:120; max-width:min(48ch, 92vw); padding:5px 8px;
+    background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:4px;
+    box-shadow:var(--shadow-tip, 0 6px 18px rgb(0 0 0 / .22));
+    font-family:var(--body-font); font-size:calc(13px * var(--zoom, 1)); line-height:1.35;
+    pointer-events:none; white-space:normal;
+  }

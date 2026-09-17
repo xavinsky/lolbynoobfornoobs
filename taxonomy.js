@@ -181,7 +181,7 @@ const TAXONOMY = (() => {
   }};
   return TAX;
 })();
-// Tranche de portée (unités du jeu) — cf. 03-competences-inventaire.md §7.
+// Tranche de portée (unités du jeu) — cf. docs/existant/competences-inventaire.md §7.
 function rangeBucket(n){ return n == null ? null : n <= 150 ? 'self' : n <= 450 ? 'melee' : n <= 700 ? 'short' : n <= 1000 ? 'medium' : n <= 1500 ? 'long' : n <= 5000 ? 'vlong' : 'global'; }
 // Icône d'une valeur : <a> vers la page Compétences, infobulle = libellé + explication.
 function taxIconHtml(axis, key, opts){
