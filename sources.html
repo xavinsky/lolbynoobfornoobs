@@ -204,7 +204,7 @@
 
   // Tous les mécanismes, ceux rencontrés sur la fiche-type et la légende d'abord (dans l'ordre des [n]), puis
   // les éventuels autres. Édition publique : seuls les mécanismes des pages publiées.
-  const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'rolesTiers', 'tierIcons', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate', 'countersPage'];
+  const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'rolesTiers', 'tierIcons', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'pages', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate', 'countersPage'];
   for(const s of GLOBAL_SOURCES) if(!isPublicEdition() || PUBLIC_MECH.includes(s.id)) ref(s.id);
   document.getElementById('sourcesList').innerHTML = [...REFS.values()].map(({ n, src: s }) => `
     <div class="detail-card sources-card" id="src-${n}">

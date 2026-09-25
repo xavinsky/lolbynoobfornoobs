@@ -111,7 +111,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-06-13"
+    "releaseDate": "2013-06-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Aatrox",
+      "lolalytics": "https://lolalytics.com/lol/aatrox/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%ED%8A%B8%EB%A1%9D%EC%8A%A4"
+    }
   },
   {
     "id": "ahri",
@@ -235,7 +240,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-12-14"
+    "releaseDate": "2011-12-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ahri",
+      "lolalytics": "https://lolalytics.com/lol/ahri/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EB%A6%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "akali",
@@ -365,7 +375,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-05-11"
+    "releaseDate": "2010-05-11",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Akali",
+      "lolalytics": "https://lolalytics.com/lol/akali/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EC%B9%BC%EB%A6%AC"
+    }
   },
   {
     "id": "akshan",
@@ -449,7 +464,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2021-07-22"
+    "releaseDate": "2021-07-22",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Akshan",
+      "lolalytics": "https://lolalytics.com/lol/akshan/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%ED%81%AC%EC%83%A8"
+    }
   },
   {
     "id": "alistar",
@@ -556,7 +576,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Alistar",
+      "lolalytics": "https://lolalytics.com/lol/alistar/build/",
+      "namu": "https://namu.wiki/w/%EC%95%8C%EB%A6%AC%EC%8A%A4%ED%83%80"
+    }
   },
   {
     "id": "ambessa",
@@ -638,7 +663,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2024-11-06"
+    "releaseDate": "2024-11-06",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ambessa",
+      "lolalytics": "https://lolalytics.com/lol/ambessa/build/",
+      "namu": "https://namu.wiki/w/%EC%95%94%EB%B2%A0%EC%82%AC"
+    }
   },
   {
     "id": "amumu",
@@ -744,7 +774,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-06-26"
+    "releaseDate": "2009-06-26",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Amumu",
+      "lolalytics": "https://lolalytics.com/lol/amumu/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EB%AC%B4%EB%AC%B4"
+    }
   },
   {
     "id": "anivia",
@@ -873,7 +908,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-07-10"
+    "releaseDate": "2009-07-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Anivia",
+      "lolalytics": "https://lolalytics.com/lol/anivia/build/",
+      "namu": "https://namu.wiki/w/%EC%95%A0%EB%8B%88%EB%B9%84%EC%95%84"
+    }
   },
   {
     "id": "annie",
@@ -980,7 +1020,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Annie",
+      "lolalytics": "https://lolalytics.com/lol/annie/build/",
+      "namu": "https://namu.wiki/w/%EC%95%A0%EB%8B%88(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "aphelios",
@@ -1066,7 +1111,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2019-12-11"
+    "releaseDate": "2019-12-11",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Aphelios",
+      "lolalytics": "https://lolalytics.com/lol/aphelios/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%ED%8E%A0%EB%A6%AC%EC%98%A4%EC%8A%A4"
+    }
   },
   {
     "id": "ashe",
@@ -1214,7 +1264,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ashe",
+      "lolalytics": "https://lolalytics.com/lol/ashe/build/",
+      "namu": "https://namu.wiki/w/%EC%95%A0%EC%89%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "aurelionsol",
@@ -1319,7 +1374,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-03-24"
+    "releaseDate": "2016-03-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Aurelion_Sol",
+      "lolalytics": "https://lolalytics.com/lol/aurelionsol/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EC%9A%B0%EB%A0%90%EB%A6%AC%EC%98%A8%20%EC%86%94"
+    }
   },
   {
     "id": "aurora",
@@ -1418,7 +1478,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2024-07-17"
+    "releaseDate": "2024-07-17",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Aurora",
+      "lolalytics": "https://lolalytics.com/lol/aurora/build/",
+      "namu": "https://namu.wiki/w/%EC%98%A4%EB%A1%9C%EB%9D%BC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "azir",
@@ -1526,7 +1591,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-09-16"
+    "releaseDate": "2014-09-16",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Azir",
+      "lolalytics": "https://lolalytics.com/lol/azir/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EC%A7%80%EB%A5%B4"
+    }
   },
   {
     "id": "bard",
@@ -1616,7 +1686,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2015-03-12"
+    "releaseDate": "2015-03-12",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Bard",
+      "lolalytics": "https://lolalytics.com/lol/bard/build/",
+      "namu": "https://namu.wiki/w/%EB%B0%94%EB%93%9C(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "belveth",
@@ -1698,7 +1773,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2022-06-09"
+    "releaseDate": "2022-06-09",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Bel'Veth",
+      "lolalytics": "https://lolalytics.com/lol/belveth/build/",
+      "namu": "https://namu.wiki/w/%EB%B2%A8%EB%B2%A0%EC%8A%A4"
+    }
   },
   {
     "id": "blitzcrank",
@@ -1796,7 +1876,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-02"
+    "releaseDate": "2009-09-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Blitzcrank",
+      "lolalytics": "https://lolalytics.com/lol/blitzcrank/build/",
+      "namu": "https://namu.wiki/w/%EB%B8%94%EB%A6%AC%EC%B8%A0%ED%81%AC%EB%9E%AD%ED%81%AC"
+    }
   },
   {
     "id": "brand",
@@ -1933,7 +2018,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-04-12"
+    "releaseDate": "2011-04-12",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Brand",
+      "lolalytics": "https://lolalytics.com/lol/brand/build/",
+      "namu": "https://namu.wiki/w/%EB%B8%8C%EB%9E%9C%EB%93%9C(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "braum",
@@ -2023,7 +2113,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-05-12"
+    "releaseDate": "2014-05-12",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Braum",
+      "lolalytics": "https://lolalytics.com/lol/braum/build/",
+      "namu": "https://namu.wiki/w/%EB%B8%8C%EB%9D%BC%EC%9B%80"
+    }
   },
   {
     "id": "briar",
@@ -2105,7 +2200,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2023-09-14"
+    "releaseDate": "2023-09-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Briar",
+      "lolalytics": "https://lolalytics.com/lol/briar/build/",
+      "namu": "https://namu.wiki/w/%EB%B8%8C%EB%9D%BC%EC%9D%B4%EC%96%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "caitlyn",
@@ -2247,7 +2347,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-01-04"
+    "releaseDate": "2011-01-04",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Caitlyn",
+      "lolalytics": "https://lolalytics.com/lol/caitlyn/build/",
+      "namu": "https://namu.wiki/w/%EC%BC%80%EC%9D%B4%ED%8B%80%EB%A6%B0(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "camille",
@@ -2341,7 +2446,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-12-07"
+    "releaseDate": "2016-12-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Camille",
+      "lolalytics": "https://lolalytics.com/lol/camille/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EB%B0%80"
+    }
   },
   {
     "id": "cassiopeia",
@@ -2470,7 +2580,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-12-14"
+    "releaseDate": "2010-12-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Cassiopeia",
+      "lolalytics": "https://lolalytics.com/lol/cassiopeia/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EC%8B%9C%EC%98%A4%ED%8E%98%EC%95%84(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "chogath",
@@ -2591,7 +2706,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-06-26"
+    "releaseDate": "2009-06-26",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Cho'Gath",
+      "lolalytics": "https://lolalytics.com/lol/chogath/build/",
+      "namu": "https://namu.wiki/w/%EC%B4%88%EA%B0%80%EC%8A%A4"
+    }
   },
   {
     "id": "corki",
@@ -2722,7 +2842,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-19"
+    "releaseDate": "2009-09-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Corki",
+      "lolalytics": "https://lolalytics.com/lol/corki/build/",
+      "namu": "https://namu.wiki/w/%EC%BD%94%EB%A5%B4%ED%82%A4"
+    }
   },
   {
     "id": "darius",
@@ -2843,7 +2968,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-05-23"
+    "releaseDate": "2012-05-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Darius",
+      "lolalytics": "https://lolalytics.com/lol/darius/build/",
+      "namu": "https://namu.wiki/w/%EB%8B%A4%EB%A6%AC%EC%9A%B0%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "diana",
@@ -2947,7 +3077,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-08-07"
+    "releaseDate": "2012-08-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Diana",
+      "lolalytics": "https://lolalytics.com/lol/diana/build/",
+      "namu": "https://namu.wiki/w/%EB%8B%A4%EC%9D%B4%EC%95%A0%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "drmundo",
@@ -3070,7 +3205,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-02"
+    "releaseDate": "2009-09-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Dr._Mundo",
+      "lolalytics": "https://lolalytics.com/lol/drmundo/build/",
+      "namu": "https://namu.wiki/w/%EB%AC%B8%EB%8F%84%20%EB%B0%95%EC%82%AC"
+    }
   },
   {
     "id": "draven",
@@ -3166,7 +3306,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-06-06"
+    "releaseDate": "2012-06-06",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Draven",
+      "lolalytics": "https://lolalytics.com/lol/draven/build/",
+      "namu": "https://namu.wiki/w/%EB%93%9C%EB%A0%88%EC%9D%B4%EB%B8%90"
+    }
   },
   {
     "id": "ekko",
@@ -3279,7 +3424,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2015-05-29"
+    "releaseDate": "2015-05-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ekko",
+      "lolalytics": "https://lolalytics.com/lol/ekko/build/",
+      "namu": "https://namu.wiki/w/%EC%97%90%EC%BD%94(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "elise",
@@ -3385,7 +3535,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-10-26"
+    "releaseDate": "2012-10-26",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Elise",
+      "lolalytics": "https://lolalytics.com/lol/elise/build/",
+      "namu": "https://namu.wiki/w/%EC%97%98%EB%A6%AC%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "evelynn",
@@ -3501,7 +3656,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-05-01"
+    "releaseDate": "2009-05-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Evelynn",
+      "lolalytics": "https://lolalytics.com/lol/evelynn/build/",
+      "namu": "https://namu.wiki/w/%EC%9D%B4%EB%B8%94%EB%A6%B0(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "ezreal",
@@ -3629,7 +3789,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-03-16"
+    "releaseDate": "2010-03-16",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ezreal",
+      "lolalytics": "https://lolalytics.com/lol/ezreal/build/",
+      "namu": "https://namu.wiki/w/%EC%9D%B4%EC%A6%88%EB%A6%AC%EC%96%BC"
+    }
   },
   {
     "id": "fiddlesticks",
@@ -3752,7 +3917,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Fiddlesticks",
+      "lolalytics": "https://lolalytics.com/lol/fiddlesticks/build/",
+      "namu": "https://namu.wiki/w/%ED%94%BC%EB%93%A4%EC%8A%A4%ED%8B%B1"
+    }
   },
   {
     "id": "fiora",
@@ -3857,7 +4027,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-02-29"
+    "releaseDate": "2012-02-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Fiora",
+      "lolalytics": "https://lolalytics.com/lol/fiora/build/",
+      "namu": "https://namu.wiki/w/%ED%94%BC%EC%98%A4%EB%9D%BC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "fizz",
@@ -3978,7 +4153,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-11-15"
+    "releaseDate": "2011-11-15",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Fizz",
+      "lolalytics": "https://lolalytics.com/lol/fizz/build/",
+      "namu": "https://namu.wiki/w/%ED%94%BC%EC%A6%88"
+    }
   },
   {
     "id": "galio",
@@ -4100,7 +4280,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-08-10"
+    "releaseDate": "2010-08-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Galio",
+      "lolalytics": "https://lolalytics.com/lol/galio/build/",
+      "namu": "https://namu.wiki/w/%EA%B0%88%EB%A6%AC%EC%98%A4"
+    }
   },
   {
     "id": "gangplank",
@@ -4230,7 +4415,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-08-19"
+    "releaseDate": "2009-08-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Gangplank",
+      "lolalytics": "https://lolalytics.com/lol/gangplank/build/",
+      "namu": "https://namu.wiki/w/%EA%B0%B1%ED%94%8C%EB%9E%AD%ED%81%AC"
+    }
   },
   {
     "id": "garen",
@@ -4371,7 +4561,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-04-27"
+    "releaseDate": "2010-04-27",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Garen",
+      "lolalytics": "https://lolalytics.com/lol/garen/build/",
+      "namu": "https://namu.wiki/w/%EA%B0%80%EB%A0%8C"
+    }
   },
   {
     "id": "gnar",
@@ -4461,7 +4656,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-08-14"
+    "releaseDate": "2014-08-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Gnar",
+      "lolalytics": "https://lolalytics.com/lol/gnar/build/",
+      "namu": "https://namu.wiki/w/%EB%82%98%EB%A5%B4"
+    }
   },
   {
     "id": "gragas",
@@ -4582,7 +4782,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-02-02"
+    "releaseDate": "2010-02-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Gragas",
+      "lolalytics": "https://lolalytics.com/lol/gragas/build/",
+      "namu": "https://namu.wiki/w/%EA%B7%B8%EB%9D%BC%EA%B0%80%EC%8A%A4"
+    }
   },
   {
     "id": "graves",
@@ -4703,7 +4908,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-10-19"
+    "releaseDate": "2011-10-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Graves",
+      "lolalytics": "https://lolalytics.com/lol/graves/build/",
+      "namu": "https://namu.wiki/w/%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%B8%8C%EC%A6%88"
+    }
   },
   {
     "id": "gwen",
@@ -4805,7 +5015,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2021-04-15"
+    "releaseDate": "2021-04-15",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Gwen",
+      "lolalytics": "https://lolalytics.com/lol/gwen/build/",
+      "namu": "https://namu.wiki/w/%EA%B7%B8%EC%9B%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "hecarim",
@@ -4894,7 +5109,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-04-18"
+    "releaseDate": "2012-04-18",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Hecarim",
+      "lolalytics": "https://lolalytics.com/lol/hecarim/build/",
+      "namu": "https://namu.wiki/w/%ED%97%A4%EC%B9%B4%EB%A6%BC"
+    }
   },
   {
     "id": "heimerdinger",
@@ -5000,7 +5220,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-10-10"
+    "releaseDate": "2009-10-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Heimerdinger",
+      "lolalytics": "https://lolalytics.com/lol/heimerdinger/build/",
+      "namu": "https://namu.wiki/w/%ED%95%98%EC%9D%B4%EB%A8%B8%EB%94%A9%EA%B1%B0"
+    }
   },
   {
     "id": "hwei",
@@ -5101,7 +5326,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2023-12-05"
+    "releaseDate": "2023-12-05",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Hwei",
+      "lolalytics": "https://lolalytics.com/lol/hwei/build/",
+      "namu": "https://namu.wiki/w/%ED%9D%90%EC%9B%A8%EC%9D%B4"
+    }
   },
   {
     "id": "illaoi",
@@ -5193,7 +5423,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2015-11-24"
+    "releaseDate": "2015-11-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Illaoi",
+      "lolalytics": "https://lolalytics.com/lol/illaoi/build/",
+      "namu": "https://namu.wiki/w/%EC%9D%BC%EB%9D%BC%EC%98%A4%EC%9D%B4"
+    }
   },
   {
     "id": "irelia",
@@ -5315,7 +5550,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-11-16"
+    "releaseDate": "2010-11-16",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Irelia",
+      "lolalytics": "https://lolalytics.com/lol/irelia/build/",
+      "namu": "https://namu.wiki/w/%EC%9D%B4%EB%A0%90%EB%A6%AC%EC%95%84"
+    }
   },
   {
     "id": "ivern",
@@ -5422,7 +5662,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-10-05"
+    "releaseDate": "2016-10-05",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ivern",
+      "lolalytics": "https://lolalytics.com/lol/ivern/build/",
+      "namu": "https://namu.wiki/w/%EC%95%84%EC%9D%B4%EB%B2%88"
+    }
   },
   {
     "id": "janna",
@@ -5547,7 +5792,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-02"
+    "releaseDate": "2009-09-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Janna",
+      "lolalytics": "https://lolalytics.com/lol/janna/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%94%EB%82%98"
+    }
   },
   {
     "id": "jarvaniv",
@@ -5655,7 +5905,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-03-01"
+    "releaseDate": "2011-03-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Jarvan_IV",
+      "lolalytics": "https://lolalytics.com/lol/jarvaniv/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%90%EB%A5%B4%EB%B0%98%204%EC%84%B8"
+    }
   },
   {
     "id": "jax",
@@ -5793,7 +6048,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Jax",
+      "lolalytics": "https://lolalytics.com/lol/jax/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%AD%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "jayce",
@@ -5896,7 +6156,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-07-07"
+    "releaseDate": "2012-07-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Jayce",
+      "lolalytics": "https://lolalytics.com/lol/jayce/build/",
+      "namu": "https://namu.wiki/w/%EC%A0%9C%EC%9D%B4%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "jhin",
@@ -5986,7 +6251,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-02-01"
+    "releaseDate": "2016-02-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Jhin",
+      "lolalytics": "https://lolalytics.com/lol/jhin/build/",
+      "namu": "https://namu.wiki/w/%EC%A7%84(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "jinx",
@@ -6093,7 +6363,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-10-10"
+    "releaseDate": "2013-10-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Jinx",
+      "lolalytics": "https://lolalytics.com/lol/jinx/build/",
+      "namu": "https://namu.wiki/w/%EC%A7%95%ED%81%AC%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "ksante",
@@ -6206,7 +6481,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2022-11-02"
+    "releaseDate": "2022-11-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/K'Sante",
+      "lolalytics": "https://lolalytics.com/lol/ksante/build/",
+      "namu": "https://namu.wiki/w/%ED%81%AC%EC%82%B0%ED%85%8C"
+    }
   },
   {
     "id": "kaisa",
@@ -6296,7 +6576,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2018-03-07"
+    "releaseDate": "2018-03-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kai'Sa",
+      "lolalytics": "https://lolalytics.com/lol/kaisa/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EC%9D%B4%EC%82%AC"
+    }
   },
   {
     "id": "kalista",
@@ -6403,7 +6688,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-11-20"
+    "releaseDate": "2014-11-20",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kalista",
+      "lolalytics": "https://lolalytics.com/lol/kalista/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%BC%EB%A6%AC%EC%8A%A4%ED%83%80"
+    }
   },
   {
     "id": "karma",
@@ -6501,7 +6791,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-02-01"
+    "releaseDate": "2011-02-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Karma",
+      "lolalytics": "https://lolalytics.com/lol/karma/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EB%A5%B4%EB%A7%88(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "karthus",
@@ -6605,7 +6900,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-06-12"
+    "releaseDate": "2009-06-12",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Karthus",
+      "lolalytics": "https://lolalytics.com/lol/karthus/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EC%84%9C%EC%8A%A4"
+    }
   },
   {
     "id": "kassadin",
@@ -6710,7 +7010,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-08-07"
+    "releaseDate": "2009-08-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kassadin",
+      "lolalytics": "https://lolalytics.com/lol/kassadin/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EC%82%AC%EB%94%98"
+    }
   },
   {
     "id": "katarina",
@@ -6840,7 +7145,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-19"
+    "releaseDate": "2009-09-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Katarina",
+      "lolalytics": "https://lolalytics.com/lol/katarina/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%ED%83%80%EB%A6%AC%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "kayle",
@@ -6974,7 +7284,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kayle",
+      "lolalytics": "https://lolalytics.com/lol/kayle/build/",
+      "namu": "https://namu.wiki/w/%EC%BC%80%EC%9D%BC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "kayn",
@@ -7063,7 +7378,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2017-07-12"
+    "releaseDate": "2017-07-12",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kayn",
+      "lolalytics": "https://lolalytics.com/lol/kayn/build/",
+      "namu": "https://namu.wiki/w/%EC%BC%80%EC%9D%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "kennen",
@@ -7171,7 +7491,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-04-08"
+    "releaseDate": "2010-04-08",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kennen",
+      "lolalytics": "https://lolalytics.com/lol/kennen/build/",
+      "namu": "https://namu.wiki/w/%EC%BC%80%EB%84%A8"
+    }
   },
   {
     "id": "khazix",
@@ -7277,7 +7602,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-09-27"
+    "releaseDate": "2012-09-27",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kha'Zix",
+      "lolalytics": "https://lolalytics.com/lol/khazix/build/",
+      "namu": "https://namu.wiki/w/%EC%B9%B4%EC%A7%81%EC%8A%A4"
+    }
   },
   {
     "id": "kindred",
@@ -7367,7 +7697,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2015-10-14"
+    "releaseDate": "2015-10-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kindred",
+      "lolalytics": "https://lolalytics.com/lol/kindred/build/",
+      "namu": "https://namu.wiki/w/%ED%82%A8%EB%93%9C%EB%A0%88%EB%93%9C"
+    }
   },
   {
     "id": "kled",
@@ -7474,7 +7809,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-08-10"
+    "releaseDate": "2016-08-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kled",
+      "lolalytics": "https://lolalytics.com/lol/kled/build/",
+      "namu": "https://namu.wiki/w/%ED%81%B4%EB%A0%88%EB%93%9C"
+    }
   },
   {
     "id": "kogmaw",
@@ -7609,7 +7949,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-06-24"
+    "releaseDate": "2010-06-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Kog'Maw",
+      "lolalytics": "https://lolalytics.com/lol/kogmaw/build/",
+      "namu": "https://namu.wiki/w/%EC%BD%94%EA%B7%B8%EB%AA%A8"
+    }
   },
   {
     "id": "leblanc",
@@ -7750,7 +8095,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-11-02"
+    "releaseDate": "2010-11-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/LeBlanc",
+      "lolalytics": "https://lolalytics.com/lol/leblanc/build/",
+      "namu": "https://namu.wiki/w/%EB%A5%B4%EB%B8%94%EB%9E%91(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "leesin",
@@ -7877,7 +8227,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-04-01"
+    "releaseDate": "2011-04-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lee_Sin",
+      "lolalytics": "https://lolalytics.com/lol/leesin/build/",
+      "namu": "https://namu.wiki/w/%EB%A6%AC%20%EC%8B%A0"
+    }
   },
   {
     "id": "leona",
@@ -7985,7 +8340,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-07-13"
+    "releaseDate": "2011-07-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Leona",
+      "lolalytics": "https://lolalytics.com/lol/leona/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%88%EC%98%A4%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "lillia",
@@ -8067,7 +8427,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-07-22"
+    "releaseDate": "2020-07-22",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lillia",
+      "lolalytics": "https://lolalytics.com/lol/lillia/build/",
+      "namu": "https://namu.wiki/w/%EB%A6%B4%EB%A6%AC%EC%95%84(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "lissandra",
@@ -8148,7 +8513,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-04-30"
+    "releaseDate": "2013-04-30",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lissandra",
+      "lolalytics": "https://lolalytics.com/lol/lissandra/build/",
+      "namu": "https://namu.wiki/w/%EB%A6%AC%EC%82%B0%EB%93%9C%EB%9D%BC"
+    }
   },
   {
     "id": "locke",
@@ -8230,7 +8600,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2026-06-24"
+    "releaseDate": "2026-06-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Locke",
+      "lolalytics": "https://lolalytics.com/lol/locke/build/",
+      "namu": "https://namu.wiki/w/%EB%A1%9C%ED%81%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "lucian",
@@ -8338,7 +8713,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-08-22"
+    "releaseDate": "2013-08-22",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lucian",
+      "lolalytics": "https://lolalytics.com/lol/lucian/build/",
+      "namu": "https://namu.wiki/w/%EB%A3%A8%EC%8B%9C%EC%95%88(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "lulu",
@@ -8436,7 +8816,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-03-20"
+    "releaseDate": "2012-03-20",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lulu",
+      "lolalytics": "https://lolalytics.com/lol/lulu/build/",
+      "namu": "https://namu.wiki/w/%EB%A3%B0%EB%A3%A8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "lux",
@@ -8547,7 +8932,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-10-19"
+    "releaseDate": "2010-10-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Lux",
+      "lolalytics": "https://lolalytics.com/lol/lux/build/",
+      "namu": "https://namu.wiki/w/%EB%9F%AD%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "malphite",
@@ -8674,7 +9064,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-09-02"
+    "releaseDate": "2009-09-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Malphite",
+      "lolalytics": "https://lolalytics.com/lol/malphite/build/",
+      "namu": "https://namu.wiki/w/%EB%A7%90%ED%8C%8C%EC%9D%B4%ED%8A%B8"
+    }
   },
   {
     "id": "malzahar",
@@ -8805,7 +9200,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-06-01"
+    "releaseDate": "2010-06-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Malzahar",
+      "lolalytics": "https://lolalytics.com/lol/malzahar/build/",
+      "namu": "https://namu.wiki/w/%EB%A7%90%EC%9E%90%ED%95%98"
+    }
   },
   {
     "id": "maokai",
@@ -8927,7 +9327,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-02-16"
+    "releaseDate": "2011-02-16",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Maokai",
+      "lolalytics": "https://lolalytics.com/lol/maokai/build/",
+      "namu": "https://namu.wiki/w/%EB%A7%88%EC%98%A4%EC%B9%B4%EC%9D%B4"
+    }
   },
   {
     "id": "masteryi",
@@ -9025,7 +9430,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Master_Yi",
+      "lolalytics": "https://lolalytics.com/lol/masteryi/build/",
+      "namu": "https://namu.wiki/w/%EB%A7%88%EC%8A%A4%ED%84%B0%20%EC%9D%B4"
+    }
   },
   {
     "id": "mel",
@@ -9141,7 +9551,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2025-01-23"
+    "releaseDate": "2025-01-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Mel",
+      "lolalytics": "https://lolalytics.com/lol/mel/build/",
+      "namu": "https://namu.wiki/w/%EB%A9%9C(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "milio",
@@ -9231,7 +9646,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2023-03-23"
+    "releaseDate": "2023-03-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Milio",
+      "lolalytics": "https://lolalytics.com/lol/milio/build/",
+      "namu": "https://namu.wiki/w/%EB%B0%80%EB%A6%AC%EC%98%A4"
+    }
   },
   {
     "id": "missfortune",
@@ -9355,7 +9775,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-09-08"
+    "releaseDate": "2010-09-08",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Miss_Fortune",
+      "lolalytics": "https://lolalytics.com/lol/missfortune/build/",
+      "namu": "https://namu.wiki/w/%EB%AF%B8%EC%8A%A4%20%ED%8F%AC%EC%B8%88(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "mordekaiser",
@@ -9489,7 +9914,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-02-24"
+    "releaseDate": "2010-02-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Mordekaiser",
+      "lolalytics": "https://lolalytics.com/lol/mordekaiser/build/",
+      "namu": "https://namu.wiki/w/%EB%AA%A8%EB%8D%B0%EC%B9%B4%EC%9D%B4%EC%A0%80"
+    }
   },
   {
     "id": "morgana",
@@ -9607,7 +10037,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Morgana",
+      "lolalytics": "https://lolalytics.com/lol/morgana/build/",
+      "namu": "https://namu.wiki/w/%EB%AA%A8%EB%A5%B4%EA%B0%80%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "naafiri",
@@ -9720,7 +10155,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2023-07-19"
+    "releaseDate": "2023-07-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Naafiri",
+      "lolalytics": "https://lolalytics.com/lol/naafiri/build/",
+      "namu": "https://namu.wiki/w/%EB%82%98%ED%94%BC%EB%A6%AC"
+    }
   },
   {
     "id": "nami",
@@ -9811,7 +10251,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-12-07"
+    "releaseDate": "2012-12-07",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nami",
+      "lolalytics": "https://lolalytics.com/lol/nami/build/",
+      "namu": "https://namu.wiki/w/%EB%82%98%EB%AF%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "nasus",
@@ -9930,7 +10375,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-10-01"
+    "releaseDate": "2009-10-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nasus",
+      "lolalytics": "https://lolalytics.com/lol/nasus/build/",
+      "namu": "https://namu.wiki/w/%EB%82%98%EC%84%9C%EC%8A%A4"
+    }
   },
   {
     "id": "nautilus",
@@ -10028,7 +10478,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-02-14"
+    "releaseDate": "2012-02-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nautilus",
+      "lolalytics": "https://lolalytics.com/lol/nautilus/build/",
+      "namu": "https://namu.wiki/w/%EB%85%B8%ED%8B%B8%EB%9F%AC%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "neeko",
@@ -10133,7 +10588,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2018-12-05"
+    "releaseDate": "2018-12-05",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Neeko",
+      "lolalytics": "https://lolalytics.com/lol/neeko/build/",
+      "namu": "https://namu.wiki/w/%EB%8B%88%EC%BD%94(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "nidalee",
@@ -10249,7 +10709,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-12-17"
+    "releaseDate": "2009-12-17",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nidalee",
+      "lolalytics": "https://lolalytics.com/lol/nidalee/build/",
+      "namu": "https://namu.wiki/w/%EB%8B%88%EB%8B%AC%EB%A6%AC"
+    }
   },
   {
     "id": "nilah",
@@ -10331,7 +10796,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2022-07-13"
+    "releaseDate": "2022-07-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nilah",
+      "lolalytics": "https://lolalytics.com/lol/nilah/build/",
+      "namu": "https://namu.wiki/w/%EB%8B%90%EB%9D%BC"
+    }
   },
   {
     "id": "nocturne",
@@ -10430,7 +10900,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-03-15"
+    "releaseDate": "2011-03-15",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nocturne",
+      "lolalytics": "https://lolalytics.com/lol/nocturne/build/",
+      "namu": "https://namu.wiki/w/%EB%85%B9%ED%84%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "nunu",
@@ -10537,7 +11012,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Nunu",
+      "lolalytics": "https://lolalytics.com/lol/nunu/build/",
+      "namu": "https://namu.wiki/w/%EB%88%84%EB%88%84%EC%99%80%20%EC%9C%8C%EB%9F%BC%ED%94%84"
+    }
   },
   {
     "id": "olaf",
@@ -10666,7 +11146,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-06-09"
+    "releaseDate": "2010-06-09",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Olaf",
+      "lolalytics": "https://lolalytics.com/lol/olaf/build/",
+      "namu": "https://namu.wiki/w/%EC%98%AC%EB%9D%BC%ED%94%84(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "orianna",
@@ -10765,7 +11250,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-06-01"
+    "releaseDate": "2011-06-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Orianna",
+      "lolalytics": "https://lolalytics.com/lol/orianna/build/",
+      "namu": "https://namu.wiki/w/%EC%98%A4%EB%A6%AC%EC%95%84%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "ornn",
@@ -10854,7 +11344,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2017-08-23"
+    "releaseDate": "2017-08-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ornn",
+      "lolalytics": "https://lolalytics.com/lol/ornn/build/",
+      "namu": "https://namu.wiki/w/%EC%98%A4%EB%A5%B8"
+    }
   },
   {
     "id": "pantheon",
@@ -10973,7 +11468,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-02-02"
+    "releaseDate": "2010-02-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Pantheon",
+      "lolalytics": "https://lolalytics.com/lol/pantheon/build/",
+      "namu": "https://namu.wiki/w/%ED%8C%90%ED%85%8C%EC%98%A8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "poppy",
@@ -11100,7 +11600,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-01-13"
+    "releaseDate": "2010-01-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Poppy",
+      "lolalytics": "https://lolalytics.com/lol/poppy/build/",
+      "namu": "https://namu.wiki/w/%EB%BD%80%EC%82%90(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "pyke",
@@ -11191,7 +11696,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2018-05-31"
+    "releaseDate": "2018-05-31",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Pyke",
+      "lolalytics": "https://lolalytics.com/lol/pyke/build/",
+      "namu": "https://namu.wiki/w/%ED%8C%8C%EC%9D%B4%ED%81%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "qiyana",
@@ -11279,7 +11789,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2019-06-28"
+    "releaseDate": "2019-06-28",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Qiyana",
+      "lolalytics": "https://lolalytics.com/lol/qiyana/build/",
+      "namu": "https://namu.wiki/w/%ED%82%A4%EC%95%84%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "quinn",
@@ -11403,7 +11918,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-03-01"
+    "releaseDate": "2013-03-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Quinn",
+      "lolalytics": "https://lolalytics.com/lol/quinn/build/",
+      "namu": "https://namu.wiki/w/%ED%80%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "rakan",
@@ -11493,7 +12013,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2017-04-19"
+    "releaseDate": "2017-04-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rakan",
+      "lolalytics": "https://lolalytics.com/lol/rakan/build/",
+      "namu": "https://namu.wiki/w/%EB%9D%BC%EC%B9%B8"
+    }
   },
   {
     "id": "rammus",
@@ -11606,7 +12131,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-07-10"
+    "releaseDate": "2009-07-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rammus",
+      "lolalytics": "https://lolalytics.com/lol/rammus/build/",
+      "namu": "https://namu.wiki/w/%EB%9E%8C%EB%A8%B8%EC%8A%A4"
+    }
   },
   {
     "id": "reksai",
@@ -11719,7 +12249,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-12-11"
+    "releaseDate": "2014-12-11",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rek'Sai",
+      "lolalytics": "https://lolalytics.com/lol/reksai/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%89%EC%82%AC%EC%9D%B4"
+    }
   },
   {
     "id": "rell",
@@ -11827,7 +12362,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-12-10"
+    "releaseDate": "2020-12-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rell",
+      "lolalytics": "https://lolalytics.com/lol/rell/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%90"
+    }
   },
   {
     "id": "renata",
@@ -11909,7 +12449,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2022-02-17"
+    "releaseDate": "2022-02-17",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Renata_Glasc",
+      "lolalytics": "https://lolalytics.com/lol/renata/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%88%EB%82%98%ED%83%80%20%EA%B8%80%EB%9D%BC%EC%8A%A4%ED%81%AC"
+    }
   },
   {
     "id": "renekton",
@@ -12017,7 +12562,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-01-18"
+    "releaseDate": "2011-01-18",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Renekton",
+      "lolalytics": "https://lolalytics.com/lol/renekton/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%88%EB%84%A5%ED%86%A4"
+    }
   },
   {
     "id": "rengar",
@@ -12142,7 +12692,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-08-21"
+    "releaseDate": "2012-08-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rengar",
+      "lolalytics": "https://lolalytics.com/lol/rengar/build/",
+      "namu": "https://namu.wiki/w/%EB%A0%9D%EA%B0%80"
+    }
   },
   {
     "id": "riven",
@@ -12256,7 +12811,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-09-14"
+    "releaseDate": "2011-09-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Riven",
+      "lolalytics": "https://lolalytics.com/lol/riven/build/",
+      "namu": "https://namu.wiki/w/%EB%A6%AC%EB%B8%90(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "rumble",
@@ -12347,7 +12907,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-04-26"
+    "releaseDate": "2011-04-26",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Rumble",
+      "lolalytics": "https://lolalytics.com/lol/rumble/build/",
+      "namu": "https://namu.wiki/w/%EB%9F%BC%EB%B8%94"
+    }
   },
   {
     "id": "ryze",
@@ -12481,7 +13046,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ryze",
+      "lolalytics": "https://lolalytics.com/lol/ryze/build/",
+      "namu": "https://namu.wiki/w/%EB%9D%BC%EC%9D%B4%EC%A6%88(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "samira",
@@ -12563,7 +13133,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-09-21"
+    "releaseDate": "2020-09-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Samira",
+      "lolalytics": "https://lolalytics.com/lol/samira/build/",
+      "namu": "https://namu.wiki/w/%EC%82%AC%EB%AF%B8%EB%9D%BC"
+    }
   },
   {
     "id": "sejuani",
@@ -12679,7 +13254,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-01-17"
+    "releaseDate": "2012-01-17",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sejuani",
+      "lolalytics": "https://lolalytics.com/lol/sejuani/build/",
+      "namu": "https://namu.wiki/w/%EC%84%B8%EC%A3%BC%EC%95%84%EB%8B%88"
+    }
   },
   {
     "id": "senna",
@@ -12767,7 +13347,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2019-11-10"
+    "releaseDate": "2019-11-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Senna",
+      "lolalytics": "https://lolalytics.com/lol/senna/build/",
+      "namu": "https://namu.wiki/w/%EC%84%B8%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "seraphine",
@@ -12872,7 +13457,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-10-29"
+    "releaseDate": "2020-10-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Seraphine",
+      "lolalytics": "https://lolalytics.com/lol/seraphine/build/",
+      "namu": "https://namu.wiki/w/%EC%84%B8%EB%9D%BC%ED%95%80"
+    }
   },
   {
     "id": "sett",
@@ -12954,7 +13544,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-01-14"
+    "releaseDate": "2020-01-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sett",
+      "lolalytics": "https://lolalytics.com/lol/sett/build/",
+      "namu": "https://namu.wiki/w/%EC%84%B8%ED%8A%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "shaco",
@@ -13075,7 +13670,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-10-10"
+    "releaseDate": "2009-10-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Shaco",
+      "lolalytics": "https://lolalytics.com/lol/shaco/build/",
+      "namu": "https://namu.wiki/w/%EC%83%A4%EC%BD%94(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "shen",
@@ -13195,7 +13795,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-03-24"
+    "releaseDate": "2010-03-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Shen",
+      "lolalytics": "https://lolalytics.com/lol/shen/build/",
+      "namu": "https://namu.wiki/w/%EC%89%94"
+    }
   },
   {
     "id": "shyvana",
@@ -13338,7 +13943,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-11-01"
+    "releaseDate": "2011-11-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Shyvana",
+      "lolalytics": "https://lolalytics.com/lol/shyvana/build/",
+      "namu": "https://namu.wiki/w/%EC%89%AC%EB%B0%94%EB%82%98"
+    }
   },
   {
     "id": "singed",
@@ -13438,7 +14048,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-04-18"
+    "releaseDate": "2009-04-18",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Singed",
+      "lolalytics": "https://lolalytics.com/lol/singed/build/",
+      "namu": "https://namu.wiki/w/%EC%8B%A0%EC%A7%80%EB%93%9C"
+    }
   },
   {
     "id": "sion",
@@ -13550,7 +14165,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sion",
+      "lolalytics": "https://lolalytics.com/lol/sion/build/",
+      "namu": "https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EC%98%A8"
+    }
   },
   {
     "id": "sivir",
@@ -13675,7 +14295,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sivir",
+      "lolalytics": "https://lolalytics.com/lol/sivir/build/",
+      "namu": "https://namu.wiki/w/%EC%8B%9C%EB%B9%84%EB%A5%B4"
+    }
   },
   {
     "id": "skarner",
@@ -13816,7 +14441,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-08-09"
+    "releaseDate": "2011-08-09",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Skarner",
+      "lolalytics": "https://lolalytics.com/lol/skarner/build/",
+      "namu": "https://namu.wiki/w/%EC%8A%A4%EC%B9%B4%EB%84%88"
+    }
   },
   {
     "id": "smolder",
@@ -13924,7 +14554,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2024-01-31"
+    "releaseDate": "2024-01-31",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Smolder",
+      "lolalytics": "https://lolalytics.com/lol/smolder/build/",
+      "namu": "https://namu.wiki/w/%EC%8A%A4%EB%AA%B0%EB%8D%94"
+    }
   },
   {
     "id": "sona",
@@ -14048,7 +14683,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-09-21"
+    "releaseDate": "2010-09-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sona",
+      "lolalytics": "https://lolalytics.com/lol/sona/build/",
+      "namu": "https://namu.wiki/w/%EC%86%8C%EB%82%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "soraka",
@@ -14164,7 +14804,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Soraka",
+      "lolalytics": "https://lolalytics.com/lol/soraka/build/",
+      "namu": "https://namu.wiki/w/%EC%86%8C%EB%9D%BC%EC%B9%B4"
+    }
   },
   {
     "id": "swain",
@@ -14326,7 +14971,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-10-05"
+    "releaseDate": "2010-10-05",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Swain",
+      "lolalytics": "https://lolalytics.com/lol/swain/build/",
+      "namu": "https://namu.wiki/w/%EC%8A%A4%EC%9B%A8%EC%9D%B8"
+    }
   },
   {
     "id": "sylas",
@@ -14427,7 +15077,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2019-01-25"
+    "releaseDate": "2019-01-25",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Sylas",
+      "lolalytics": "https://lolalytics.com/lol/sylas/build/",
+      "namu": "https://namu.wiki/w/%EC%82%AC%EC%9D%BC%EB%9F%AC%EC%8A%A4"
+    }
   },
   {
     "id": "syndra",
@@ -14549,7 +15204,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-09-13"
+    "releaseDate": "2012-09-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Syndra",
+      "lolalytics": "https://lolalytics.com/lol/syndra/build/",
+      "namu": "https://namu.wiki/w/%EC%8B%A0%EB%93%9C%EB%9D%BC"
+    }
   },
   {
     "id": "tahmkench",
@@ -14660,7 +15320,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2015-07-09"
+    "releaseDate": "2015-07-09",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Tahm_Kench",
+      "lolalytics": "https://lolalytics.com/lol/tahmkench/build/",
+      "namu": "https://namu.wiki/w/%ED%83%90%20%EC%BC%84%EC%B9%98"
+    }
   },
   {
     "id": "taliyah",
@@ -14772,7 +15437,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2016-05-18"
+    "releaseDate": "2016-05-18",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Taliyah",
+      "lolalytics": "https://lolalytics.com/lol/taliyah/build/",
+      "namu": "https://namu.wiki/w/%ED%83%88%EB%A6%AC%EC%95%BC"
+    }
   },
   {
     "id": "talon",
@@ -14903,7 +15573,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-08-24"
+    "releaseDate": "2011-08-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Talon",
+      "lolalytics": "https://lolalytics.com/lol/talon/build/",
+      "namu": "https://namu.wiki/w/%ED%83%88%EB%A1%A0(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "taric",
@@ -15018,7 +15693,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-08-19"
+    "releaseDate": "2009-08-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Taric",
+      "lolalytics": "https://lolalytics.com/lol/taric/build/",
+      "namu": "https://namu.wiki/w/%ED%83%80%EB%A6%AD(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "teemo",
@@ -15140,7 +15820,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Teemo",
+      "lolalytics": "https://lolalytics.com/lol/teemo/build/",
+      "namu": "https://namu.wiki/w/%ED%8B%B0%EB%AA%A8"
+    }
   },
   {
     "id": "thresh",
@@ -15231,7 +15916,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-01-23"
+    "releaseDate": "2013-01-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Thresh",
+      "lolalytics": "https://lolalytics.com/lol/thresh/build/",
+      "namu": "https://namu.wiki/w/%EC%93%B0%EB%A0%88%EC%89%AC"
+    }
   },
   {
     "id": "tristana",
@@ -15361,7 +16051,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Tristana",
+      "lolalytics": "https://lolalytics.com/lol/tristana/build/",
+      "namu": "https://namu.wiki/w/%ED%8A%B8%EB%A6%AC%EC%8A%A4%ED%83%80%EB%82%98"
+    }
   },
   {
     "id": "trundle",
@@ -15464,7 +16159,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-12-01"
+    "releaseDate": "2010-12-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Trundle",
+      "lolalytics": "https://lolalytics.com/lol/trundle/build/",
+      "namu": "https://namu.wiki/w/%ED%8A%B8%EB%9F%B0%EB%93%A4"
+    }
   },
   {
     "id": "tryndamere",
@@ -15571,7 +16271,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-05-01"
+    "releaseDate": "2009-05-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Tryndamere",
+      "lolalytics": "https://lolalytics.com/lol/tryndamere/build/",
+      "namu": "https://namu.wiki/w/%ED%8A%B8%EB%A6%B0%EB%8B%A4%EB%AF%B8%EC%96%B4"
+    }
   },
   {
     "id": "twistedfate",
@@ -15686,7 +16391,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Twisted_Fate",
+      "lolalytics": "https://lolalytics.com/lol/twistedfate/build/",
+      "namu": "https://namu.wiki/w/%ED%8A%B8%EC%9C%84%EC%8A%A4%ED%8B%B0%EB%93%9C%20%ED%8E%98%EC%9D%B4%ED%8A%B8"
+    }
   },
   {
     "id": "twitch",
@@ -15811,7 +16521,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-05-01"
+    "releaseDate": "2009-05-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Twitch",
+      "lolalytics": "https://lolalytics.com/lol/twitch/build/",
+      "namu": "https://namu.wiki/w/%ED%8A%B8%EC%9C%84%EC%B9%98(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "udyr",
@@ -15932,7 +16647,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-12-02"
+    "releaseDate": "2009-12-02",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Udyr",
+      "lolalytics": "https://lolalytics.com/lol/udyr/build/",
+      "namu": "https://namu.wiki/w/%EC%9A%B0%EB%94%94%EB%A5%B4"
+    }
   },
   {
     "id": "urgot",
@@ -16057,7 +16777,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-08-24"
+    "releaseDate": "2010-08-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Urgot",
+      "lolalytics": "https://lolalytics.com/lol/urgot/build/",
+      "namu": "https://namu.wiki/w/%EC%9A%B0%EB%A5%B4%EA%B3%B3"
+    }
   },
   {
     "id": "varus",
@@ -16164,7 +16889,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-05-08"
+    "releaseDate": "2012-05-08",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Varus",
+      "lolalytics": "https://lolalytics.com/lol/varus/build/",
+      "namu": "https://namu.wiki/w/%EB%B0%94%EB%A3%A8%EC%8A%A4"
+    }
   },
   {
     "id": "vayne",
@@ -16279,7 +17009,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-05-10"
+    "releaseDate": "2011-05-10",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Vayne",
+      "lolalytics": "https://lolalytics.com/lol/vayne/build/",
+      "namu": "https://namu.wiki/w/%EB%B2%A0%EC%9D%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "veigar",
@@ -16407,7 +17142,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-07-24"
+    "releaseDate": "2009-07-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Veigar",
+      "lolalytics": "https://lolalytics.com/lol/veigar/build/",
+      "namu": "https://namu.wiki/w/%EB%B2%A0%EC%9D%B4%EA%B0%80"
+    }
   },
   {
     "id": "velkoz",
@@ -16544,7 +17284,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2014-02-27"
+    "releaseDate": "2014-02-27",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Vel'Koz",
+      "lolalytics": "https://lolalytics.com/lol/velkoz/build/",
+      "namu": "https://namu.wiki/w/%EB%B2%A8%EC%BD%94%EC%A6%88"
+    }
   },
   {
     "id": "vex",
@@ -16626,7 +17371,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2021-09-23"
+    "releaseDate": "2021-09-23",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Vex",
+      "lolalytics": "https://lolalytics.com/lol/vex/build/",
+      "namu": "https://namu.wiki/w/%EB%B2%A1%EC%8A%A4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "vi",
@@ -16726,7 +17476,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-12-19"
+    "releaseDate": "2012-12-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Vi",
+      "lolalytics": "https://lolalytics.com/lol/vi/build/",
+      "namu": "https://namu.wiki/w/%EB%B0%94%EC%9D%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "viego",
@@ -16808,7 +17563,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2021-01-21"
+    "releaseDate": "2021-01-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Viego",
+      "lolalytics": "https://lolalytics.com/lol/viego/build/",
+      "namu": "https://namu.wiki/w/%EB%B9%84%EC%97%90%EA%B3%A0"
+    }
   },
   {
     "id": "viktor",
@@ -16928,7 +17688,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-12-29"
+    "releaseDate": "2011-12-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Viktor",
+      "lolalytics": "https://lolalytics.com/lol/viktor/build/",
+      "namu": "https://namu.wiki/w/%EB%B9%85%ED%86%A0%EB%A5%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "vladimir",
@@ -17056,7 +17821,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-07-27"
+    "releaseDate": "2010-07-27",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Vladimir",
+      "lolalytics": "https://lolalytics.com/lol/vladimir/build/",
+      "namu": "https://namu.wiki/w/%EB%B8%94%EB%9D%BC%EB%94%94%EB%AF%B8%EB%A5%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "volibear",
@@ -17155,7 +17925,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-11-29"
+    "releaseDate": "2011-11-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Volibear",
+      "lolalytics": "https://lolalytics.com/lol/volibear/build/",
+      "namu": "https://namu.wiki/w/%EB%B3%BC%EB%A6%AC%EB%B2%A0%EC%96%B4"
+    }
   },
   {
     "id": "warwick",
@@ -17277,7 +18052,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-02-21"
+    "releaseDate": "2009-02-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Warwick",
+      "lolalytics": "https://lolalytics.com/lol/warwick/build/",
+      "namu": "https://namu.wiki/w/%EC%9B%8C%EC%9C%85(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "monkeyking",
@@ -17407,7 +18187,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-07-26"
+    "releaseDate": "2011-07-26",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Wukong",
+      "lolalytics": "https://lolalytics.com/lol/wukong/build/",
+      "namu": "https://namu.wiki/w/%EC%98%A4%EA%B3%B5(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "xayah",
@@ -17496,7 +18281,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2017-04-19"
+    "releaseDate": "2017-04-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Xayah",
+      "lolalytics": "https://lolalytics.com/lol/xayah/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%90%EC%95%BC"
+    }
   },
   {
     "id": "xerath",
@@ -17624,7 +18414,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-10-05"
+    "releaseDate": "2011-10-05",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Xerath",
+      "lolalytics": "https://lolalytics.com/lol/xerath/build/",
+      "namu": "https://namu.wiki/w/%EC%A0%9C%EB%9D%BC%EC%8A%A4"
+    }
   },
   {
     "id": "xinzhao",
@@ -17747,7 +18542,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2010-07-13"
+    "releaseDate": "2010-07-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Xin_Zhao",
+      "lolalytics": "https://lolalytics.com/lol/xinzhao/build/",
+      "namu": "https://namu.wiki/w/%EC%8B%A0%20%EC%A7%9C%EC%98%A4"
+    }
   },
   {
     "id": "yasuo",
@@ -17850,7 +18650,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-12-13"
+    "releaseDate": "2013-12-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Yasuo",
+      "lolalytics": "https://lolalytics.com/lol/yasuo/build/",
+      "namu": "https://namu.wiki/w/%EC%95%BC%EC%8A%A4%EC%98%A4"
+    }
   },
   {
     "id": "yone",
@@ -17938,7 +18743,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2020-08-06"
+    "releaseDate": "2020-08-06",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Yone",
+      "lolalytics": "https://lolalytics.com/lol/yone/build/",
+      "namu": "https://namu.wiki/w/%EC%9A%94%EB%84%A4"
+    }
   },
   {
     "id": "yorick",
@@ -18070,7 +18880,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2011-06-22"
+    "releaseDate": "2011-06-22",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Yorick",
+      "lolalytics": "https://lolalytics.com/lol/yorick/build/",
+      "namu": "https://namu.wiki/w/%EC%9A%94%EB%A6%AD(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "yunara",
@@ -18152,7 +18967,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2025-07-16"
+    "releaseDate": "2025-07-16",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Yunara",
+      "lolalytics": "https://lolalytics.com/lol/yunara/build/",
+      "namu": "https://namu.wiki/w/%EC%9C%A0%EB%82%98%EB%9D%BC"
+    }
   },
   {
     "id": "yuumi",
@@ -18251,7 +19071,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2019-05-14"
+    "releaseDate": "2019-05-14",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Yuumi",
+      "lolalytics": "https://lolalytics.com/lol/yuumi/build/",
+      "namu": "https://namu.wiki/w/%EC%9C%A0%EB%AF%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "zaahen",
@@ -18333,7 +19158,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2025-11-19"
+    "releaseDate": "2025-11-19",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zaahen",
+      "lolalytics": "https://lolalytics.com/lol/zaahen/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%90%ED%97%A8"
+    }
   },
   {
     "id": "zac",
@@ -18446,7 +19276,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2013-03-29"
+    "releaseDate": "2013-03-29",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zac",
+      "lolalytics": "https://lolalytics.com/lol/zac/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%90%ED%81%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "zed",
@@ -18550,7 +19385,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-11-13"
+    "releaseDate": "2012-11-13",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zed",
+      "lolalytics": "https://lolalytics.com/lol/zed/build/",
+      "namu": "https://namu.wiki/w/%EC%A0%9C%EB%93%9C(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "zeri",
@@ -18632,7 +19472,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2022-01-20"
+    "releaseDate": "2022-01-20",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zeri",
+      "lolalytics": "https://lolalytics.com/lol/zeri/build/",
+      "namu": "https://namu.wiki/w/%EC%A0%9C%EB%A6%AC(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "ziggs",
@@ -18745,7 +19590,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-02-01"
+    "releaseDate": "2012-02-01",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Ziggs",
+      "lolalytics": "https://lolalytics.com/lol/ziggs/build/",
+      "namu": "https://namu.wiki/w/%EC%A7%81%EC%8A%A4"
+    }
   },
   {
     "id": "zilean",
@@ -18860,7 +19710,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2009-04-18"
+    "releaseDate": "2009-04-18",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zilean",
+      "lolalytics": "https://lolalytics.com/lol/zilean/build/",
+      "namu": "https://namu.wiki/w/%EC%A7%88%EB%A6%AC%EC%96%B8(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "zoe",
@@ -18956,7 +19811,12 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2017-11-21"
+    "releaseDate": "2017-11-21",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zoe",
+      "lolalytics": "https://lolalytics.com/lol/zoe/build/",
+      "namu": "https://namu.wiki/w/%EC%A1%B0%EC%9D%B4(%EB%A6%AC%EA%B7%B8%20%EC%98%A4%EB%B8%8C%20%EB%A0%88%EC%A0%84%EB%93%9C)"
+    }
   },
   {
     "id": "zyra",
@@ -19071,6 +19931,11 @@ const CHAMPIONS = [
         "duration": 180
       }
     ],
-    "releaseDate": "2012-07-24"
+    "releaseDate": "2012-07-24",
+    "pages": {
+      "wiki": "https://wiki.leagueoflegends.com/en-us/Zyra",
+      "lolalytics": "https://lolalytics.com/lol/zyra/build/",
+      "namu": "https://namu.wiki/w/%EC%9E%90%EC%9D%B4%EB%9D%BC"
+    }
   }
 ];

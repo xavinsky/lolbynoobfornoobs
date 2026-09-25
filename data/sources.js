@@ -37,6 +37,19 @@ const GLOBAL_SOURCES = [
     "caveat": "Le WR moyen d'un palier n'est pas 50 % (les joueurs Fer gagnent ≈ 44 % de leurs parties classées, les Or ≈ 50 %) : un WR lu à un palier se compare aux autres champions du même palier, pas à 50. Un champion peu joué à un palier a peu de parties : le chiffre est alors instable (« — » s'il n'en a aucune). Pas de lettre de tier en mode paliers (les notes du site source ne se combinent pas)."
   },
   {
+    "id": "pages",
+    "label": "Bloc « Sources : » de la fiche champion — page du champion sur chaque site source",
+    "fields": [
+      "pages.wiki",
+      "pages.lolalytics",
+      "pages.namu"
+    ],
+    "method": "Pour chaque champion, un lien vers la page que lui consacre chaque site dont le guide reprend le contenu : fiche officielle de Riot (leagueoflegends.com, calculée depuis l'identifiant du champion), wiki League of Legends (page du champion, sous son nom anglais), lolalytics (page de build du champion), Namu Wiki (page du champion, celle dont les explications de matchups sont traduites). Chaque lien porte le logo du site, tiré du site lui-même (son icône officielle), et au survol ce qu'on trouve sur la page.",
+    "url": null,
+    "retrieved": "2026-09-25",
+    "caveat": "Liens vers des pages vivantes, qui changent sans nous : le contenu d'une page peut différer de ce que le guide en a repris à sa date. Les logos restent la propriété de leurs sites."
+  },
+  {
     "id": "abilities",
     "label": "Titre du champion, nom et description des compétences",
     "fields": [

@@ -50,12 +50,16 @@ qui appartiennent à d'autres et gardent leurs propres conditions :
    ban, statistiques par rôle et par palier : chiffres relevés sur ce
    site, cités avec leur date sur la page Sources du site.
 
-4. 3 Minute League of Legends et League of Legends - France (YouTube) —
+4. Logos des sites sources (img/sources/ : League of Legends, wiki League of
+   Legends, lolalytics, Namu Wiki) — icônes officielles de ces sites, qui en
+   restent propriétaires ; utilisées seulement pour mener à leur page.
+
+5. 3 Minute League of Legends et League of Legends - France (YouTube) —
    les conseils extraits des vidéos de présentation citent la vidéo et
    la minute du passage ; les vidéos elles-mêmes restent la propriété
    de leurs auteurs.
 
-5. Namu Wiki (https://namu.wiki) — les explications de matchups de la
+6. Namu Wiki (https://namu.wiki) — les explications de matchups de la
    page Counters (data/counters_page.js) sont traduites automatiquement
    de la section « 상성 » (matchups) des pages champion de Namu Wiki.
    Elles sont sous licence Creative Commons Attribution - Pas

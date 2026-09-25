@@ -192,6 +192,12 @@
 
   a.champ-link{ font-size:1em; color:var(--r-h2); text-decoration:none; margin-left:auto; white-space:nowrap; }
   a.champ-link:hover{ text-decoration:underline; }
+  /* Bloc « Sources : » de la fiche champion : logos des sites qui ont une page sur le champion, dans le coin de l'en-tête */
+  .src-pages{ display:flex; align-items:center; gap:8px; margin-left:auto; align-self:flex-start; padding:4px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface2); white-space:nowrap; }
+  .src-pages-lbl{ font-size:.85em; color:var(--muted); }
+  .src-pages a{ display:flex; align-items:center; border-radius:4px; padding:2px; }
+  .src-pages a:hover{ background:var(--accent-soft); }
+  .src-pages img{ height:18px; width:auto; display:block; }
 
   .empty{ text-align:center; padding:40px 20px; color:var(--muted); font-family:var(--body-font); }
   .newbadge{ font-family:var(--mono); font-size:.65em; text-transform:uppercase; letter-spacing:.04em; color:var(--c3); border:1px solid var(--c3); border-radius:10px; padding:1px 7px; }
