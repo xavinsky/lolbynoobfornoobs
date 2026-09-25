@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Effets et statistiques des objets — LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="bases" data-page="objets-effets"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+
+<main>
+  <div class="detail-card">
+    <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Effets et statistiques des objets — ce qu'un objet fait, et ce qu'il donne</h2>
+    <p style="margin:6px 0 0;">Un objet apporte des <b>statistiques</b> (dégâts d'attaque, armure, vitesse de déplacement…) et, souvent, un ou plusieurs <b>effets</b> : un passif nommé, un actif à déclencher, une consommation. Cette page explique chaque famille d'effets et chaque statistique, avec le nombre d'objets concernés, trois exemples et la liste complète repliée ; sur la sous-page Objets, chaque objet porte les icônes de ses effets et peut être filtré par effet ou par statistique. Sources en fin de page <a class="ref pagenote" href="#sources">[1]</a> <a class="ref pagenote" href="#sources">[2]</a> <a class="ref pagenote" href="#sources">[3]</a>.</p>
+    <nav class="sub-nav" id="axisNav"></nav>
+  </div>
+  <div id="content" style="display:flex; flex-direction:column; gap:12px;"></div>
+</main>
+
+<footer></footer>
+
+<script src="data/refs.js"></script>
+<script src="data/item_effects.js"></script>
+<script src="data/stat_defs.js"></script>
+<script src="data/sources.js"></script>
+<script src="taxonomy.js"></script>
+<script src="itemstats.js"></script>
+<script>
+(function(){
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const DD = `https://ddragon.leagueoflegends.com/cdn/${REFS_VERSION}/img/item/`;
+  const WIKI = 'https://wiki.leagueoflegends.com/en-us/';
+  // Objets de la Faille : même règle que la sous-page Objets (drapeau Data Dragon, doublons, et modes du wiki).
+  const ALL = ItemStats.srItems.filter(id => { const e = ITEM_EFFECTS[id]; return !(e && e.sr === false); });
+  const T = TAXONOMY.itemEffects;
+  const chip = id => `<a class="tx-ex" href="bases.html#item-${id}" title="${esc(ITEMS[id].name)} — ${ITEMS[id].gold} PO"><img class="champ-icon" src="${DD}${ITEMS[id].icon}" alt="">${esc(ITEMS[id].name)}</a>`;
+  const byGold = (a, b) => ITEMS[b].gold - ITEMS[a].gold;
+  const byName = (a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name);
+  // Trois exemples (les plus chers, donc les objets complets) et la liste complète repliée, par ordre alphabétique.
+  const examples = (hits, what) => {
+    const ex = hits.slice().sort(byGold).slice(0, 3);
+    const all = hits.slice().sort(byName);
+    return `${ex.length ? `<div class="tx-examples">${ex.map(chip).join('')}</div>` : ''}${hits.length > 3 ? `<details class="tx-all"><summary>Tous les ${what} (${hits.length})</summary><div class="tx-examples">${all.map(chip).join('')}</div></details>` : ''}`;
+  };
+  // Une clé que plus aucun objet ne porte reste dans le vocabulaire (taxonomy.js) mais ne s'affiche pas : une entrée
+  // « 0 objet » n'apprend rien au lecteur. Elle réapparaît d'elle-même si un objet la reçoit à nouveau.
+  const hitsOf = key => ALL.filter(id => (ITEM_EFFECTS[id] || {}).keys && ITEM_EFFECTS[id].keys.includes(key));
+  function effectHtml(key){
+    const it = T.items[key]; const hits = hitsOf(key);
+    return `<div class="tx-entry" id="tx-itemEffects-${key}">
+      <div class="tx-entry-h">${taxIconHtml('itemEffects', key, { cls:'big', text: it.label })}<span class="tx-count">${hits.length} objet${hits.length>1?'s':''}</span></div>
+      <p class="tx-desc">${esc(it.desc)}</p>
+      ${examples(hits, 'objets')}
+    </div>`;
+  }
+  function statHtml(e){
+    const d = STAT_DEFS[e.term] || {};
+    const hits = [...e.items].filter(id => ALL.includes(id));
+    const label = d.label || e.term.charAt(0).toUpperCase() + e.term.slice(1);
+    const how = e.pct && e.flat ? 'en points ou en pourcentage' : e.pct ? 'en pourcentage' : 'en points';
+    return `<div class="tx-entry" id="tx-stat-${esc(e.term).replace(/[^a-z0-9]+/g, '-')}">
+      <div class="tx-entry-h"><span class="tx-icon big tx-stat-name">${esc(label)}</span><span class="tx-count">${hits.length} objet${hits.length>1?'s':''}</span></div>
+      <p class="tx-desc">${d.desc ? esc(d.desc) : `Statistique donnée par les objets (${how}) ; pas encore de définition rédigée.`}${d.wiki ? ` <a class="lex-wiki" href="${WIKI}${d.wiki}" target="_blank" rel="noopener">wiki ↗</a>` : ''}</p>
+      ${examples(hits, 'objets')}
+    </div>`;
+  }
+  const nav = [];
+  const cards = [];
+  // 1) Effets
+  nav.push(`<a href="#effets">Effets</a>`);
+  cards.push(`<div class="detail-card" id="effets"><h3 class="section-label">Effets des objets</h3><p style="margin:0 0 8px;">Ce qu'un objet fait au-delà de ses statistiques : passifs, actifs, consommables, classés par famille. Classement dérivé des fiches d'objets du wiki et des descriptions officielles <a class="ref pagenote" href="#sources">[1]</a> <a class="ref pagenote" href="#sources">[2]</a>.</p></div>`);
+  for(const g of T.groups){
+    const keys = g.keys.filter(k => hitsOf(k).length);
+    if(!keys.length) continue;   // groupe entièrement vide : ni carte ni entrée de sommaire
+    nav.push(`<a href="#tx-group-${g.id}">${esc(g.title)}</a>`);
+    cards.push(`<div class="detail-card" id="tx-group-${g.id}"><h3 class="section-label">${esc(g.title)}</h3><div class="tx-grid">${keys.map(effectHtml).join('')}</div></div>`);
+  }
+  const noEff = ALL.filter(id => !(ITEM_EFFECTS[id] && ITEM_EFFECTS[id].keys.length));
+  cards.push(`<div class="detail-card"><h3 class="section-label">Objets sans effet particulier (${noEff.length})</h3><p style="margin:0 0 6px;">Seulement des statistiques : composants, bottes de base, objets simples.</p>${examples(noEff, 'objets')}</div>`);
+  // 2) Statistiques
+  nav.push(`<a href="#statistiques">Statistiques</a>`);
+  cards.push(`<div class="detail-card" id="statistiques"><h3 class="section-label">Statistiques des objets</h3><p style="margin:0 0 8px;">Chaque statistique que les objets de la Faille donnent, ce qu'elle fait, et les objets qui la donnent. Termes lus dans les descriptions officielles <a class="ref pagenote" href="#sources">[2]</a>, définitions résumées du wiki <a class="ref pagenote" href="#sources">[3]</a>.</p></div>`);
+  const cats = [...ItemStats.CATEGORIES, ['autres', 'Autres', []]];
+  for(const [cid, title] of cats){
+    const rows = ItemStats.statList.filter(e => ItemStats.catOf(e.term) === cid && [...e.items].some(id => ALL.includes(id)));
+    if(!rows.length) continue;
+    nav.push(`<a href="#stat-group-${cid}">${esc(title)}</a>`);
+    cards.push(`<div class="detail-card" id="stat-group-${cid}"><h3 class="section-label">${esc(title)}</h3><div class="tx-grid">${rows.map(statHtml).join('')}</div></div>`);
+  }
+  // 3) Sources (numérotées, renvoyées depuis le texte)
+  const frDate = iso => iso ? new Date(iso + 'T00:00:00').toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+  const mech = id => GLOBAL_SOURCES.find(s => s.id === id) || {};
+  cards.push(`<div class="detail-card sources-card" id="sources"><h3 class="section-label">Sources</h3>
+    <div class="source-item"><div class="h"><span class="num">[1]</span><span class="label">Wiki League of Legends — Module:ItemData/data</span><span class="date">récupéré le ${frDate(mech('itemEffects').retrieved)} · CC BY-SA 3.0</span></div><div class="method">Table de données de tous les objets : effets nommés (passifs, actif, consommable) avec leurs mots-clés, modes où l'objet existe. Classement en familles par des règles fixes — mécanisme « itemEffects » sur la page Sources.</div><a class="url" href="https://wiki.leagueoflegends.com/en-us/Module:ItemData/data" target="_blank" rel="noopener">wiki.leagueoflegends.com/en-us/Module:ItemData/data</a></div>
+    <div class="source-item"><div class="h"><span class="num">[2]</span><span class="label">Data Dragon fr_FR ${esc(REFS_VERSION)} — item.json</span><span class="date">mécanisme « refs »</span></div><div class="method">Noms, prix, icônes, descriptions officielles des objets ; noms français des effets ; lignes « statistiques » d'où sont lus les termes de la partie Statistiques (bloc &lt;stats&gt; de chaque description).</div></div>
+    <div class="source-item"><div class="h"><span class="num">[3]</span><span class="label">Définitions des statistiques — résumés traduits du wiki League of Legends</span><span class="date">rédigées le ${frDate(mech('statDefs').retrieved)} · CC BY-SA 3.0</span></div><div class="method">Une définition courte par statistique, résumée de la page du wiki qui la définit (lien « wiki ↗ » sur chaque définition) — mécanisme « statDefs » sur la page Sources.</div></div>
+  </div>`);
+  document.getElementById('axisNav').innerHTML = nav.join('') + '<a href="#sources">Sources</a>';
+  document.getElementById('content').innerHTML = cards.join('');
+  function flash(){ const id = location.hash.slice(1); const t = id && document.getElementById(id); if(!t) return; t.scrollIntoView({ block:'center' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 2000); }
+  window.addEventListener('hashchange', flash); flash();
+})();
+</script>
+</body>
+</html>

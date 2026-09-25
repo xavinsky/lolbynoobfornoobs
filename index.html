@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="champion" data-page="list"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+
+<main>
+
+  <!-- ===== VUE LISTE ===== -->
+  <div id="view-list">
+    <nav class="roles" id="roleNav">
+      <button data-role="all">Tous <span class="cnt"></span></button>
+      <button data-role="top" class="on"><img class="role-icon" src="https://wiki.leagueoflegends.com/en-us/images/Top_icon.png" alt="">Top <span class="cnt"></span></button>
+      <button data-role="jgl"><img class="role-icon" src="https://wiki.leagueoflegends.com/en-us/images/Jungle_icon.png" alt="">Jungle <span class="cnt"></span></button>
+      <button data-role="mid"><img class="role-icon" src="https://wiki.leagueoflegends.com/en-us/images/Middle_icon.png" alt="">Mid <span class="cnt"></span></button>
+      <button data-role="adc"><img class="role-icon" src="https://wiki.leagueoflegends.com/en-us/images/Bottom_icon.png" alt="">Bot <span class="cnt"></span></button>
+      <button data-role="sup"><img class="role-icon" src="https://wiki.leagueoflegends.com/en-us/images/Support_icon.png" alt="">Sup <span class="cnt"></span></button>
+    </nav>
+
+    <div id="rosterBlock" hidden style="display:flex; flex-direction:column; gap:12px;"></div>
+
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Chercher…" autocomplete="off">
+      <div class="segmented" id="dmgFilter">
+        <button data-dmg="all" class="on">Tout</button>
+        <button data-dmg="AD">AD</button>
+        <button data-dmg="AP">AP</button>
+        <button data-dmg="Mixte">Mixte</button>
+      </div>
+      <div class="segmented" id="powerFilter" title="Courbe de puissance (rôle filtré, sinon rôle principal) — une phase compte si elle figure dans l'étiquette (Early-Mid vaut pour Early et pour Mid)">
+        <button data-power="all" class="on">Tout</button>
+        <button data-power="early">Early</button>
+        <button data-power="mid">Mid</button>
+        <button data-power="late">Late</button>
+        <button data-power="stable">Stable</button>
+      </div>
+      <select class="sortsel" id="sortSel">
+        <option value="pr">Trier : popularité (pick)</option>
+        <option value="ban">Trier : priorité ban</option>
+        <option value="wr">Trier : winrate</option>
+        <option value="tier">Trier : tier</option>
+        <option value="az">Trier : A → Z</option>
+      </select>
+      <div class="segmented" id="viewSel" title="Disposition de la liste">
+        <button data-view="table" class="on">▤ Tableau</button>
+        <button data-view="grid">▦ Grille</button>
+      </div>
+      <button type="button" class="mine-toggle" id="mineToggle" title="N'afficher que mes champions (marqués ★ dans la liste ou sur une fiche)">★ Mes champions</button>
+      <span class="spacer"></span>
+      <span class="count-badge" id="countBadge"></span>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <!-- ===== VUE DÉTAIL ===== -->
+  <div id="view-detail" hidden style="display:flex; flex-direction:column; gap:12px;">
+    <div class="champ-switch">
+      <input type="text" id="champSwitchInput" placeholder="Changer de champion…" autocomplete="off">
+      <div class="champ-switch-results" id="champSwitchResults" hidden></div>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+
+</main>
+
+<footer></footer>
+
+<script src="data/champions.js"></script>
+<script src="data/roles_tiers.js"></script>
+<script src="data/tips_video.js"></script>
+<script src="data/stats.js"></script>
+<script src="data/mechanics.js"></script>
+<script src="data/mechanics_fr.js"></script>
+<script src="data/refs.js"></script>
+<script src="taxonomy.js"></script>
+<script>
+(function(){
+  const ROLE_LABEL = {all:'Tous', top:'Top', jgl:'Jungle', mid:'Mid', adc:'Bot', sup:'Sup'};
+  // Icônes officielles Riot (wiki.leagueoflegends.com, catégorie "Role icons") — pas de version
+  // Data Dragon équivalente pour les rôles/lanes, contrairement aux champions/sorts.
+  const ROLE_ICON_FILE = {top:'Top_icon.png', jgl:'Jungle_icon.png', mid:'Middle_icon.png', adc:'Bottom_icon.png', sup:'Support_icon.png'};
+  function roleIconUrl(role){ return `https://wiki.leagueoflegends.com/en-us/images/${ROLE_ICON_FILE[role]}`; }
+  function roleLabelHtml(role){ return (ROLE_ICON_FILE[role] ? `<img class="role-icon" src="${roleIconUrl(role)}" alt="">` : '') + ROLE_LABEL[role]; }
+  // Icône seule (pas de texte "Top"/"Mid"...) pour les pastilles stat par rôle : le texte est
+  // redondant avec l'icône dans ce contexte, contrairement au menu de filtre par rôle.
+  function roleIconOnlyHtml(role){ return ROLE_ICON_FILE[role] ? `<img class="role-icon role-icon-lg" src="${roleIconUrl(role)}" alt="${ROLE_LABEL[role]}" title="${ROLE_LABEL[role]}">` : ''; }
+  function champIconUrl(ch){ return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${ch.ddid}.png`; }
+  const RECENT = new Set(['Locke','Zaahen','Yunara','Mel']);
+  const TIER_ORDER = Object.fromEntries(['S+','S','S-','A+','A','A-','B+','B','B-','C+','C','C-','D+','D','D-'].map((t, i) => [t, i]));
+  const LETTER_LABEL = {passive:'P', q:'Q', w:'W', e:'E', r:'R'};
+
+  // mode : 'list' (vue Liste) ou 'roster' (vue Mon roster) — même liste, même barre d'outils ; chaque
+  // mode garde son propre rôle filtré (listRole / rosterRole), `role` est celui du mode courant.
+  // view : 'table' (une ligne par champion, colonnes alignées) ou 'grid' (cartes, icône en grand) —
+  // préférence du navigateur, pas une donnée.
+  function loadView(){ try{ return localStorage.getItem('docListView') === 'grid' ? 'grid' : 'table'; }catch(e){ return 'table'; } }
+  function saveView(v){ try{ localStorage.setItem('docListView', v); }catch(e){} }
+  let state = { mode:'list', role:'top', listRole:'top', rosterRole:'top', view:loadView(), q:'', dmg:'all', power:'all', sort:'pr', mine:false, detailLane:null, versus:null };
+  function setRole(role){ state.role = role; if(state.mode === 'roster') state.rosterRole = role; else state.listRole = role; }
+
+  function dmgClass(dmg){ return dmg === 'Mixte' ? 'mixte' : dmg === 'AP' ? 'ap' : 'ad'; }
+  function dmgLabel(dmg){ return dmg; }
+  function rolesOf(ch){ return Object.keys(ch.roles); }
+  function primaryRole(ch){ return rolesOf(ch).reduce((best, role) => ch.roles[role].pr > ch.roles[best].pr ? role : best); }
+  // Toutes lignes confondues : PR = somme des PR par rôle (même champion compté dans chaque rôle où il
+  // est joué, sur la même base de parties — la somme donne son pick rate toutes lanes confondues) ;
+  // WR = moyenne des rôles pondérée par leur PR. Ban = une seule valeur : on bannit un champion, pas
+  // un rôle — la source la répète sur chaque rôle avec de petits écarts de moment de mesure, on garde
+  // celle du rôle principal (cf. sources.js, mécanisme "rolesCombined").
+  // ---------- Paliers affichés (WR / PR / Ban) : réglage de tout le site, dans l'en-tête (nav.js, AppNav.tiers) ----------
+  const RT = (typeof ROLES_TIERS !== 'undefined') ? ROLES_TIERS : null;
+  // Chiffres d'un champion à un rôle pour les paliers cochés : WR pondéré par les parties du champion, PR et Ban pondérés
+  // par les parties analysées du palier (mécanisme « rolesTiers ») ; sans fichier de paliers, la référence Émeraude+
+  // de champions.js (mécanisme « roles »), avec sa lettre de tier.
+  function roleStat(ch, role){
+    const ref = ch.roles[role]; if(!ref) return null;
+    if(!RT || !state.tiers.length) return { ...ref, src: 'ref' };
+    const per = (RT.champions[String(parseInt(ch.key, 10))] || {})[role] || {};
+    let g = 0, wr = 0, an = 0, pr = 0, br = 0;
+    for(const t of state.tiers){
+      const x = per[t], lane = (RT.tiers[t] || { lanes: {} }).lanes[role];
+      if(!x || !lane) continue;
+      g += x.games; wr += x.wr * x.games; an += lane.analysed; pr += x.pr * lane.analysed; br += x.br * lane.analysed;
+    }
+    if(!g) return { tier: null, wr: NaN, pr: 0, ban: NaN, games: 0, src: 'tiers', missing: true };
+    return { tier: null, wr: wr / g, pr: pr / an, ban: br / an, games: g, src: 'tiers' };
+  }
+  function tiersLabel(){ return AppNav.tiersLabel(); }
+  const fmtPct = v => isNaN(v) ? '—' : v.toFixed(1) + '%';
+  function combinedStatsFor(ch){
+    const rs = rolesOf(ch).map(role => roleStat(ch, role)).filter(r => r && !r.missing);
+    const totalPr = rs.reduce((s,r)=>s+r.pr, 0);
+    const wr = totalPr>0 ? rs.reduce((s,r)=>s+r.wr*r.pr,0)/totalPr : NaN;
+    return { wr, pr: totalPr, ban: banOf(ch) };
+  }
+  function banOf(ch){ const r = roleStat(ch, primaryRole(ch)); return r ? r.ban : NaN; }
+  function statsFor(ch){
+    if(state.role !== 'all') return roleStat(ch, state.role) || { tier: null, wr: NaN, pr: 0, ban: NaN };
+    return { tier: ch.roles[primaryRole(ch)].tier, ...combinedStatsFor(ch) };
+  }
+  function abilityVideoUrl(ch, letter){ return `https://lol.dyn.riotcdn.net/x/videos/champion-abilities/${ch.key}/ability_${ch.key}_${letter.toUpperCase()}1.mp4`; }
+  // Le nom de fichier de chaque icône (passif/Q/W/E/R) est stocké tel quel dans champions.js
+  // (ch.abilities[key].icon), copié depuis le champ image.full de Data Dragon — PAS reconstruit à
+  // partir d'un motif "ddid+lettre" : ce motif ne tient que pour une minorité de champions
+  // (ex. Ahri_Passive.png n'existe pas, le vrai fichier est Ahri_SoulEater2.png). Reconstruire le
+  // nom donnait une icône cassée (404/403) pour 109 passifs et 197 icônes de sort sur 173 champions.
+  function abilityIconUrl(ch, key){
+    const dir = key === 'passive' ? 'passive' : 'spell';
+    return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/${dir}/${ch.abilities[key].icon}`;
+  }
+  function champPageUrl(ch){ return `https://www.leagueoflegends.com/fr-fr/champions/${ch.id}/`; }
+  function findChamp(id){ return CHAMPIONS.find(c => c.id === id); }
+  function dmgTitle(ch){ return `Officiel Data Dragon — Physique ${ch.dmgRating.attack}/10 · Magie ${ch.dmgRating.magic}/10`; }
+  // "Dernière refonte de kit" = dernier changement affectant réellement les sorts (pas une simple
+  // retouche de ratios, cf. data/sources.js mécanisme "reworks") — sert à juger si un guide/une
+  // vidéo ancienne décrit encore le champion actuel.
+  function reworkLabel(ch){
+    if(!ch.lastKitRework){
+      if(ch.reworkHistory.length) return 'Kit jamais retravaillé';
+      return ch.releaseDate ? `Création ${frDate(ch.releaseDate)}` : 'Historique de refonte inconnu';
+    }
+    return `Kit changé le ${frDate(ch.lastKitRework.date)}`;
+  }
+  function reworkTitle(ch){
+    if(!ch.lastKitRework){
+      if(ch.reworkHistory.length) return 'Cette page ne liste que des mises à jour cosmétiques (texture/visuel) pour ce champion, jamais de vrai changement de sorts.';
+      return ch.releaseDate
+        ? "Ce champion n'apparaît pas dans l'historique de refontes consulté (wiki.leagueoflegends.com) : son kit n'a jamais changé depuis sa sortie, à cette date — la dernière modification connue est donc sa création."
+        : "Ce champion n'apparaît pas dans l'historique de refontes consulté (wiki.leagueoflegends.com) — probablement jamais retravaillé, non vérifié un par un.";
+    }
+    return `${ch.lastKitRework.type} — un ou plusieurs sorts ont vraiment changé d'effet à cette date (pas juste des chiffres). Si un guide/une vidéo date d'avant, il peut décrire un kit obsolète.`;
+  }
+  // Section dédiée (pas juste une pastille dans l'en-tête) : la date de dernière refonte de kit
+  // sert directement à juger, section suivante, si une vidéo de présentation est encore fidèle au
+  // champion actuel — d'où sa place juste avant "Vidéos de présentation". La date essentielle est
+  // dans le titre lui-même (visible même repliée, repliée par défaut) ; détail et date de sortie
+  // du champion dans le corps.
+  function reworkBlockHtml(ch){
+    const history = ch.reworkHistory || [];
+    const titleSuffix = ch.lastKitRework ? ` — ${frDate(ch.lastKitRework.date)}` : history.length ? ' — jamais retravaillé (cosmétique seulement)' : ch.releaseDate ? ` — création ${frDate(ch.releaseDate)}` : ' — historique inconnu';
+    const historyRows = history.length ? `<div class="rework-history">${history.map(h => `
+      <div class="rework-item${h.kitAffecting ? '' : ' cosmetic'}">
+        <div>
+          <span class="rework-date">${frDate(h.date)}</span>
+          <span class="rework-type">${h.type}</span>
+          ${h.kitAffecting ? '' : '<span class="rework-cosmetic-tag">cosmétique</span>'}
+          ${sourceLinkHtml(h.source)}
+        </div>
+      </div>`).join('')}</div>` : `<p class="rework-note">Ce champion n'apparaît pas dans l'historique de refontes consulté — son kit n'a donc jamais changé depuis sa création (aucune refonte recensée).</p>`;
+    const releaseRow = ch.releaseDate ? `<div class="rework-item release"><div><span class="rework-date">${frDate(ch.releaseDate)}</span><span class="rework-type">Sortie du champion</span></div></div>` : '';
+    return sectionHtml('sec-rework', `Mise à jour du personnage par Riot${titleSuffix}`, historyRows + releaseRow, null, true);
+  }
+  // Points forts/Contre = conseils officiels Riot copiés tels quels (Data Dragon allytips/enemytips,
+  // cf. data/sources.js, mécanisme "analysis").
+  // Jamais de texte non sourcé affiché comme un fait — et quand tout est vide on n'affiche même
+  // pas le bloc (pas de placeholder répété sur les fiches sans conseil).
+  // Conseils : officiels Riot (champions.js) ; à défaut, extraits des vidéos de présentation (data/tips_video.js, mécanisme « analysisVideo »).
+  function videoTips(ch){ const v = (typeof TIPS_VIDEO !== 'undefined') && TIPS_VIDEO[ch.id]; return v && ((v.strengths||[]).length || (v.counters||[]).length) && !(ch.strengths||[]).length && !(ch.counters||[]).length ? v : null; }
+  function tipsOf(ch){ const v = videoTips(ch); return v ? { strengths: (v.strengths||[]).map(x => x.text), counters: (v.counters||[]).map(x => x.text), video: v } : { strengths: ch.strengths||[], counters: ch.counters||[], video: null }; }
+  function hasAnalysis(ch){ const t = tipsOf(ch); return !!(t.strengths.length || t.counters.length); }
+  // Dans un conseil, chaque nom de sort du champion est remplacé par sa touche (P/Q/W/E/R) — le
+  // nom reste en infobulle. Noms doubles (ex. "Courroux de la reine/Sondeur explosif") : chaque
+  // moitié compte ; les plus longs d'abord pour qu'un nom inclus dans un autre ne le coupe pas.
+  function keyifyTip(ch, text){
+    const names = [];
+    for(const k of ['passive','q','w','e','r']){
+      const a = ch.abilities[k];
+      if(!a) continue;
+      a.name.split('/').map(n => n.trim()).filter(n => n.length >= 3).forEach(n => names.push({ n, k }));
+    }
+    if(!names.length) return text;
+    names.sort((x,y) => y.n.length - x.n.length);
+    const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Tolérance au pluriel mot à mot ("Lances astrales", "Charges explosives", "Tunnels").
+    const pat = n => n.split(/\s+/).map(esc).join('s?\\s+') + 's?';
+    names.forEach(x => { x.re = new RegExp('^' + pat(x.n) + '$', 'i'); });
+    const re = new RegExp(names.map(x => pat(x.n)).join('|'), 'gi');
+    return text.replace(re, m => {
+      const hit = names.find(x => x.re.test(m));
+      return `<kbd class="key" title="${hit.n}">${LETTER_LABEL[hit.k]}</kbd>`;
+    });
+  }
+  function tipsListHtml(ch, items, cls){ return `<ul class="field-list${cls ? ' ' + cls : ''}">${items.map(t => `<li>${keyifyTip(ch, t)}</li>`).join('')}</ul>`; }
+  function analysisBlockHtml(ch, extraStyle, collapsed){
+    if(!hasAnalysis(ch)) return '';
+    const t = tipsOf(ch), s = t.strengths, c = t.counters;
+    // Conseils tirés des vidéos : la mention d'origine va dans le bloc Sources de la fiche (renvoi [n]), pas dans le contenu.
+    const refV = field => refVideo(ch, t.video, field);
+    return `
+        <div class="champ-body"${extraStyle ? ` style="${extraStyle}"` : ''}${collapsed ? ' hidden' : ''}>
+          ${s.length ? `<div><span class="field-label menace" title="Conseils officiels Riot « en jouant avec » ce champion (Data Dragon) : ce qu'il cherche à faire, donc à quoi s'attendre en face">Points forts${refSpecific(ch, 'strengths')}</span>${tipsListHtml(ch, s)}</div>` : ''}
+          ${c.length ? `<div><span class="field-label contre" title="Conseils officiels Riot « en jouant contre » ce champion (Data Dragon)">Contre${refSpecific(ch, 'counters')}${refV('counters')}</span>${tipsListHtml(ch, c, 'contre')}</div>` : ''}
+        </div>`;
+  }
+  function frDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+  }
+  // Bloc de détail repliable : chaque section (Compétences, Vidéos, Sources...) peut être masquée
+  // sans perdre sa place — un chevron sur le titre bascule la visibilité du corps.
+  function sectionHtml(id, title, bodyHtml, extraClass, collapsed){
+    return `
+      <div class="detail-card${extraClass ? ' ' + extraClass : ''}">
+        <h3 class="section-label${collapsed ? ' collapsed' : ''}" data-toggle="${id}">${title}</h3>
+        <div class="section-body" id="${id}"${collapsed ? ' hidden' : ''}>${bodyHtml}</div>
+      </div>`;
+  }
+  function initCollapsibles(){
+    document.querySelectorAll('#detailContent .section-label[data-toggle]').forEach(h => {
+      if(h.dataset.bound) return;   // sections stats re-rendues au changement de rôle : ne pas doubler l'écouteur
+      h.dataset.bound = '1';
+      h.addEventListener('click', () => {
+        const body = document.getElementById(h.dataset.toggle);
+        if(!body) return;
+        body.hidden = !body.hidden;
+        h.classList.toggle('collapsed', body.hidden);
+      });
+    });
+  }
+  // Citation d'une entrée de refonte : la source est toujours un simple lien (patch notes ou
+  // annonce Riot), pas la peine d'un repli pour ça — juste "[source]" cliquable vers l'original.
+  function sourceLinkHtml(source){
+    if(!source) return '';
+    return `<a class="rework-source" href="${source.url}" target="_blank" rel="noopener" title="${source.label || source.url}">[source]</a>`;
+  }
+  const LANG_LABEL = { fr: 'FR', en: 'EN' };
+  // Une vidéo publiée avant la dernière refonte de kit décrit un kit qui n'existe plus — comparaison
+  // simple de dates entre videos[].published et lastKitRework.date (cf. data/sources.js, mécanisme
+  // "championVideos").
+  function formatDuration(sec){
+    if(!sec && sec !== 0) return '';
+    const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+    return `${m}:${String(s).padStart(2,'0')}`;
+  }
+  function videosBlockHtml(ch){
+    const videos = ch.videos || [];
+    if(!videos.length) return '';
+    const reworkDate = ch.lastKitRework ? ch.lastKitRework.date : null;
+    // Plus récentes en premier ; une vidéo sans date connue passe en dernier plutôt que de fausser
+    // l'ordre.
+    const sorted = videos.slice().sort((a, b) => (b.published || '') < (a.published || '') ? -1 : (b.published || '') > (a.published || '') ? 1 : 0);
+    const rows = sorted.map(v => {
+      // Marge de 30 jours : les vidéos officielles (Spotlight/Focus sur) sortent souvent juste
+      // avant la date de patch enregistrée pour une refonte (annonce anticipée du nouveau kit) —
+      // sans cette marge, ces vidéos qui décrivent pourtant bien le kit actuel seraient signalées
+      // à tort comme obsolètes.
+      const daysBefore = reworkDate && v.published ? (new Date(reworkDate) - new Date(v.published)) / 86400000 : 0;
+      const stale = daysBefore > 30;
+      return `
+        <div class="video-item">
+          <span class="pill pill-lang">${LANG_LABEL[v.lang] || v.lang.toUpperCase()}</span>
+          <span class="pill pill-kind ${v.kind}">${v.kind === 'official' ? 'Officiel' : 'Communautaire'}</span>
+          <a href="${v.url}" target="_blank" rel="noopener" class="video-label">${v.label}</a>
+          <span class="video-date">${v.published ? frDate(v.published) : 'date inconnue'}</span>
+          ${v.duration ? `<span class="video-duration">${formatDuration(v.duration)}</span>` : ''}
+          ${stale ? `<span class="video-stale" title="Publiée avant la dernière refonte de kit du ${frDate(reworkDate)} — peut décrire un kit qui n'existe plus">⚠ potentiellement obsolète</span>` : ''}
+        </div>`;
+    }).join('');
+    return sectionHtml('sec-videos', 'Vidéos de présentation', rows);
+  }
+  // ---------- Renvois de sources [n] (fiche détail) ----------
+  // Sur la fiche, un renvoi [n] n'apparaît QUE pour une source spécifique à CE champion
+  // (ch.sourceNotes — une donnée qui déroge au mécanisme global, ex. un rôle retrouvé via une autre
+  // page, des conseils officiels écartés). Les mécanismes globaux (identiques pour tous les
+  // champions) ne sont pas répétés fiche par fiche : ils sont expliqués une fois sur sources.html,
+  // sur une fiche-type annotée. REFS vaut null hors fiche détail : rien n'est affiché en vue liste.
+  let REFS = null;
+  const escHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function refSpecific(ch, field){
+    if(!REFS) return '';
+    return (ch.sourceNotes || []).filter(s => s.field === field).map(s => {
+      const key = s.field + '|' + s.note;
+      if(!REFS.has(key)) REFS.set(key, { n: REFS.size + 1, src: s });
+      const r = REFS.get(key);
+      return `<a class="ref" href="#" data-ref="${r.n}" title="${escHtml('Source spécifique — champ « ' + s.field + ' »')}">[${r.n}]</a>`;
+    }).join('');
+  }
+  // Renvoi [n] vers une source de fiche pour les conseils tirés des vidéos de présentation (data/tips_video.js).
+  function refVideo(ch, v, field){
+    if(!REFS || !v) return '';
+    const items = v[field] || []; if(!items.length) return '';
+    const vids = [...new Set(items.map(x => x.video))];
+    const key = 'video';   // une seule entrée de source pour Points forts et Contre
+    if(!REFS.has(key)){
+      const labels = vids.map(id => { const x = (ch.videos||[]).find(y => (y.url||'').includes(id)); return x ? `${x.channel} (${frDate(x.published)})` : id; });
+      REFS.set(key, { n: REFS.size + 1, src: { field: 'Points forts / Contre', retrieved: v.retrieved, url: 'https://www.youtube.com/watch?v=' + vids[0],
+        note: `Pas de conseils officiels Riot pour ce champion : conseils extraits des vidéos de présentation — ${labels.join(', ')} — mécanisme « analysisVideo » sur la page Sources (guides « 3 Minute » lus en premier, une phrase par passage, minute citée).${v.caveat ? ' ' + v.caveat : ''}` } });
+    }
+    const r = REFS.get(key);
+    return `<a class="ref" href="#" data-ref="${r.n}" title="Source des conseils">[${r.n}]</a>`;
+  }
+  function sourcesBlockHtml(ch){
+    const items = [...REFS.values()].map(r => {
+      const s = r.src;
+      return `
+      <div class="source-item specific" id="src-${r.n}">
+        <div class="h"><span class="num">[${r.n}]</span><span class="label">Spécifique à ${ch.name} — champ « ${escHtml(s.field)} »</span><span class="date">récupéré le ${frDate(s.retrieved)}</span></div>
+        <div class="method">${escHtml(s.note)}</div>
+        ${s.url ? `<a class="url" href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : ''}
+      </div>`;
+    }).join('');
+    const mechNote = `<p style="margin:${items ? '8px' : '0'} 0 0;">Mécaniques détaillées des sorts : notes de la fiche de chaque sort sur le wiki League of Legends (en, CC BY-SA 3.0 — lien « wiki ↗ » sous chaque sort), traduites par un modèle de traduction local, non relues — mécanismes « mechanics » et « mechanicsFr » sur la page Sources.</p>`;
+    const body = `${items}${mechNote}<p style="margin:8px 0 0;">Tout le reste de la fiche suit les mécanismes communs à tous les champions — <a class="backlink" href="sources.html">fiche-type annotée sur la page Sources ↗</a>.</p>`;
+    return sectionHtml('sec-sources', items ? 'Sources spécifiques à cette fiche' : 'Sources de cette fiche', body, 'sources-card', !!items);
+  }
+  // Clic sur un [n] : ouvre le bloc Sources (replié par défaut) et fait défiler jusqu'à l'entrée.
+  // stopPropagation : un [n] placé dans un titre de section ne doit pas replier cette section.
+  function initRefLinks(){
+    document.querySelectorAll('#detailContent a.ref').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        const body = document.getElementById('sec-sources');
+        const h = document.querySelector('#detailContent .section-label[data-toggle="sec-sources"]');
+        if(body) body.hidden = false;
+        if(h) h.classList.remove('collapsed');
+        const target = document.getElementById('src-' + a.dataset.ref);
+        if(!target) return;
+        target.scrollIntoView({ behavior:'smooth', block:'center' });
+        target.classList.add('flash');
+        setTimeout(() => target.classList.remove('flash'), 1500);
+      });
+    });
+  }
+
+  // ---------- Routing ----------
+  function route(){
+    const hash = window.location.hash;
+    const m = hash.match(/^#\/champ\/(.+)$/);
+    if(m){
+      const ch = findChamp(decodeURIComponent(m[1]));
+      if(ch){ renderDetail(ch); showView('detail'); return; }
+    }
+    // "#/champ" sans identifiant : vue Champion vide, avec la recherche prête — destination du menu
+    // "Champion" quand aucun champion n'a encore été consulté.
+    if(hash === '#/champ' || hash === '#/champ/'){
+      document.getElementById('detailContent').innerHTML = '<div class="detail-card"><p style="margin:0;">Choisis un champion dans la zone de recherche ci-dessus, ou dans la <a class="backlink" href="#/list">Liste</a>.</p></div>';
+      showView('detail');
+      document.getElementById('champSwitchInput').focus();
+      return;
+    }
+    showView(hash === '#/roster' && !isPublicEdition() ? 'roster' : 'list');
+  }
+  // Liste et Mon roster partagent le même conteneur (#view-list) : même liste de champions, même
+  // barre d'outils ; le mode ajoute le bloc roster et retire « Tous » du filtre de rôle.
+  function showView(v){
+    const listy = v === 'list' || v === 'roster';
+    document.getElementById('view-list').hidden = !listy;
+    document.getElementById('view-detail').hidden = v !== 'detail';
+    if(listy){
+      state.mode = v;
+      state.role = v === 'roster' ? state.rosterRole : state.listRole;
+      renderList();
+    }
+    updateNav(v);
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange', route);
+
+  // ---------- Footer persistant (Liste / Détail / Sources), toujours visible ----------
+  // "Détail" retient le dernier champion consulté (localStorage, survit à un aller-retour sur
+  // sources.html) pour rester une destination utile même quand on n'est pas déjà sur une fiche.
+  function lastChampId(){ try{ return localStorage.getItem('docLastChamp'); }catch(e){ return null; } }
+  function setLastChampId(id){ try{ localStorage.setItem('docLastChamp', id); }catch(e){} }
+  // En-tête et menus : nav.js (AppNav) — le sous-menu « Détail » pointe vers le dernier champion consulté
+  // (localStorage, écrit ci-dessus) ; les liens vers les autres pages portent `?last=<id>`.
+  function updateNav(mode){ AppNav.render('champion', mode); }
+
+  // ---------- Recherche de champion dans la vue détail (changer de champion sans repasser par la liste) ----------
+  (function(){
+    const input = document.getElementById('champSwitchInput');
+    const results = document.getElementById('champSwitchResults');
+    function renderResults(){
+      const q = input.value.trim().toLowerCase();
+      if(!q){ results.hidden = true; results.innerHTML = ''; return; }
+      const matches = CHAMPIONS.filter(c => c.name.toLowerCase().includes(q)).slice(0, 8);
+      if(!matches.length){ results.innerHTML = '<div class="champ-switch-empty">Aucun champion</div>'; results.hidden = false; return; }
+      results.innerHTML = matches.map(c => `<button type="button" data-id="${c.id}">${c.name}</button>`).join('');
+      results.hidden = false;
+    }
+    input.addEventListener('input', renderResults);
+    input.addEventListener('focus', renderResults);
+    results.addEventListener('mousedown', e => {
+      const btn = e.target.closest('button[data-id]');
+      if(!btn) return;
+      input.value = '';
+      results.hidden = true;
+      window.location.hash = '#/champ/' + encodeURIComponent(btn.dataset.id);
+    });
+    document.addEventListener('click', e => {
+      if(!e.target.closest('.champ-switch')) results.hidden = true;
+    });
+  })();
+
+  // ---------- Vues Liste et Mon roster ----------
+  function listLane(ch){ return state.role === 'all' ? defaultLane(ch) : state.role; }
+  function rolePillsHtml(ch){
+    return rolesOf(ch).sort((x,y)=>ch.roles[y].pr-ch.roles[x].pr).map(role => {
+      const rs = roleStat(ch, role);
+      const cur = role === state.role;
+      const prHtml = cur ? `<b>${fmtPct(rs.pr)}</b>` : fmtPct(rs.pr);
+      return `<span class="pill pill-role${cur ? ' cur' : ''}" title="${escHtml(tiersLabel())}${rs.missing ? ' — pas assez de parties à ces paliers' : ''}">${roleIconOnlyHtml(role)} ${rs.tier ? `<b>${rs.tier}</b> ` : ''}<span class="n">PR ${prHtml}</span>${starHtml(ch, role)}</span>`;
+    }).join('');
+  }
+  function champNameHtml(ch, withIcon){
+    return `<button class="champ-name" data-id="${ch.id}">${withIcon ? `<img class="champ-icon" src="${champIconUrl(ch)}" alt="">` : ''}${ch.name}</button>${RECENT.has(ch.name) ? '<span class="newbadge">Récent</span>' : ''}`;
+  }
+  function dmgPillHtml(ch){ return `<span class="pill pill-dmg ${dmgClass(ch.damageType)}" title="${dmgTitle(ch)}">${dmgLabel(ch.damageType)}</span>`; }
+  // Trois segments : en grille (carte étroite) le Ban passe seul à la ligne plutôt que de couper au milieu.
+  function statLineHtml(ch){ const r = combinedStatsFor(ch); return `<span class="stat" title="${escHtml(tiersLabel())}"><span>WR ${fmtPct(r.wr)} · PR ${fmtPct(r.pr)}</span><span class="ban">Ban ${fmtPct(r.ban)}</span></span>`; }
+  const toggleBtnHtml = '<button class="champ-toggle" aria-expanded="false" title="Voir Points forts / Contre">▸ détails</button>';
+  // Vue tableau : une ligne par champion, cellules dans l'ordre des colonnes de l'en-tête (grille CSS,
+  // cf. .tbl .champ-head) — une cellule vide garde la colonne quand le champion n'a pas de conseil.
+  // La classe Riot (Combattant, Mage…) n'est pas en liste : étiquette officielle trop large pour aider
+  // au premier coup d'œil ; elle reste sur la fiche.
+  function tableRowEl(ch, idx){
+    const el = document.createElement('div');
+    el.className = 'champ';
+    el.innerHTML = `
+      <div class="champ-head">
+        <span class="champ-rank">${idx+1}</span>
+        <span class="c-name">${champNameHtml(ch, true)}</span>
+        ${dmgPillHtml(ch)}
+        <span class="c-power">${powerTagHtml(ch, listLane(ch))}</span>
+        <span class="c-roles">${rolePillsHtml(ch)}</span>
+        ${statLineHtml(ch)}
+        ${hasAnalysis(ch) ? toggleBtnHtml : '<span></span>'}
+      </div>
+      ${analysisBlockHtml(ch, null, true)}`;
+    return el;
+  }
+  // Vue grille : une carte (icône en grand, infos dessous) suivie, si le champion a des conseils,
+  // d'une ligne de détail Points forts/Contre pleine largeur, masquée — élément frère de la carte, pas
+  // enfant, pour pouvoir occuper toute la rangée de la grille (cf. #results.grid).
+  function gridCardEls(ch, idx){
+    const card = document.createElement('div');
+    card.className = 'champ gcard';
+    card.innerHTML = `
+      <span class="champ-rank">${idx+1}</span>
+      <img class="champ-icon" src="${champIconUrl(ch)}" alt="">
+      <span class="c-name">${champNameHtml(ch, false)}</span>
+      <span class="gline">${dmgPillHtml(ch)}${powerTagHtml(ch, listLane(ch))}</span>
+      <span class="gline c-roles">${rolePillsHtml(ch)}</span>
+      ${statLineHtml(ch)}
+      ${hasAnalysis(ch) ? toggleBtnHtml : ''}`;
+    const els = [card];
+    if(hasAnalysis(ch)){
+      const det = document.createElement('div');
+      det.className = 'champ gdetail';
+      det.hidden = true;
+      det.innerHTML = `<div class="gdetail-h"><img class="champ-icon" src="${champIconUrl(ch)}" alt="">${ch.name}<span class="muted small">— Points forts / Contre</span></div>${analysisBlockHtml(ch, null, false)}`;
+      els.push(det);
+    }
+    return els;
+  }
+  function renderList(){
+    const roster = state.mode === 'roster';
+    const nav = document.getElementById('roleNav');
+    [...nav.querySelectorAll('button')].forEach(b=>{
+      // Le roster se construit rôle par rôle : pas de « Tous » dans cette vue.
+      if(b.dataset.role === 'all') b.hidden = roster;
+      b.classList.toggle('on', b.dataset.role === state.role);
+      const c = b.dataset.role === 'all' ? CHAMPIONS.length : CHAMPIONS.filter(ch => ch.roles[b.dataset.role]).length;
+      b.querySelector('.cnt').textContent = '('+c+')';
+    });
+    renderRosterBlock();
+
+    let list = state.role === 'all' ? CHAMPIONS.slice() : CHAMPIONS.filter(ch => ch.roles[state.role]);
+    if(state.q.trim()){
+      const q = state.q.trim().toLowerCase();
+      list = list.filter(ch => ch.name.toLowerCase().includes(q));
+    }
+    if(state.dmg !== 'all'){
+      list = list.filter(ch => dmgLabel(ch.damageType) === state.dmg);
+    }
+    // Courbe de puissance du rôle affiché : « Early » retient toute étiquette qui contient la phase
+    // (Early, Early-Mid…), « Stable » les champions sans phase dominante ; sans stats pour ce rôle, exclu.
+    if(state.power !== 'all'){
+      list = list.filter(ch => { const pc = powerCurve(laneStats(ch, listLane(ch))); return pc && (state.power === 'stable' ? !pc.tags.length : pc.tags.includes(state.power)); });
+    }
+    if(state.mine) list = list.filter(ch => masteredLanes(ch.id).some(l => state.role === 'all' || l === state.role));
+    document.getElementById('mineToggle').classList.toggle('on', state.mine);
+    [...document.getElementById('viewSel').querySelectorAll('button')].forEach(b => b.classList.toggle('on', b.dataset.view === state.view));
+    list = list.slice().sort((a,b)=>{
+      const ra = statsFor(a), rb = statsFor(b);
+      if(state.sort === 'pr') return rb.pr - ra.pr;
+      if(state.sort === 'ban') return rb.ban - ra.ban;
+      if(state.sort === 'wr') return rb.wr - ra.wr;
+      if(state.sort === 'tier') return (ra.tier || rb.tier) ? (TIER_ORDER[ra.tier] ?? 9) - (TIER_ORDER[rb.tier] ?? 9) : (isNaN(rb.wr) ? -1 : rb.wr) - (isNaN(ra.wr) ? -1 : ra.wr);
+      if(state.sort === 'az') return a.name.localeCompare(b.name);
+      return 0;
+    });
+
+    document.getElementById('countBadge').textContent = list.length + ' champion' + (list.length>1?'s':'') + ' — ' + ROLE_LABEL[state.role];
+
+    const wrap = document.getElementById('results');
+    wrap.classList.toggle('grid', state.view === 'grid');
+    wrap.classList.toggle('tbl', state.view === 'table');
+    wrap.innerHTML = '';
+    if(!list.length){ wrap.innerHTML = '<div class="empty">Aucun champion ne correspond à ce filtre.</div>'; return; }
+    const frag = document.createDocumentFragment();
+    if(state.view === 'table'){
+      const hdr = document.createElement('div');
+      hdr.className = 'champ-hdr';
+      hdr.innerHTML = '<span>#</span><span>Champion</span><span>Dégâts</span><span>Courbe</span><span>Rôles · tier · PR · ★</span><span>Toutes lignes</span><span></span>';
+      frag.appendChild(hdr);
+    }
+    list.forEach((ch, idx) => {
+      if(state.view === 'grid') gridCardEls(ch, idx).forEach(el => frag.appendChild(el));
+      else frag.appendChild(tableRowEl(ch, idx));
+    });
+    wrap.appendChild(frag);
+    initStars(wrap);
+    wrap.querySelectorAll('button.champ-name').forEach(b => {
+      b.addEventListener('click', () => { window.location.hash = '#/champ/' + encodeURIComponent(b.dataset.id); });
+    });
+    // Points forts/Contre repliés par défaut (147 cartes × ~5 puces sinon) — bouton « détails » par champion.
+    // Tableau : le bloc est dans la ligne ; grille : c'est l'élément qui suit la carte.
+    wrap.querySelectorAll('button.champ-toggle').forEach(b => {
+      b.addEventListener('click', () => {
+        const card = b.closest('.champ');
+        const body = card.classList.contains('gcard') ? card.nextElementSibling : card.querySelector('.champ-body');
+        if(!body) return;
+        body.hidden = !body.hidden;
+        b.setAttribute('aria-expanded', String(!body.hidden));
+        b.textContent = body.hidden ? '▸ détails' : '▾ détails';
+      });
+    });
+  }
+
+  document.getElementById('roleNav').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-role]');
+    if(!btn) return;
+    setRole(btn.dataset.role);
+    renderList();
+  });
+  document.getElementById('viewSel').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-view]');
+    if(!btn) return;
+    state.view = btn.dataset.view;
+    saveView(state.view);
+    renderList();
+  });
+  document.getElementById('dmgFilter').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-dmg]');
+    if(!btn) return;
+    state.dmg = btn.dataset.dmg;
+    [...document.getElementById('dmgFilter').querySelectorAll('button')].forEach(b => b.classList.toggle('on', b === btn));
+    renderList();
+  });
+  document.getElementById('powerFilter').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-power]');
+    if(!btn) return;
+    state.power = btn.dataset.power;
+    [...document.getElementById('powerFilter').querySelectorAll('button')].forEach(b => b.classList.toggle('on', b === btn));
+    renderList();
+  });
+  document.getElementById('search').addEventListener('input', e => { state.q = e.target.value; renderList(); });
+  state.tiers = AppNav.tiers();
+  window.addEventListener('tierschange', () => { state.tiers = AppNav.tiers(); if(!document.getElementById('view-list').hidden) renderList(); else { const ch = state.detailId && findChamp(state.detailId); if(ch) renderDetail(ch); } });
+  document.getElementById('sortSel').addEventListener('change', e => { state.sort = e.target.value; renderList(); });
+
+  // ---------- Vue détail ----------
+  // ---------- Stats par rôle (lolalytics, cf. sources.js "stats") : courbe de puissance, build, runes, sorts, matchups ----------
+  const LANE_ORDER = ['top','jgl','mid','adc','sup'];
+  const DD = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img`;
+  // Données générées, chargées à part (data/stats.js, data/mechanics.js) et jointes par id de champion.
+  function statsOf(ch){ return CHAMPION_STATS[ch.id] || null; }
+  function laneStats(ch, lane){ const s = statsOf(ch); return (s && s.byLane[lane]) || null; }
+  function mechOf(ch, key){ const m = ABILITY_MECHANICS[ch.id]; return (m && m[key]) || null; }
+  // Traductions (data/mechanics_fr.js) : absentes tant que le fichier n'existe pas ou qu'une note n'est pas traduite.
+  function mechFrOf(ch, key){ const F = (typeof ABILITY_MECHANICS_FR !== 'undefined') && ABILITY_MECHANICS_FR[ch.id]; return (F && F[key]) || null; }
+  function defaultLane(ch){
+    const s = statsOf(ch), lanes = s ? Object.keys(s.byLane) : [];
+    if(state.role !== 'all' && lanes.includes(state.role)) return state.role;
+    return lanes.sort((a,b)=>s.byLane[b].pr - s.byLane[a].pr)[0] || null;
+  }
+  // Significativité (≈95 %) : |WR − 50| > 98/√n — cf. sources.js, mécanisme "matchups".
+  function sigMargin(n){ return 98 / Math.sqrt(Math.max(1, n)); }
+  function isSig(wr, n){ return Math.abs(wr - 50) > sigMargin(n); }
+  const pct = x => x.toFixed(1) + '%';
+  const fmtN = n => n.toLocaleString('fr-FR');
+
+  // Courbe de puissance — dérivée de gameLength (règle : cf. sources.js, mécanisme "powerCurve").
+  function powerCurve(ls){
+    if(!ls || !ls.gameLength) return null;
+    const b = ls.gameLength.map(x => ({ ...x, wr: x.games ? 100 * x.wins / x.games : null }));
+    const tot = b.reduce((s,x)=>s+x.games,0), win = b.reduce((s,x)=>s+x.wins,0);
+    const overall = tot ? 100 * win / tot : 50;
+    const phase = idx => { const g = idx.reduce((s,i)=>s+b[i].games,0), w = idx.reduce((s,i)=>s+b[i].wins,0); return { n: g, wr: g ? 100*w/g : null }; };
+    const phases = { early: phase([1,2]), mid: phase([3,4]), late: phase([5,6]) };
+    const tags = Object.entries(phases).filter(([,p]) => p.n >= 500 && p.wr !== null && p.wr - overall >= 1).map(([k]) => k);
+    const LABEL = { early:'Early', mid:'Mid', late:'Late' };
+    return { overall, buckets: b.map(x => ({ ...x, rel: x.wr === null ? null : x.wr / overall })), phases, tags, label: tags.length ? tags.map(t=>LABEL[t]).join('-') : 'Stable', cls: tags.length ? tags.join('-') : 'stable' };
+  }
+  function powerTagHtml(ch, lane){
+    const pc = powerCurve(laneStats(ch, lane));
+    if(!pc) return '';
+    return `<span class="pill pill-power ${pc.cls}" title="Courbe de puissance (${ROLE_LABEL[lane]}) : phases où le taux de victoire dépasse la moyenne du champion d'au moins 1 point — Early 15-25 min, Mid 25-35, Late 35+ (cf. page Sources)">${pc.label}</span>`;
+  }
+  function powerCurveHtml(ch, lane){
+    const ls = laneStats(ch, lane), pc = powerCurve(ls);
+    if(!pc) return '<p class="muted">Pas de données pour ce rôle.</p>';
+    const W = 560, H = 170, padL = 38, padR = 12, padT = 14, padB = 28;
+    const xs = i => padL + i * (W - padL - padR) / 6;
+    const rels = pc.buckets.map(b => b.rel).filter(r => r !== null);
+    const lo = Math.min(0.9, ...rels), hi = Math.max(1.1, ...rels);
+    const ys = r => padT + (hi - r) * (H - padT - padB) / (hi - lo);
+    const pts = pc.buckets.map((b,i) => b.rel === null ? null : `${xs(i).toFixed(1)},${ys(b.rel).toFixed(1)}`).filter(Boolean).join(' ');
+    const dots = pc.buckets.map((b,i) => b.rel === null ? '' : `<circle cx="${xs(i).toFixed(1)}" cy="${ys(b.rel).toFixed(1)}" r="3.5"><title>${b.label} min : WR ${pct(b.wr)} sur ${fmtN(b.games)} parties (×${b.rel.toFixed(2)} vs moyenne)</title></circle>`).join('');
+    const labels = pc.buckets.map((b,i) => `<text x="${xs(i).toFixed(1)}" y="${H-8}" text-anchor="middle">${b.label}</text>`).join('');
+    const yl = [lo, 1, hi].map(v => `<text x="${padL-6}" y="${(ys(v)+4).toFixed(1)}" text-anchor="end">${v.toFixed(2)}</text>`).join('');
+    const ph = p => p.wr === null ? '—' : pct(p.wr);
+    return `
+      <div class="power-head"><span class="pill pill-power ${pc.cls}">${pc.label}</span>
+        <span class="muted">WR moyen ${pct(pc.overall)} sur ${fmtN(ls.n)} parties (${ROLE_LABEL[lane]}, Émeraude+, patch ${statsOf(ch).patch}) — Early ${ph(pc.phases.early)} · Mid ${ph(pc.phases.mid)} · Late ${ph(pc.phases.late)}</span></div>
+      <svg class="power-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Puissance relative selon la durée de la partie">
+        <line x1="${padL}" x2="${W-padR}" y1="${ys(1).toFixed(1)}" y2="${ys(1).toFixed(1)}" class="ref"/>
+        <polyline points="${pts}" class="curve"/>${dots}${labels}${yl}
+      </svg>
+      <p class="muted small">Puissance relative = taux de victoire dans la tranche de durée ÷ taux de victoire moyen du champion (1 = sa moyenne). Survoler un point pour le nombre de parties. Pas de « spike » niveau/objet ici : cette source ne le mesure pas.</p>`;
+  }
+
+  // ---- Chips objets / runes / sorts (noms et icônes : data/refs.js, Data Dragon) ----
+  // Liens vers la page Bases (objet, rune, sort) : portent le dernier champion consulté (`?last=`), comme les menus.
+  function basesUrl(anchor){ return 'bases.html' + AppNav.params() + '#' + anchor; }
+  function itemHtml(id, sub){
+    const it = ITEMS[id]; if(!it) return `<span class="item-chip">#${id}</span>`;
+    return `<a class="item-chip" href="${basesUrl('item-' + id)}" title="${escHtml(it.name)} — ${it.gold} PO"><img src="${DD}/item/${it.icon}" alt=""><span class="nm">${escHtml(it.name)}</span>${sub ? `<span class="sub">${sub}</span>` : ''}</a>`;
+  }
+  function runeHtml(id, big){
+    const r = RUNES[id];
+    if(!r){ const s = SHARDS[id]; return s ? `<span class="rune-chip shard" title="${escHtml(s.shortDesc||'')}">${escHtml(s.name)}</span>` : `#${id}`; }
+    return `<a class="rune-chip${big?' keystone':''}" href="${basesUrl('rune-' + id)}" title="${escHtml(r.shortDesc.replace(/<[^>]+>/g,''))}"><img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" alt=""><span class="nm">${escHtml(r.name)}</span></a>`;
+  }
+  function spellHtml(id){
+    const s = SPELLS[id]; if(!s) return `#${id}`;
+    return `<a class="spell-chip" href="${basesUrl('spell-' + id)}" title="${escHtml(s.description)}"><img src="${DD}/spell/${s.icon}" alt=""><span class="nm">${escHtml(s.name)}</span></a>`;
+  }
+  const kbdSeq = s => s.split('').map(c => `<kbd class="key">${c}</kbd>`).join('');
+  const nwr = (n, wr) => `<span class="nwr">WR ${pct(wr)} · ${fmtN(n)} p.</span>`;
+  function buildHtml(ch, lane){
+    const ls = laneStats(ch, lane); if(!ls) return '';
+    const it = ls.items;
+    const nextRow = k => it.next[k].map(x => itemHtml(x.id, `${pct(x.wr)} · ${fmtN(x.n)} p.`)).join('');
+    return `
+      <div class="build-row"><span class="build-label">Départ</span>${it.start.set.map(id => itemHtml(id)).join('')}${nwr(it.start.n, it.start.wr)}</div>
+      <div class="build-row"><span class="build-label">Cœur (le plus joué)</span>${it.core.set.map(id => itemHtml(id)).join('<span class="arrow">→</span>')}${nwr(it.core.n, it.core.wr)}</div>
+      <div class="build-row"><span class="build-label">Cœur (meilleur WR)</span>${it.coreWin.set.map(id => itemHtml(id)).join('<span class="arrow">→</span>')}${nwr(it.coreWin.n, it.coreWin.wr)}</div>
+      <div class="build-row"><span class="build-label">Bottes</span>${it.boots.map(x => itemHtml(x.id, `${pct(x.pr)} des parties · WR ${pct(x.wr)}`)).join('')}</div>
+      <div class="build-row"><span class="build-label">4ᵉ objet</span>${nextRow('item4')}</div>
+      <div class="build-row"><span class="build-label">5ᵉ objet</span>${nextRow('item5')}</div>
+      <div class="build-row"><span class="build-label">6ᵉ objet</span>${nextRow('item6')}</div>
+      <div class="build-row"><span class="build-label">Les plus achetés</span>${it.popular.map(x => itemHtml(x.id, `${pct(x.pr)} · WR ${pct(x.wr)}`)).join('')}</div>
+      <p class="muted small">Pourcentages = part des parties de ${escHtml(ch.name)} (${ROLE_LABEL[lane]}) où l'objet est acheté, et taux de victoire de ces parties. Un WR élevé sur peu de parties ne prouve rien (cf. Matchups pour la règle de significativité).</p>`;
+  }
+  function runesHtml(ch, lane){
+    const ls = laneStats(ch, lane); if(!ls) return '';
+    const page = (p, title) => {
+      const pri = RUNES[p.set.pri[0]], sec = RUNES[p.set.sec[0]];
+      return `<div class="rune-page"><div class="rune-title">${title} ${nwr(p.n, p.wr)}</div>
+        <div class="rune-cols">
+          <div><div class="rune-style">${pri ? escHtml(RUNE_STYLES[pri.style].name) : ''}</div>${runeHtml(p.set.pri[0], true)}${p.set.pri.slice(1).map(id => runeHtml(id)).join('')}</div>
+          <div><div class="rune-style">${sec ? escHtml(RUNE_STYLES[sec.style].name) : ''}</div>${p.set.sec.map(id => runeHtml(id)).join('')}</div>
+          <div><div class="rune-style">Fragments</div>${p.set.mod.map(id => runeHtml(id)).join('')}</div>
+        </div></div>`;
+    };
+    return page(ls.runes.pick, 'Page la plus jouée') + page(ls.runes.win, 'Page au meilleur WR');
+  }
+  function spellsSkillsHtml(ch, lane){
+    const ls = laneStats(ch, lane); if(!ls) return '';
+    const sp = ls.spells, sk = ls.skills;
+    return `
+      <div class="build-row"><span class="build-label">Sorts d'invocateur</span>${sp.all.map(x => `<span class="spell-pair${x.pr>=50?' main':''}">${x.id.map(spellHtml).join('')}<span class="sub">${pct(x.pr)} · WR ${pct(x.wr)}</span></span>`).join('')}</div>
+      <div class="build-row"><span class="build-label">Priorité des sorts</span>${sk.priority.id.split('').map(c=>`<kbd class="key">${c}</kbd>`).join('<span class="arrow">›</span>')}${nwr(sk.priority.n, sk.priority.wr)}</div>
+      <div class="build-row"><span class="build-label">Ordre (15 niveaux)</span><span class="kseq">${kbdSeq(sk.order.id)}</span>${nwr(sk.order.n, sk.order.wr)}</div>`;
+  }
+  function champById(cid){ return CHAMPIONS.find(c => parseInt(c.key,10) === cid); }
+  function champChip(c){ return c ? `<a class="champ-chip" href="#/champ/${encodeURIComponent(c.id)}"><img class="champ-icon" src="${champIconUrl(c)}" alt="">${escHtml(c.name)}</a>` : '?'; }
+  const wrCls = r => r.sig ? (r.wr > 50 ? ' good' : ' bad') : '';
+  function matchupsHtml(ch, lane){
+    const ls = laneStats(ch, lane); if(!ls) return '';
+    const rows = ls.matchups.map(m => ({ ...m, c: champById(m.cid), sig: isSig(m.wr, m.n) })).filter(m => m.c).sort((a,b)=>b.wr-a.wr);
+    const sig = rows.filter(m => m.sig);
+    const line = m => `<div>${champChip(m.c)} <span class="num${wrCls(m)}">${pct(m.wr)}</span> <span class="muted">${fmtN(m.n)} p.</span></div>`;
+    return `
+      <div class="matchup-summary">
+        <div><span class="field-label menace">Le plus dur pour ${escHtml(ch.name)}</span>${sig.slice(-5).reverse().map(line).join('') || '<span class="muted">aucun écart significatif</span>'}</div>
+        <div><span class="field-label contre">Le plus facile</span>${sig.slice(0,5).map(line).join('') || '<span class="muted">aucun écart significatif</span>'}</div></div>
+      <p class="muted small">WR de ${escHtml(ch.name)} contre chaque adversaire au même rôle (${ROLE_LABEL[lane]}). Grisé = écart non significatif (|WR − 50| ≤ 98/√n, seuil ≈95 %) : trop peu de parties pour conclure. « ± » = marge de cet échantillon.</p>
+      <div class="table-wrap"><table class="matchup-table"><thead><tr><th>Adversaire</th><th>WR</th><th>Parties</th><th>±</th></tr></thead><tbody>${rows.map(m => `<tr class="${m.sig ? '' : 'nosig'}"><td>${champChip(m.c)}</td><td class="num${wrCls(m)}">${pct(m.wr)}</td><td class="num">${fmtN(m.n)}</td><td class="num muted">${sigMargin(m.n).toFixed(1)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+
+  // ---------- Mes champions ★ (sélection manuelle, une étoile par champion ET par rôle, localStorage) ----------
+  // Entrées "id:rôle" (ex. "malphite:top") : un champion peut être maîtrisé à un rôle et pas à un autre.
+  function mastered(){ try{ return JSON.parse(localStorage.getItem('docMastered')||'[]').filter(x => typeof x === 'string' && x.includes(':')); }catch(e){ return []; } }
+  function masteredLanes(id){ return mastered().filter(x => x.startsWith(id + ':')).map(x => x.split(':')[1]); }
+  function isMastered(id, lane){ return mastered().includes(id + ':' + lane); }
+  function toggleMastered(id, lane){ const m = mastered(); const k = id + ':' + lane; const i = m.indexOf(k); if(i>=0) m.splice(i,1); else m.push(k); try{ localStorage.setItem('docMastered', JSON.stringify(m)); }catch(e){} }
+  // <span> (pas <button>) : l'étoile vit à l'intérieur de la pastille de rôle, elle-même un bouton sur la fiche.
+  function starHtml(ch, lane){ if(isPublicEdition()) return ''; const on = isMastered(ch.id, lane); return `<span class="star${on?' on':''}" role="button" tabindex="0" data-star="${ch.id}" data-lane="${lane}" title="${on ? 'Je joue ' + ch.name + ' en ' + ROLE_LABEL[lane] + ' — cliquer pour retirer' : 'Marquer : je joue ' + ch.name + ' en ' + ROLE_LABEL[lane]}">★</span>`; }
+  function initStars(root, ch){
+    root.querySelectorAll('[data-star]').forEach(s => s.addEventListener('click', e => {
+      e.stopPropagation(); e.preventDefault();
+      toggleMastered(s.dataset.star, s.dataset.lane); s.classList.toggle('on');
+      const c = findChamp(s.dataset.star);
+      s.title = s.classList.contains('on') ? `Je joue ${c.name} en ${ROLE_LABEL[s.dataset.lane]} — cliquer pour retirer` : `Marquer : je joue ${c.name} en ${ROLE_LABEL[s.dataset.lane]}`;
+      if(state.mode === 'roster' && !document.getElementById('view-list').hidden) renderRosterBlock();
+      if(ch){ const box = document.getElementById('statsSections'); if(box){ box.innerHTML = statsSectionsHtml(ch, state.detailLane); initCollapsibles(); initStatsSections(ch); } }
+    }));
+  }
+  // WR de `c` contre `opp` au rôle `lane`, lu dans les matchups de `c` (null si trop peu de parties ensemble).
+  function wrVs(c, lane, opp){ const ls = laneStats(c, lane); if(!ls) return null; const m = ls.matchups.find(x => x.cid === parseInt(opp.key,10)); return m ? { wr: m.wr, n: m.n, sig: isSig(m.wr, m.n) } : null; }
+  function counterPickHtml(opp, lane){
+    const all = CHAMPIONS.filter(c => c.id !== opp.id && laneStats(c, lane)).map(c => ({ c, r: wrVs(c, lane, opp) })).filter(x => x.r).sort((a,b)=>b.r.wr-a.r.wr);
+    const sig = all.filter(x => x.r.sig && x.r.wr > 50), mine = all.filter(x => isMastered(x.c.id, lane));
+    const line = x => `<div>${champChip(x.c)} <span class="num${wrCls(x.r)}">${pct(x.r.wr)}</span> <span class="muted">${fmtN(x.r.n)} p.${x.r.sig?'':' (non significatif)'}</span></div>`;
+    return `
+      <div class="matchup-summary">
+        <div><span class="field-label contre">Mes champions ★ face à ${escHtml(opp.name)}</span>${mine.length ? mine.slice(0,6).map(line).join('') : '<span class="muted">Aucun champion ★ joué à ce rôle — cliquer ★ sur une fiche ou dans la liste.</span>'}</div>
+        <div><span class="field-label menace">Les meilleurs contre lui (tous)</span>${sig.slice(0,6).map(line).join('') || '<span class="muted">aucun écart significatif</span>'}</div></div>
+      <p class="muted small">WR de chaque champion contre ${escHtml(opp.name)} au même rôle, lu dans sa propre fiche de matchups. Même règle de significativité que les Matchups.</p>
+      <details class="more"><summary>Tous les champions jouables face à ${escHtml(opp.name)} (${ROLE_LABEL[lane]}) — ${all.length}</summary><div class="table-wrap"><table class="matchup-table"><thead><tr><th>Champion</th><th>WR contre lui</th><th>Parties</th></tr></thead><tbody>${all.map(x=>`<tr class="${x.r.sig?'':'nosig'}"><td>${champChip(x.c)}${isMastered(x.c.id, lane)?' <span class="star on small">★</span>':''}</td><td class="num${wrCls(x.r)}">${pct(x.r.wr)}</td><td class="num">${fmtN(x.r.n)}</td></tr>`).join('')}</tbody></table></div></details>`;
+  }
+  function versusHtml(ch, lane, opp){
+    if(!opp) return '<p class="muted" style="margin:0">Choisir l\'adversaire en face pour voir le matchup et ce qu\'il construit d\'habitude.</p>';
+    const r = wrVs(ch, lane, opp), ols = laneStats(opp, lane);
+    return `
+      <div class="versus-head">${champChip(ch)} <span class="vs">contre</span> ${champChip(opp)} ${r ? `<span class="num${wrCls(r)}">${pct(r.wr)}</span> <span class="muted">${fmtN(r.n)} parties${r.sig?'':' — non significatif'}</span>` : '<span class="muted">pas assez de parties ensemble</span>'}</div>
+      ${ols ? `<div class="build-row"><span class="build-label">Il construit (cœur)</span>${ols.items.core.set.map(id=>itemHtml(id)).join('<span class="arrow">→</span>')}</div>
+      <div class="build-row"><span class="build-label">Sa rune clé</span>${runeHtml(ols.runes.pick.set.pri[0], true)}</div>
+      <div class="build-row"><span class="build-label">Ses sorts</span>${ols.spells.pick.ids.map(spellHtml).join('')}</div>
+      <div class="build-row"><span class="build-label">Sa courbe</span>${powerTagHtml(opp, lane)}</div>
+      <p class="muted small">Ce que l'adversaire construit d'habitude à ce rôle — pas une adaptation à ce matchup précis (voir BACKLOG 2.2).</p>` : '<p class="muted">Pas de stats pour cet adversaire à ce rôle.</p>'}`;
+  }
+  function statsSectionsHtml(ch, lane){
+    if(!statsOf(ch) || !lane) return '';
+    const opp = state.versus ? findChamp(state.versus) : null;
+    const power = sectionHtml('sec-power', `Courbe de puissance — ${ROLE_LABEL[lane]}`, powerCurveHtml(ch, lane));
+    if(isPublicEdition()) return power;  // édition publique : la fiche s'arrête à la courbe de puissance
+    return power +
+      sectionHtml('sec-versus', 'Face à… — matchup et build adverse', `<div class="champ-switch versus"><input type="text" id="versusInput" placeholder="Adversaire en face…" autocomplete="off" value="${opp?escHtml(opp.name):''}"><div class="champ-switch-results" id="versusResults" hidden></div></div><div id="versusBody">${versusHtml(ch, lane, opp)}</div>`) +
+      sectionHtml('sec-build', 'Objets', buildHtml(ch, lane)) +
+      sectionHtml('sec-runes', 'Runes', runesHtml(ch, lane)) +
+      sectionHtml('sec-spells', "Sorts d'invocateur et ordre des sorts", spellsSkillsHtml(ch, lane)) +
+      sectionHtml('sec-matchups', 'Matchups — qui le bat, qui il bat', matchupsHtml(ch, lane), null, true) +
+      sectionHtml('sec-counter', `Contre-pick — que jouer face à ${escHtml(ch.name)}`, counterPickHtml(ch, lane), null, true);
+  }
+  function initStatsSections(ch){
+    const box = document.getElementById('statsSections'); if(!box) return;
+    document.querySelectorAll('#detailContent .roleline button[data-lane]').forEach(b => {
+      if(b.dataset.bound) return; b.dataset.bound = '1';
+      b.addEventListener('click', () => {
+        state.detailLane = b.dataset.lane;
+        document.querySelectorAll('#detailContent .roleline [data-lane]').forEach(x => x.classList.toggle('cur', x.dataset.lane === state.detailLane));
+        // L'étiquette de courbe de l'en-tête suit le rôle sélectionné, comme les sections stats.
+        const pb = document.getElementById('powerBadge'); if(pb) pb.innerHTML = powerTagHtml(ch, state.detailLane);
+        box.innerHTML = statsSectionsHtml(ch, state.detailLane); initCollapsibles(); initStatsSections(ch);
+      });
+    });
+    const input = document.getElementById('versusInput'), results = document.getElementById('versusResults');
+    if(!input) return;
+    const lane = state.detailLane;
+    const render = () => {
+      const q = input.value.trim().toLowerCase(); if(!q){ results.hidden = true; return; }
+      const ms = CHAMPIONS.filter(c => c.id !== ch.id && laneStats(c, lane) && c.name.toLowerCase().includes(q)).slice(0,8);
+      results.innerHTML = ms.length ? ms.map(c => `<button type="button" data-id="${c.id}">${escHtml(c.name)}</button>`).join('') : '<div class="champ-switch-empty">Aucun champion à ce rôle</div>'; results.hidden = false;
+    };
+    input.addEventListener('input', render); input.addEventListener('focus', render);
+    results.addEventListener('mousedown', e => { const b = e.target.closest('button[data-id]'); if(!b) return; state.versus = b.dataset.id; input.value = findChamp(state.versus).name; results.hidden = true; document.getElementById('versusBody').innerHTML = versusHtml(ch, lane, findChamp(state.versus)); });
+    document.addEventListener('click', e => { if(!e.target.closest('.champ-switch.versus')) results.hidden = true; });
+  }
+  // ---------- Vue Mon roster : mes champions ★ par rôle, puis recommandations pour le rôle choisi ----------
+  function renderRosterBlock(){
+    const box = document.getElementById('rosterBlock');
+    box.hidden = state.mode !== 'roster';
+    if(box.hidden) return;
+    box.innerHTML = myChampsCardHtml() + rosterCardHtml();
+    initRosterBlock();
+  }
+  function myChampsCardHtml(){
+    const rows = LANE_ORDER.map(lane => {
+      const mine = mastered().filter(x => x.endsWith(':' + lane)).map(x => findChamp(x.split(':')[0])).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name));
+      const chips = mine.map(c => `<span class="champ-chip"><a href="#/champ/${encodeURIComponent(c.id)}"><img class="champ-icon" src="${champIconUrl(c)}" alt="">${escHtml(c.name)}</a><span class="chip-x" role="button" tabindex="0" data-rm="${c.id}" data-lane="${lane}" title="Retirer ${escHtml(c.name)} de mes champions ${ROLE_LABEL[lane]}">×</span></span>`).join('');
+      return `<div class="roster-lane${lane === state.role ? ' cur' : ''}">
+        <button type="button" class="lane-btn${lane === state.role ? ' on' : ''}" data-rlane="${lane}" title="Recommandations et champions de ce rôle">${roleLabelHtml(lane)}<span class="muted" style="margin-left:6px;">${mine.length}</span></button>
+        <div class="chip-wrap">${chips || '<span class="muted small">aucun</span>'}</div>
+        <div class="champ-switch roster-add"><input type="text" placeholder="Ajouter un champion ${ROLE_LABEL[lane]}…" autocomplete="off" data-addlane="${lane}"><div class="champ-switch-results" hidden></div></div>
+      </div>`;
+    }).join('');
+    return `<div class="detail-card"><h3 class="section-label">Mes champions ★ — par rôle</h3>
+      <p class="muted small" style="margin:2px 0 8px;">Les champions que je joue, rôle par rôle : ajouter par le champ de saisie ou l'étoile ★ de la liste ci-dessous, retirer par la croix. Mémorisé dans ce navigateur, pas une donnée. Ils servent aux recommandations ci-dessous et au contre-pick sur chaque fiche adverse.</p>
+      <div class="roster-lanes">${rows}</div></div>`;
+  }
+  function initRosterBlock(){
+    const box = document.getElementById('rosterBlock');
+    box.querySelectorAll('button[data-rlane]').forEach(b => b.addEventListener('click', () => { setRole(b.dataset.rlane); renderList(); }));
+    box.querySelectorAll('.chip-x[data-rm]').forEach(x => x.addEventListener('click', () => { toggleMastered(x.dataset.rm, x.dataset.lane); renderList(); }));
+    box.querySelectorAll('input[data-addlane]').forEach(input => {
+      const lane = input.dataset.addlane;
+      champAutocomplete(input, input.nextElementSibling, c => c.roles[lane] && !isMastered(c.id, lane), c => { toggleMastered(c.id, lane); renderList(); }, 'Aucun champion à ajouter à ce rôle');
+    });
+  }
+  // Saisie avec suggestions : `accept` filtre les champions proposés, `onPick` reçoit le champion choisi.
+  function champAutocomplete(input, results, accept, onPick, emptyText){
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      if(!q){ results.hidden = true; results.innerHTML = ''; return; }
+      const ms = CHAMPIONS.filter(c => accept(c) && c.name.toLowerCase().includes(q)).slice(0, 8);
+      results.innerHTML = ms.length ? ms.map(c => `<button type="button" data-id="${c.id}">${escHtml(c.name)}</button>`).join('') : `<div class="champ-switch-empty">${emptyText || 'Aucun champion'}</div>`;
+      results.hidden = false;
+    };
+    input.addEventListener('input', render);
+    input.addEventListener('focus', render);
+    input.addEventListener('blur', () => setTimeout(() => { results.hidden = true; }, 150));
+    results.addEventListener('mousedown', e => {
+      const b = e.target.closest('button[data-id]'); if(!b) return;
+      e.preventDefault(); input.value = ''; results.hidden = true;
+      onPick(findChamp(b.dataset.id));
+    });
+  }
+  // Recommandations pour le rôle choisi : adversaires mal couverts par mes champions ★, champions à
+  // apprendre (règle dans data/sources.js, mécanisme "matchups").
+  function rosterCardHtml(){
+    const lane = state.role;
+    const card = body => `<div class="detail-card roster-card" id="rosterCard">${body}</div>`;
+    const mine = mastered().filter(x => x.endsWith(':' + lane)).map(x => findChamp(x.split(':')[0])).filter(c => c && laneStats(c, lane));
+    if(!mine.length) return card(`<h3 class="section-label">Recommandations — ${ROLE_LABEL[lane]}</h3><p class="muted" style="margin:0">Aucun champion ★ pour ce rôle : en ajouter un ci-dessus (ou par l'étoile de la liste) pour voir les adversaires mal couverts et quoi apprendre.</p>`);
+    const opps = CHAMPIONS.filter(c => c.roles[lane] && (roleStat(c, lane) || {}).pr >= 1 && laneStats(c, lane));
+    const weak = [], unknown = [];
+    for(const o of opps){
+      const best = mine.map(c => wrVs(c, lane, o)).filter(r => r && r.sig).sort((a,b)=>b.wr-a.wr)[0];
+      if(!best) unknown.push(o); else if(best.wr < 50) weak.push(o);
+    }
+    const cand = CHAMPIONS.filter(c => laneStats(c, lane) && !isMastered(c.id, lane)).map(c => {
+      let score = 0; const fixes = [];
+      for(const o of weak){ const r = wrVs(c, lane, o); if(r && r.sig && r.wr > 50){ score += (r.wr - 50) * ((roleStat(o, lane) || {}).pr || 0); fixes.push(o); } }
+      return { c, score, fixes };
+    }).filter(x => x.fixes.length).sort((a,b)=>b.score-a.score).slice(0,5);
+    return card(`<h3 class="section-label">Recommandations — ${ROLE_LABEL[lane]} <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">avec ${mine.map(c=>escHtml(c.name)).join(', ')}</span></h3>
+      <div class="champ-body" style="border-top:none;padding-top:0;margin-top:4px;">
+        <div><span class="field-label menace" title="Adversaires joués à ce rôle (PR ≥ 1 %) contre lesquels le meilleur de mes champions a un WR < 50 % (écart significatif)">Mal couverts (${weak.length}/${opps.length})</span>${weak.length ? `<div class="chip-wrap">${weak.map(champChip).join('')}</div>` : '<span class="muted">aucun</span>'}${unknown.length ? `<div class="muted small">+ ${unknown.length} sans écart significatif (pas assez de parties)</div>` : ''}</div>
+        <div><span class="field-label contre" title="Score = Σ (WR contre l'adversaire − 50) × PR de l'adversaire, sur les adversaires mal couverts, écarts significatifs seulement">À apprendre</span>${cand.length ? cand.map(x => `<div>${champChip(x.c)} <span class="muted">couvre ${x.fixes.slice(0,4).map(o=>escHtml(o.name)).join(', ')}${x.fixes.length>4?` +${x.fixes.length-4}`:''}</span></div>`).join('') : '<span class="muted">rien à suggérer</span>'}</div>
+      </div>`);
+  }
+  // ---------- Mécaniques d'un sort (wiki, cf. sources.js "mechanics") ----------
+  const MECH_T = { targeting:{Direction:'Direction',Auto:'Automatique',Unit:'Unité ciblée',Location:'Zone au sol',Vector:'Vecteur',Passive:'Passif',Varied:'Variable'}, affects:{Enemies:'Ennemis',Allies:'Alliés',Self:'Soi-même',Champions:'Champions',Minions:'Sbires',Monsters:'Monstres',Structures:'Structures'}, damageType:{Physical:'Physiques',Magic:'Magiques',True:'Bruts',Mixed:'Mixtes',Special:'Spécial'}, spellShield:{True:'Bloqué',False:'Non bloqué',Special:'Partiel / spécial'} };
+  const mechTr = (f, v) => v.split(/\s*[\/,]\s*/).map(x => (MECH_T[f] && MECH_T[f][x]) || x).join(' / ');
+  // Rangée d'icônes de classification (taxonomy.js) : ciblage · cibles · dégâts · portée · effets · contres.
+  // Chaque icône mène à son explication sur la page Compétences ; l'infobulle la résume.
+  // Champion à croissance permanente : au moins un sort accumule des charges définitives (mécanisme abilityTaxonomy, clé « stacking »).
+  function growthPillHtml(ch){
+    const keys = ['passive','q','w','e','r'].filter(k => { const m = mechOf(ch, k); return m && m.tax && (m.tax.effects || []).includes('stacking'); });
+    if(!keys.length) return '';
+    const it = TAXONOMY.effects.items.stacking;
+    return `<a class="pill pill-growth" href="competences.html#tx-effects-stacking" title="${escHtml(it.label + ' — ' + it.desc)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${it.icon.svg}</svg>Croissance permanente : ${keys.map(k => LETTER_LABEL[k]).join(', ')}</a>`;
+  }
+  function taxRowHtml(t){
+    if(!t) return '';
+    const g = [];
+    g.push((t.targeting || []).map(k => taxIconHtml('targeting', k)).join(''));
+    g.push((t.affects || []).map(k => taxIconHtml('affects', k)).join(''));
+    g.push((t.damage || []).map(k => taxIconHtml('damage', k)).join(''));
+    const rb = rangeBucket(t.targetRange); if(rb) g.push(taxIconHtml('range', rb, { cls:'pill pill-range', text: TAXONOMY.range.items[rb].short + (t.targetRange < 99999 ? ' · ' + t.targetRange : '') }));
+    const order = [].concat(...TAXONOMY.effects.groups.map(x => x.keys));
+    g.push((t.effects || []).slice().sort((a,b) => order.indexOf(a) - order.indexOf(b)).map(k => taxIconHtml('effects', k)).join(''));
+    g.push(['projectile','spellShield','grounded','knockdown','parry'].filter(k => t[k] === 'true').map(k => taxIconHtml('interaction', k)).join(''));
+    return `<div class="tx-row">${g.filter(Boolean).map(x => `<span class="tx-group">${x}</span>`).join('<span class="tx-sep"></span>')}<a class="tx-help" href="competences.html" title="Explication de toutes les icônes">?</a></div>`;
+  }
+  // Précisions sur un sort dites dans une vidéo de présentation (data/tips_video.js, mécanisme « analysisVideo »), avec la minute.
+  function videoNotesHtml(ch, notes){
+    if(!notes.length) return '';
+    const link = x => { const v = (ch.videos||[]).find(y => (y.url||'').includes(x.video)); const [mm, ss] = (x.t||'0:00').split(':'); return `<a href="https://www.youtube.com/watch?v=${x.video}&t=${parseInt(mm,10)*60+parseInt(ss||'0',10)}s" target="_blank" rel="noopener" title="${escHtml(v ? v.channel : 'vidéo')}">${escHtml(v ? v.channel : 'vidéo')} · ${escHtml(x.t||'')}</a>`; };
+    return `<div class="mech-video"><b>Précisions de la vidéo de présentation</b><ul>${notes.map(x => `<li>${escHtml(x.text)} <span class="muted small">(${link(x)})</span></li>`).join('')}</ul></div>`;
+  }
+  function mechanicsHtml(m){
+    const props = [];
+    if(!m.tax){
+      if(m.targeting) props.push(['Ciblage', mechTr('targeting', m.targeting)]);
+      if(m.affects) props.push(['Affecte', mechTr('affects', m.affects)]);
+      if(m.damageType) props.push(['Dégâts', mechTr('damageType', m.damageType)]);
+      if(m.spellShield) props.push(['Bouclier de sort', mechTr('spellShield', m.spellShield)]);
+    }
+    if(m.castTime) props.push(['Incantation', m.castTime + (/^[\d.]+$/.test(m.castTime) ? ' s' : '')]);
+    if(m.cooldown) props.push(['Récupération', m.cooldown + ' s']);
+    if(m.range && !(m.tax && m.tax.targetRange)) props.push(['Portée', m.range]);   // la tranche de portée (rangée d'icônes) porte déjà la valeur
+    // Notes : en français quand la traduction existe, sinon en anglais avec la mention « non traduit » ; le texte anglais reste dans data/mechanics.js (lien « wiki ↗ » vers la fiche du sort).
+    const fr = m.fr || {};
+    const frNotes = fr.notes || [], frInter = fr.interrupts || [];
+    const interList = (m.interrupts||[]).map((i, idx) => i.interrupts ? { en: i.interrupts, fr: frInter[idx], kind: i.kind } : null).filter(Boolean);
+    const noteList = (m.notes||[]).map((n, idx) => ({ en: n, fr: frNotes[idx] }));
+    const translated = noteList.filter(x => x.fr).length + interList.filter(x => x.fr).length, total = noteList.length + interList.length;
+    const kindLabel = k => k === 'channel' ? 'Canalisation' : "Temps d'incantation";
+    const li = (x, lang) => `<li>${x.kind ? `<b>${kindLabel(x.kind)} interrompu par :</b> ` : ''}${escHtml(lang === 'fr' && x.fr ? x.fr : x.en)}${lang === 'fr' && !x.fr ? ' <span class="muted small">(non traduit)</span>' : ''}</li>`;
+    const wikiUrl = m.wikiTitle ? 'https://wiki.leagueoflegends.com/en-us/' + encodeURIComponent(m.wikiTitle.replace(/ /g, '_')) : null;
+    const body = `<ul>${[...interList, ...noteList].map(x => li(x, 'fr')).join('')}</ul>`;
+    const wikiLink = wikiUrl ? ` <a class="mech-wiki" href="${wikiUrl}" target="_blank" rel="noopener" title="Fiche du sort sur le wiki (en) — texte d'origine des notes">wiki ↗</a>` : '';
+    return `${taxRowHtml(m.tax)}<div class="mech-props">${props.map(([k,v]) => `<span class="mech-prop"><b>${k}</b> ${escHtml(v)}</span>`).join('')}</div>
+      ${total ? `<details class="mech-notes"><summary>Mécaniques détaillées (${total})${translated < total ? ` — ${total - translated} non traduite${total - translated > 1 ? 's' : ''}` : ''}${wikiLink}</summary>${body}</details>` : ''}`;
+  }
+
+  function renderDetail(ch){
+    state.detailId = ch.id;
+    setLastChampId(ch.id);
+    REFS = new Map();
+    state.detailLane = defaultLane(ch);
+    if(state.versus === ch.id) state.versus = null;
+    const dc = dmgClass(ch.damageType), dl = dmgLabel(ch.damageType);
+    // Construit au moment de l'insertion dans le gabarit (pas avant) pour que les renvois [n]
+    // soient numérotés dans l'ordre où on les lit sur la fiche.
+    // Pastilles de rôle = sélecteur du rôle affiché par les sections stats (courbe, build, runes, matchups…).
+    const rolelineHtml = () => rolesOf(ch).sort((x,y)=>ch.roles[y].pr-ch.roles[x].pr).map(role => {
+      const rs = roleStat(ch, role);
+      const selectable = !!laneStats(ch, role);
+      return `<${selectable ? 'button type="button" data-lane="' + role + '"' : 'span'} class="pill pill-role${role === state.detailLane ? ' cur' : ''}${selectable ? ' selectable' : ''}" title="${escHtml(tiersLabel())}${selectable ? ' — cliquer : afficher les stats de ce rôle' : ''}${rs.missing ? ' — pas assez de parties à ces paliers' : ''}">${roleLabelHtml(role)} ${rs.tier ? `<b>${rs.tier}</b> ` : ''}<span class="n">WR ${fmtPct(rs.wr)} · PR ${fmtPct(rs.pr)}</span>${refSpecific(ch, 'roles.' + role)}${starHtml(ch, role)}</${selectable ? 'button' : 'span'}>`;
+    }).join('');
+    const abilityKeys = ['passive','q','w','e','r'];
+    const rows = abilityKeys.map(k => {
+      const a = ch.abilities[k];
+      if(!a) return '';
+      return `
+        <div class="ability-row" data-key="${k}">
+          <img src="${abilityIconUrl(ch,k)}" alt="">
+          <span class="letter">${LETTER_LABEL[k]}</span>
+          <span class="aname">${a.name}</span>
+        </div>`;
+    }).join('');
+
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-card">
+        <div class="detail-top">
+          <img class="detail-icon" src="${champIconUrl(ch)}" alt="">
+          <div>
+            <h2>${ch.name}</h2>
+            <div class="detail-title">${ch.title}</div>
+            <div class="detail-badges">
+              <span class="pill pill-dmg ${dc}" title="${dmgTitle(ch)}">${dl}</span>
+              <span id="powerBadge" style="display:contents;">${powerTagHtml(ch, state.detailLane)}</span>
+              ${growthPillHtml(ch)}
+              <span class="champ-class" style="align-self:center;">${ch.class}</span>
+              <span class="pill pill-ban" title="Taux de ban du champion (une seule valeur : on bannit un champion, pas un rôle — cf. page Sources)">Ban ${fmtPct(banOf(ch))}</span>
+              <span class="pill pill-rework" title="${reworkTitle(ch)}">${reworkLabel(ch)}</span>
+            </div>
+          </div>
+          <span class="spacer"></span>
+          <a class="champ-link" href="${champPageUrl(ch)}" target="_blank" rel="noopener">Fiche officielle ↗</a>
+        </div>
+        <div class="roleline" style="margin-top:12px;">${rolelineHtml()}</div>
+        ${analysisBlockHtml(ch, 'margin-top:12px;')}
+      </div>
+
+      ${sectionHtml('sec-abilities', "Compétences — cliquer pour voir l'animation", `
+        <div class="abilities-layout">
+          <div class="abilities-left">
+            <div class="abilities-list" id="abilitiesGrid">${rows}</div>
+            <div class="ability-desc-full" id="abilityDescFull"></div>
+            <div class="ability-mech" id="abilityMech"></div>
+          </div>
+          <div class="video-stage" id="videoStage">
+            <!-- muted : les clips Riot ont une bande-son forte et la vidéo démarre seule à l'ouverture de la fiche —
+                 le son est coupé par défaut, l'icône son des contrôles le rend ; le choix tient le temps de la fiche. -->
+            <video id="abilityVideo" controls muted></video>
+            <div class="caption" id="videoCaption"></div>
+          </div>
+        </div>
+      `)}
+
+      ${videosBlockHtml(ch)}
+
+      ${reworkBlockHtml(ch)}
+
+      <div id="statsSections" style="display:flex; flex-direction:column; gap:12px;">${statsSectionsHtml(ch, state.detailLane)}</div>
+
+      ${sourcesBlockHtml(ch)}
+
+      <p class="report-line">${AppNav.reportLink({ page: 'fiche', champion: ch.name })}</p>
+    `;
+
+    function selectAbility(k){
+      const a = ch.abilities[k];
+      document.querySelectorAll('.ability-row').forEach(r => r.classList.toggle('active', r.dataset.key === k));
+      const letter = k === 'passive' ? 'p' : k;
+      const video = document.getElementById('abilityVideo');
+      video.style.opacity = '0';
+      video.addEventListener('loadeddata', () => { video.style.opacity = '1'; }, { once:true });
+      video.src = abilityVideoUrl(ch, letter);
+      video.play().catch(()=>{});
+      document.getElementById('videoCaption').textContent = `${LETTER_LABEL[k]} — ${a.name}`;
+      document.getElementById('abilityDescFull').innerHTML = `<div class="h"><span class="letter">${LETTER_LABEL[k]}</span><span class="name">${a.name}</span></div><div class="desc">${a.description}</div>`;
+      const mech = mechOf(ch, k);
+      const vn = ((typeof TIPS_VIDEO !== 'undefined' && TIPS_VIDEO[ch.id] && TIPS_VIDEO[ch.id].mechanics) || []).filter(x => x.key === k);
+      document.getElementById('abilityMech').innerHTML = (mech ? mechanicsHtml({ ...mech, fr: mechFrOf(ch, k) }) : '') + videoNotesHtml(ch, vn);
+    }
+    document.getElementById('abilitiesGrid').querySelectorAll('.ability-row').forEach(row => {
+      row.addEventListener('click', () => selectAbility(row.dataset.key));
+    });
+    // R préselectionné : la vidéo/description sont visibles immédiatement, pas besoin de cliquer
+    // pour comprendre ce que fait la fiche.
+    selectAbility(abilityKeys.find(k => ch.abilities[k] && k === 'r') || abilityKeys.find(k => ch.abilities[k]));
+
+    initCollapsibles();
+    initRefLinks();
+    initStars(document.getElementById('detailContent'), ch);
+    initStatsSections(ch);
+    REFS = null;
+  }
+
+  document.getElementById('mineToggle').addEventListener('click', () => { state.mine = !state.mine; renderList(); });
+  if(isPublicEdition()) document.getElementById('mineToggle').hidden = true;
+
+  route();
+})();
+</script>
+</body>
+</html>

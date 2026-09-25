@@ -1,0 +1,19 @@
+name: Signaler une erreur
+description: Un chiffre, une explication, une traduction ou un détail faux ou peu clair sur le site.
+title: "[Erreur] "
+labels: ["bug"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page concernée
+      description: Adresse de la page, ou champion et duel.
+    validations:
+      required: false
+  - type: textarea
+    id: remarque
+    attributes:
+      label: Ce qui ne va pas, et ce qui serait juste
+      description: Une source ou une vidéo aide beaucoup, mais n'est pas obligatoire.
+    validations:
+      required: true

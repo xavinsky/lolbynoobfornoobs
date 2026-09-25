@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>À propos — LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="about" data-page="merci"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+<script>
+  // Sous-menu : la sous-page courante suit l'ancre (#merci, #contribuer, #apropos).
+  (function(){ const f = () => { const h = location.hash.slice(1); if(['merci','contribuer','apropos'].includes(h)) AppNav.render('about', h); }; window.addEventListener('hashchange', f); f(); })();
+</script>
+
+<main>
+  <div class="detail-card">
+    <div class="segmented lang-ctl" role="group" aria-label="Langue de cette page / Page language / 이 페이지의 언어" style="max-width:230px; margin:0 0 12px;">
+      <button type="button" data-lang="fr">FR</button>
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ko">한국어</button>
+    </div>
+    <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;" data-i18n="introTitle"></h2>
+    <p style="margin:6px 0 0;" data-i18n="introText"></p>
+  </div>
+
+  <h3 class="section-label mock-title" id="merci" data-i18n="merciH"></h3>
+  <div class="detail-card sources-card">
+    <p class="credits-thanks" data-i18n="merciThanks"></p>
+    <div style="overflow-x:auto;"><table class="credits-table">
+      <thead><tr><th data-i18n="colSource"></th><th data-i18n="colVolume"></th><th data-i18n="colRefs"></th><th data-i18n="colWhat"></th></tr></thead>
+      <tbody id="creditsTable"></tbody>
+    </table></div>
+  </div>
+
+  <h3 class="section-label mock-title" id="contribuer" data-i18n="contribH"></h3>
+  <div class="detail-card sources-card">
+    <p class="credits-thanks" data-i18n="contribThanks"></p>
+    <p style="margin:0 0 8px;" data-i18n="contribIntro"></p>
+    <ul style="margin:0 0 10px; padding-left:18px;" id="contribList"></ul>
+    <p style="margin:0 0 6px;" id="contribTally"></p>
+    <p style="margin:0 0 6px;" id="contribIssues"></p>
+    <p class="muted small" style="margin:0;" data-i18n="contribReportHint"></p>
+  </div>
+
+  <h3 class="section-label mock-title" id="apropos" data-i18n="aproposH"></h3>
+  <div class="detail-card sources-card">
+    <h3 class="section-label" data-i18n="whoH"></h3>
+    <p class="noob-warning" data-i18n="whoWarning"></p>
+    <p style="margin:0 0 8px;" data-i18n="whoText"></p>
+    <p style="margin:0 0 8px;">— <a href="https://xavinsky.github.io/" target="_blank" rel="noopener">xavinsky</a></p>
+    <h3 class="section-label" data-i18n="indepH"></h3>
+    <p style="margin:0 0 8px;" data-i18n="indepText"></p>
+    <p style="margin:0 0 8px;" lang="en">LoL by Noob for Noobs was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+    <h3 class="section-label" data-i18n="licH"></h3>
+    <ul style="margin:0; padding-left:18px;" id="licList"></ul>
+  </div>
+</main>
+
+<script>
+(function(){
+  // ---------- Textes en français, anglais et coréen ----------
+  // Cette page (Remerciements / Contribuer / À propos) est la seule du site traduite : les sites remerciés et les
+  // contributeurs non francophones (Namu Wiki, sources anglophones) doivent pouvoir la lire sans traduire.
+  // La mention légale Riot « Legal Jibber Jabber » reste fixe en anglais (exigée telle quelle), hors du sélecteur.
+  const I18N = {
+    fr: {
+      introTitle: 'À propos',
+      introText: "Remerciements aux sources du projet, comment contribuer, et présentation du site — en français, en anglais et en coréen, pour que les sites remerciés puissent lire cette page sans avoir à la traduire.",
+      merciH: 'Remerciements',
+      merciThanks: '❤️ Un immense merci à toutes ces sources : sans elles, ce site n’existerait pas. ❤️',
+      colSource: 'Source', colVolume: 'Volume estimé', colRefs: 'Références', colWhat: 'Ce qu’elle apporte',
+      contribH: 'Contribuer',
+      contribThanks: 'Toute contribution est la bienvenue ❤️',
+      contribIntro: "Ce site est fait par un noob : il a besoin de ceux qui connaissent le jeu, et aussi des autres débutants. Tout aide, même un petit détail :",
+      contribItems: [
+        "une erreur à corriger, sur un chiffre, une explication, une traduction ou un détail de la page ;",
+        "une meilleure explication d’un counter ou d’une mécanique, ou une source à ajouter ;",
+        "une idée de nouvelle page ou de fonctionnalité ;",
+        "une envie de participer à une nouvelle fonctionnalité, au code ou aux données ;",
+        "une simple remarque sur ce qui est clair ou pas quand on débute.",
+      ],
+      contribTallyLabel: 'Écrire une remarque ou une proposition',
+      contribTallyPrefix: '<b>Sans compte :</b> ',
+      contribTallySuffix: ' (formulaire Tally). Le message n’est pas publié : il n’est lu que par l’auteur du site.',
+      contribIssueLabel: 'ouvrir une issue GitHub',
+      contribIssuePrefix: '<b>Écrire une remarque :</b> ',
+      contribIssueSuffix: '.',
+      contribIssuesPara: 'Pour ceux qui ont un compte GitHub, ou pour proposer du code : <a href="https://github.com/xavinsky/lolbynoobfornoobs/issues" target="_blank" rel="noopener">les issues du dépôt</a>. Une issue est publique : tout le monde peut la lire et y répondre.',
+      contribReportHint: 'Sur chaque fiche champion et chaque counter, le lien « ✍️ Signaler une erreur ou proposer mieux » ouvre le formulaire avec la page concernée déjà indiquée.',
+      aproposH: 'À propos du site',
+      whoH: 'Qui fait le site',
+      whoWarning: '⚠️ <b>Fait par un noob de LoL.</b> Je débute : ce site peut contenir des erreurs, des approximations ou des conclusions fausses. Vérifiez par vous-même, et les sources de chaque donnée sont là pour ça.',
+      whoText: "Frustré par le manque d’explications claires quand j’ai débuté sur ce jeu, sur le pourquoi et le comment de plein de choses, j’ai décidé d’investiguer (ça, je sais faire :) et de proposer le résultat de mes investigations aux autres noobs. D’où LoL by Noob for Noobs. Je ne prétends pas avoir la moindre connaissance de LoL : je ne fais qu’agréger les différentes sources de données que je juge intéressantes pour m’expliquer le jeu et m’aider à évoluer.",
+      indepH: 'Indépendance',
+      indepText: 'Projet de fan indépendant, sans lien avec Riot Games ni avec les sites cités. Les noms, descriptions, icônes et vidéos de League of Legends appartiennent à Riot Games et sont utilisés dans le cadre de sa <a href="https://www.riotgames.com/en/legal" target="_blank" rel="noopener">politique pour les projets de fans</a>.',
+      licH: 'Licences',
+      licItems: [
+        'Code et textes rédigés pour le site : licence MIT (fichier <a href="https://github.com/xavinsky/lolbynoobfornoobs/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a>).',
+        'Textes traduits ou résumés du wiki League of Legends : <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, page d’origine citée à chaque contenu.',
+        'Explications de matchups tirées de Namu Wiki : <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, contributeurs de Namu Wiki, traduction automatique.',
+        'Chiffres de lolalytics : relevés sur ce site et cités avec leur date dans l’origine des données ci-dessus.',
+        'Conseils tirés de vidéos YouTube : chaque conseil cite sa vidéo et la minute du passage ; les vidéos restent à leurs auteurs.',
+      ],
+      licTally: 'Messages envoyés par le formulaire de contribution : reçus par le service Tally (entreprise belge, données stockées en Europe), lus seulement pour améliorer le site.',
+    },
+    en: {
+      introTitle: 'About',
+      introText: "Thanks to the project’s sources, how to contribute, and an introduction to the site — in French, English and Korean, so the credited sites can read this page without having to translate it.",
+      merciH: 'Thanks',
+      merciThanks: '❤️ A huge thank you to all these sources: without them, this site wouldn’t exist. ❤️',
+      colSource: 'Source', colVolume: 'Estimated volume', colRefs: 'References', colWhat: 'What it provides',
+      contribH: 'Contribute',
+      contribThanks: 'All contributions are welcome ❤️',
+      contribIntro: "This site is made by a noob: it needs people who know the game, as well as other beginners. Anything helps, even a small detail:",
+      contribItems: [
+        "a mistake to fix — a figure, an explanation, a translation, or a detail on the page;",
+        "a better explanation of a counter or a mechanic, or a source to add;",
+        "an idea for a new page or feature;",
+        "wanting to help build a new feature, the code, or the data;",
+        "a simple remark on what is or isn’t clear when you’re starting out.",
+      ],
+      contribTallyLabel: 'Write a comment or a suggestion',
+      contribTallyPrefix: '<b>No account needed:</b> ',
+      contribTallySuffix: ' (Tally form). The message isn’t published: only the site’s author reads it.',
+      contribIssueLabel: 'open a GitHub issue',
+      contribIssuePrefix: '<b>Write a comment:</b> ',
+      contribIssueSuffix: '.',
+      contribIssuesPara: 'If you have a GitHub account, or want to propose code: <a href="https://github.com/xavinsky/lolbynoobfornoobs/issues" target="_blank" rel="noopener">the repository’s issues</a>. An issue is public: anyone can read it and reply.',
+      contribReportHint: 'On every champion page and every counter, the "✍️ Report an error or suggest something better" link opens the form with the relevant page already filled in.',
+      aproposH: 'About this site',
+      whoH: 'Who makes this site',
+      whoWarning: '⚠️ <b>Made by a LoL noob.</b> I’m a beginner: this site may contain mistakes, approximations, or wrong conclusions. Check for yourself — that’s exactly what the sources for each piece of data are for.',
+      whoText: "Frustrated by the lack of clear explanations when I started this game — the why and how of so many things — I decided to investigate (that, I know how to do 🙂) and share the results with other noobs. Hence LoL by Noob for Noobs. I don’t claim to know anything about LoL: I just gather the various data sources I find useful to understand the game and help myself improve.",
+      indepH: 'Independence',
+      indepText: 'An independent fan project, with no connection to Riot Games or to the sites credited here. League of Legends names, descriptions, icons and videos belong to Riot Games and are used under its <a href="https://www.riotgames.com/en/legal" target="_blank" rel="noopener">policy for fan projects</a>.',
+      licH: 'Licences',
+      licItems: [
+        'Code and text written for the site: MIT licence (<a href="https://github.com/xavinsky/lolbynoobfornoobs/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a> file).',
+        'Text translated or summarised from the League of Legends wiki: <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, source page cited for each piece of content.',
+        'Matchup explanations taken from Namu Wiki: <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, Namu Wiki contributors, machine-translated.',
+        'Figures from lolalytics: taken from that site and cited with their date in the data origins above.',
+        'Tips taken from YouTube videos: each tip cites its video and the timestamp; the videos remain their authors’ own.',
+      ],
+      licTally: 'Messages sent through the contribution form: received via the Tally service (a Belgian company, data stored in Europe), read only to improve the site.',
+    },
+    ko: {
+      introTitle: '소개',
+      introText: '이 프로젝트의 출처들에 대한 감사 인사, 기여 방법, 사이트 소개를 프랑스어, 영어, 한국어로 제공하여 소개된 사이트들이 번역 없이 읽을 수 있도록 했습니다.',
+      merciH: '감사의 말',
+      merciThanks: '❤️ 이 모든 출처에 깊이 감사드립니다. 이들이 없었다면 이 사이트는 존재하지 못했을 것입니다. ❤️',
+      colSource: '출처', colVolume: '예상 분량', colRefs: '참조 수', colWhat: '제공하는 내용',
+      contribH: '기여하기',
+      contribThanks: '모든 기여를 환영합니다 ❤️',
+      contribIntro: '이 사이트는 초보자가 만들었습니다. 게임을 잘 아는 분들의 도움도, 다른 초보자들의 도움도 필요합니다. 아주 작은 것이라도 큰 도움이 됩니다:',
+      contribItems: [
+        '숫자, 설명, 번역, 페이지의 세부 사항 등에서 고쳐야 할 오류;',
+        '카운터나 게임 메커니즘에 대한 더 나은 설명, 또는 추가할 출처;',
+        '새로운 페이지나 기능에 대한 아이디어;',
+        '새 기능, 코드, 데이터 작업에 직접 참여하고 싶은 마음;',
+        '처음 시작할 때 무엇이 이해하기 쉽고 어려운지에 대한 간단한 의견.',
+      ],
+      contribTallyLabel: '의견이나 제안 남기기',
+      contribTallyPrefix: '<b>계정 없이:</b> ',
+      contribTallySuffix: ' (Tally 양식). 이 메시지는 공개되지 않으며, 사이트 운영자만 확인합니다.',
+      contribIssueLabel: 'GitHub 이슈 열기',
+      contribIssuePrefix: '<b>의견 남기기:</b> ',
+      contribIssueSuffix: '.',
+      contribIssuesPara: 'GitHub 계정이 있거나 코드를 제안하고 싶다면: <a href="https://github.com/xavinsky/lolbynoobfornoobs/issues" target="_blank" rel="noopener">저장소 이슈</a>를 이용하세요. 이슈는 공개되어 누구나 읽고 답할 수 있습니다.',
+      contribReportHint: '각 챔피언 페이지와 카운터 페이지에는 「✍️ 오류 신고 또는 개선 제안」 링크가 있으며, 클릭하면 해당 페이지 정보가 이미 채워진 양식이 열립니다.',
+      aproposH: '사이트 소개',
+      whoH: '누가 만들었나요',
+      whoWarning: '⚠️ <b>롤 초보자가 만들었습니다.</b> 저도 아직 배우는 중이라 이 사이트에는 오류나 근사치, 잘못된 결론이 있을 수 있습니다. 직접 확인해 보세요. 각 데이터의 출처가 바로 그러라고 있는 것입니다.',
+      whoText: '이 게임을 처음 시작했을 때, 왜 그리고 어떻게라는 명확한 설명이 부족해 답답했습니다. 그래서 제가 잘하는 일, 즉 조사를 해보기로 했고 그 결과를 다른 초보자들과 나누기로 했습니다. 그렇게 만들어진 것이 LoL by Noob for Noobs입니다. 저는 롤에 대해 특별히 잘 안다고 주장하지 않습니다. 그저 게임을 이해하고 실력을 늘리는 데 도움이 된다고 생각하는 여러 출처의 자료를 모아 정리할 뿐입니다.',
+      indepH: '독립성',
+      indepText: '이 프로젝트는 라이엇 게임즈나 여기에 소개된 사이트들과 무관한 독립적인 팬 프로젝트입니다. 리그 오브 레전드의 이름, 설명, 아이콘, 영상은 라이엇 게임즈의 소유이며, <a href="https://www.riotgames.com/en/legal" target="_blank" rel="noopener">팬 프로젝트 정책</a>에 따라 사용됩니다.',
+      licH: '라이선스',
+      licItems: [
+        '사이트를 위해 작성된 코드와 텍스트: MIT 라이선스 (<a href="https://github.com/xavinsky/lolbynoobfornoobs/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a> 파일).',
+        '리그 오브 레전드 위키에서 번역하거나 요약한 텍스트: <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>, 각 내용마다 원본 페이지를 표기.',
+        '나무위키에서 가져온 상성 설명: <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a>, 나무위키 기여자, 기계 번역.',
+        'lolalytics의 수치: 해당 사이트에서 가져왔으며, 위의 데이터 출처에 날짜와 함께 표기되어 있습니다.',
+        '유튜브 영상에서 가져온 팁: 각 팁은 해당 영상과 타임스탬프를 표기하며, 영상의 저작권은 각 제작자에게 있습니다.',
+      ],
+      licTally: '기여 양식으로 보낸 메시지: Tally 서비스(벨기에 기반, 데이터는 유럽에 저장)를 통해 수신되며, 사이트 개선 목적으로만 열람됩니다.',
+    },
+  };
+
+  const LANGS = ['fr', 'en', 'ko'];
+  let lang = 'fr';
+  try{ const saved = localStorage.getItem('docLang'); if(LANGS.includes(saved)) lang = saved; }catch(e){}
+
+  function vol(ko){ return ko >= 100 ? (ko / 1024).toFixed(1).replace('.', ',') + ' Mo' : ko + ' Ko'; }
+
+  function apply(){
+    const t = I18N[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
+
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t[el.dataset.i18n]; });
+
+    // Tableau des remerciements : mêmes sources que le pied de page (nav.js, AppNav.CREDITS), description dans la
+    // langue choisie ; en coréen, nom du site en coréen quand le site en a un vrai (Namu Wiki : `label_ko`) ; un
+    // drapeau (AppNav.FLAGS[c.lang]) indique la langue du contenu repris sur chaque site, plus rapide à lire qu'un
+    // nom traduit.
+    const whatKey = lang === 'fr' ? 'what' : 'what_' + lang;
+    document.getElementById('creditsTable').innerHTML = AppNav.CREDITS.map(c =>
+      `<tr><td>${AppNav.FLAGS[c.lang]} ${AppNav.creditLink(c, lang === 'ko' ? c.label_ko : null)}</td><td class="num">${vol(c.ko)}</td><td class="num">${c.refs.toLocaleString(lang === 'ko' ? 'ko-KR' : (lang === 'en' ? 'en-GB' : 'fr-FR'))}</td><td>${c[whatKey] || c.what}</td></tr>`).join('');
+
+    // Liste « Contribuer »
+    document.getElementById('contribList').innerHTML = t.contribItems.map(li => `<li>${li}</li>`).join('');
+
+    // page d'où vient le visiteur (lien « Contribuer » du footer) : transmise au formulaire à la place de la section elle-même
+    const fromQ = new URLSearchParams(location.search);
+    const fromCtx = fromQ.get('depuis') ? { page: fromQ.get('depuisPage') || 'inconnue', url: fromQ.get('depuis') } : { page: 'contribuer' };
+    document.getElementById('contribTally').innerHTML = AppNav.CONTRIBUTE.tally
+      ? `${t.contribTallyPrefix}${AppNav.reportLink(fromCtx, t.contribTallyLabel)}${t.contribTallySuffix}`
+      : `${t.contribIssuePrefix}${AppNav.reportLink(fromCtx, t.contribIssueLabel)}${t.contribIssueSuffix}`;
+    document.getElementById('contribIssues').innerHTML = t.contribIssuesPara;
+
+    // Liste « Licences » : l'entrée Tally seulement si le formulaire est configuré (nav.js, CONTRIBUTE.tally)
+    const licItems = t.licItems.slice();
+    if(AppNav.CONTRIBUTE.tally) licItems.push(t.licTally);
+    document.getElementById('licList').innerHTML = licItems.map(li => `<li>${li}</li>`).join('');
+  }
+
+  document.querySelector('.lang-ctl').addEventListener('click', e => {
+    const b = e.target.closest('button[data-lang]');
+    if(!b) return;
+    lang = b.dataset.lang;
+    try{ localStorage.setItem('docLang', lang); }catch(e){}
+    apply();
+  });
+
+  apply();
+
+  // éléments réservés à l'édition privée (contenus absents de l'édition publique)
+  if(window.isPublicEdition && window.isPublicEdition()) document.querySelectorAll('[data-edition="private"]').forEach(el => el.remove());
+})();
+</script>
+
+<footer></footer>
+
+</body>
+</html>

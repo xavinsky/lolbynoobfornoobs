@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counters — LoL by Noob for Noobs</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead" data-section="champion" data-page="counters"></header>
+<script src="edition.js"></script>
+<script src="nav.js"></script>
+
+<main>
+  <div class="detail-card">
+    <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Counters — contre qui un champion est à l'aise, contre qui il souffre</h2>
+    <p style="margin:6px 0 0;">Choisissez un champion : ses matchups nettement favorables et défavorables mesurés chez les meilleurs joueurs, puis, pour chaque duel, l'explication tirée des deux fiches de Namu Wiki (wiki coréen de joueurs).</p>
+    <p class="muted small" style="margin:6px 0 0;">Explications : Namu Wiki, contributeurs de Namu Wiki, licence <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a> ; traduction automatique (modèle gemma4:12b). La source de chaque counter est donnée dans son détail.</p>
+    <details class="ctr-legend">
+      <summary>Comment lire les chiffres</summary>
+      <ul>
+        <li><b>Écart</b> : points de victoire gagnés (ou perdus) contre cet adversaire, au-delà de ce que prévoient les forces des deux champions (écart « Delta 2 » de lolalytics). +5 veut dire : 5 parties de plus gagnées sur 100 que prévu.</li>
+        <li><b>Mesure</b> : parties classées Master, Grandmaster et Challenger, toutes régions, cumulées sur les patchs depuis le dernier changement de kit des deux champions ; <b>parties</b> = nombre de duels mesurés.</li>
+        <li><b>Netteté</b>, selon la borne basse de l'écart (écart moins sa marge d'incertitude) : <span class="pill ctr-lvl net">net</span> au moins 3 points, <span class="pill ctr-lvl marque">marqué</span> au moins 2, <span class="pill ctr-lvl probable">probable</span> au moins 1.</li>
+        <li><span class="pill ctr-flag">plusieurs sources</span> : l'écart est aussi significatif en Diamant+ et Émeraude+ sur 30 jours. <span class="pill ctr-flag">tient à bas niveau</span> : l'écart garde le même sens de Bronze à Or.</li>
+        <li><span class="pill ctr-ok">Namu Wiki d'accord</span> <span class="pill ctr-ko">Namu Wiki en désaccord</span> <span class="pill ctr-mixed">fiches contradictoires</span> : les fiches Namu Wiki qui citent le duel le classent-elles du côté de la mesure (toutes, aucune, l'une mais pas l'autre) ; <span class="pill ctr-none">cas particulier</span> : cité sans être classé ; <span class="pill ctr-none">non expliqué</span> : aucune des deux fiches ne cite le duel. La mesure fait foi pour le sens du counter.</li>
+        <li><b>Explications</b> : traduction automatique (modèle gemma4:12b) de la section « matchups » de Namu Wiki, avec les noms officiels du jeu ; des erreurs de sens restent possibles.</li>
+      </ul>
+    </details>
+    <div class="ctr-pick">
+      <input id="ctrSearch" type="search" placeholder="Chercher un champion…" autocomplete="off">
+      <div id="ctrGrid" class="ctr-grid"></div>
+    </div>
+  </div>
+  <div id="ctrContent"></div>
+</main>
+
+<footer></footer>
+
+<script src="data/champions.js"></script>
+<script src="data/counters_page.js"></script>
+<script>
+(() => {
+  const CP = COUNTERS_PAGE;
+  const byDdid = Object.fromEntries(CHAMPIONS.map(c => [c.ddid, c]));
+  const byId = Object.fromEntries(CHAMPIONS.map(c => [c.id, c]));
+  const LANES = { top: 'Top', jgl: 'Jungle', mid: 'Mid', adc: 'Tireur', sup: 'Support' };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  const icon = ddid => `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${ddid}.png`;
+  const name = ddid => (byDdid[ddid] || {}).name || CP.names[ddid] || ddid;
+  const fmt = x => (x > 0 ? '+' : '') + x.toFixed(1).replace('.', ',');
+  const patches = CP.window.patches || [];
+  const LVL = { 'net': 'net', 'marqué': 'marque', 'probable': 'probable' };
+  // lolalytics numérote les patchs 16.N ; le jeu les affiche 26.N
+  const gamePatch = p => String(p || '').replace(/^16\./, '26.');
+  // « de » devant un nom : élision devant voyelle (d'Irelia, d'Ashe)
+  const de = n => (/^[aeiouéèêàâîïôûAEIOUÉÈÊÀÂÎÏÔÛ]/.test(n) ? "d'" : 'de ') + n;
+
+  function current(){
+    const h = decodeURIComponent((location.hash.match(/^#\/(.+)$/) || [])[1] || '');
+    if(h && CP.matchups[h]) return h;
+    const last = (() => { try{ return localStorage.getItem('docLastChamp'); }catch(e){ return null; } })()
+      || (location.search.match(/[?&]last=([^&]+)/) || [])[1];
+    const ch = last && byId[decodeURIComponent(last)];
+    return ch && CP.matchups[ch.ddid] ? ch.ddid : null;
+  }
+
+  function grid(filter){
+    const f = (filter || '').toLowerCase();
+    const list = Object.keys(CP.matchups).sort((a, b) => name(a).localeCompare(name(b), 'fr'))
+      .filter(d => !f || name(d).toLowerCase().includes(f) || d.toLowerCase().includes(f));
+    const cur = current();
+    document.getElementById('ctrGrid').innerHTML = list.map(d =>
+      `<a href="#/${encodeURIComponent(d)}" class="ctr-champ${d === cur ? ' on' : ''}" title="${esc(name(d))}"><img class="champ-icon" src="${icon(d)}" alt=""><span>${esc(name(d))}</span></a>`).join('');
+  }
+
+  function explanation(owner, opp, refs){
+    const page = CP.namu[owner];
+    if(!page) return `<p class="muted small">Pas de page Namu Wiki pour ${esc(name(owner))}.</p>`;
+    const src = `<a href="${esc(page.url)}" target="_blank" rel="noopener">fiche Namu ${esc(de(name(owner)))}</a>${refs.link('namu-' + owner)}`;
+    if(!page.translated) return `<p class="muted small">La ${src} n'est pas encore traduite.</p>`;
+    const entries = (page.opponents || {})[opp];
+    if(!entries || !entries.length) return `<p class="muted small">La ${src} ne cite pas ${esc(name(opp))} dans ses matchups.</p>`;
+    return entries.map(e => {
+      const sideTxt = e.side === 'easy' ? `${esc(name(owner))} est à l'aise contre ${esc(name(opp))}` : e.side === 'hard' ? `${esc(name(owner))} a du mal contre ${esc(name(opp))}` : `cas particulier`;
+      return `<div class="ctr-expl">
+        <div class="ctr-expl-h">D'après la ${src} : <b>${sideTxt}</b></div>
+        ${e.family ? `<p class="ctr-fam"><b>${esc(e.family)}</b>${e.familyText ? ' — ' + esc(e.familyText) : ''}</p>` : ''}
+        ${e.note ? `<p>${esc(e.note)}</p>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // avis des deux fiches Namu Wiki du duel, comparé au sens de la mesure :
+  // accord, désaccord, fiches contradictoires (l'une dans le sens de la mesure, l'autre non), cas particulier, non cité
+  function verdict(me, m){
+    const mine = ((CP.namu[me] || {}).opponents || {})[m.opp] || [];
+    const theirs = ((CP.namu[m.opp] || {}).opponents || {})[me] || [];
+    const expectMine = m.delta > 0 ? 'easy' : 'hard', expectTheirs = m.delta > 0 ? 'hard' : 'easy';
+    const said = mine.filter(e => e.side !== 'other').length + theirs.filter(e => e.side !== 'other').length;
+    if(!said) return mine.length || theirs.length ? 'other' : 'none';
+    const ok = mine.filter(e => e.side === expectMine).length + theirs.filter(e => e.side === expectTheirs).length;
+    return ok === said ? 'agree' : ok === 0 ? 'disagree' : 'split';
+  }
+  const VERDICT = {
+    agree: '<span class="pill ctr-ok" title="Les fiches Namu Wiki qui citent ce duel vont dans le sens de la mesure">Namu Wiki d\'accord</span>',
+    disagree: '<span class="pill ctr-ko" title="Les fiches Namu Wiki qui citent ce duel le décrivent dans l\'autre sens que la mesure">Namu Wiki en désaccord</span>',
+    split: '<span class="pill ctr-mixed" title="Une fiche va dans le sens de la mesure, l\'autre non">fiches contradictoires</span>',
+    other: '<span class="pill ctr-none" title="Namu Wiki cite ce duel sans le classer à l\'aise ou en difficulté">cas particulier</span>',
+    none: '<span class="pill ctr-none" title="Aucune des deux fiches Namu Wiki ne cite ce duel">non expliqué</span>',
+  };
+  const VERDICT_NOTE = {
+    disagree: "Namu Wiki décrit ce duel dans l'autre sens que la mesure. La mesure fait foi pour le sens du counter ; l'explication reste utile pour comprendre ce qui se joue, mais ce duel est à vérifier par d'autres sources.",
+    split: "Les deux fiches Namu Wiki ne classent pas ce duel du même côté : souvent un duel de maîtrise, ou deux moments de partie différents (phase de lane, combats d'équipe). La mesure fait foi pour le sens du counter.",
+  };
+
+  const LOLA_LANE = { top: 'top', jgl: 'jungle', mid: 'middle', adc: 'bottom', sup: 'support' };
+  // date ISO → jj/mm/aaaa
+  const frDate = d => d ? String(d).replace(/^(\d{4})-(\d{2})-(\d{2}).*$/, '$3/$2/$1') : '';
+  const patchRange = m => patches.length ? (gamePatch(m.since || patches[patches.length - 1]) === gamePatch(patches[0]) ? `patch ${esc(gamePatch(patches[0]))}` : `patchs ${esc(gamePatch(m.since || patches[patches.length - 1]))} à ${esc(gamePatch(patches[0]))}`) : 'patchs récents';
+
+  // Sources d'un duel, sur le modèle de la fiche détail : renvoi [n] à côté de chaque donnée, et bloc « Sources de ce
+  // counter » replié en bas du détail, une entrée numérotée par origine (libellé, date, méthode, lien).
+  function sourceRefs(me, m){
+    const rowId = `${m.lane}-${m.opp}`;
+    const a = (CP.lolalytics || {})[me], b = (CP.lolalytics || {})[m.opp];
+    const lane = LOLA_LANE[m.lane] || m.lane;
+    const defs = {
+      measure: { label: 'Mesure du duel — lolalytics, Master+', date: CP.window.retrieved, verb: 'relevé le',
+        method: `Parties classées Master, Grandmaster et Challenger de toutes les régions, ${patchRange(m)}. Écart « Delta 2 » : victoires au-delà de ce que prévoient les forces des deux champions. Le lien ouvre la page du duel sur le patch en cours.`,
+        url: a && b ? `https://lolalytics.com/lol/${a}/vs/${b}/build/?lane=${lane}&tier=master_plus&vslane=${lane}` : 'https://lolalytics.com' },
+      solid: { label: 'Plusieurs sources — lolalytics, Diamant+ et Émeraude+', date: CP.window.solidRetrieved, verb: 'relevé le',
+        method: 'Le même duel est aussi significatif en Diamant+ et en Émeraude+ sur les 30 derniers jours.', url: 'https://lolalytics.com' },
+      byTier: { label: 'Tenue selon le niveau — lolalytics, Bronze à Master+', date: CP.window.byTierRetrieved, verb: 'relevé le',
+        method: `Même duel sur les 30 derniers jours à chaque palier ; en Bronze, Argent et Or, l'écart ${{ 'tient': 'garde le même sens', "s'atténue": "s'atténue", 'disparaît': 'disparaît' }[m.byTier] || esc(m.byTier)}.`, url: 'https://lolalytics.com' },
+    };
+    for(const ddid of [me, m.opp]){
+      const p = CP.namu[ddid];
+      if(p && p.url) defs['namu-' + ddid] = { label: `Fiche Namu ${de(name(ddid))} — Namu Wiki`, date: p.retrieved, verb: 'lue le',
+        method: 'Section « matchups » (상성) de la page du champion, écrite par des joueurs ; traduction automatique.', url: p.url };
+    }
+    const order = [];
+    const link = key => {
+      if(!defs[key]) return '';
+      if(!order.includes(key)) order.push(key);
+      const n = order.indexOf(key) + 1;
+      return `<a class="ref" href="#" data-ref="${rowId}-${n}" title="${esc(defs[key].label)}">[${n}]</a>`;
+    };
+    const block = () => `<details class="ctr-sources">
+        <summary class="section-label">Sources de ce counter</summary>
+        ${order.map((key, i) => { const d = defs[key]; return `<div class="source-item" id="src-${rowId}-${i + 1}">
+          <div class="h"><span class="num">[${i + 1}]</span><span class="label">${esc(d.label)}</span>${d.date ? `<span class="date">${d.verb} ${esc(frDate(d.date))}</span>` : ''}</div>
+          <div class="method">${d.method}</div>
+          <a class="url" href="${esc(d.url)}" target="_blank" rel="noopener">${esc((() => { try{ return decodeURI(d.url); }catch(e){ return d.url; } })())}</a>
+        </div>`; }).join('')}
+        <p class="muted small" style="margin:8px 0 0;">Méthode commune à tous les duels : mécanisme « Page Counters » sur la <a class="backlink" href="sources.html#origine">page Sources ↗</a>.</p>
+      </details>`;
+    return { link, block };
+  }
+
+  function row(me, m){
+    const id = `m-${m.lane}-${m.opp}`;
+    const refs = sourceRefs(me, m);
+    const measureRef = refs.link('measure');
+    const flags = [m.solid ? `<span class="pill ctr-flag">plusieurs sources</span>${refs.link('solid')}` : '', m.byTier === 'tient' ? `<span class="pill ctr-flag">tient à bas niveau</span>${refs.link('byTier')}` : ''].join(' ');
+    return `<details class="ctr-row" id="${id}">
+      <summary>
+        <img class="champ-icon" src="${icon(m.opp)}" alt=""><span class="ctr-opp">${esc(name(m.opp))}</span>
+        <span class="pill pill-role">${LANES[m.lane] || m.lane}</span>
+        <span class="ctr-delta ${m.delta > 0 ? 'pos' : 'neg'}">${fmt(m.delta)}</span>
+        <span class="pill ctr-lvl ${LVL[m.level]}">${m.level}</span>
+        <span class="muted small ctr-n">${m.n.toLocaleString('fr-FR')} parties</span>
+        ${VERDICT[verdict(me, m)]}
+      </summary>
+      <div class="ctr-detail">
+        <p class="ctr-mesure">En Master+ (${patchRange(m)}), ${esc(name(me))} ${m.delta > 0 ? 'gagne' : 'perd'} <b>${Math.abs(m.delta).toFixed(1).replace('.', ',')} parties sur 100</b> ${m.delta > 0 ? 'de plus' : 'de moins'} que prévu contre ${esc(name(m.opp))} au ${LANES[m.lane] || m.lane}, sur ${m.n.toLocaleString('fr-FR')} duels (borne basse ${m.lb.toFixed(1).replace('.', ',')}).${measureRef} ${flags}</p>
+        ${VERDICT_NOTE[verdict(me, m)] ? `<p class="ctr-warn">${VERDICT_NOTE[verdict(me, m)]}</p>` : ''}
+        ${explanation(me, m.opp, refs)}
+        ${explanation(m.opp, me, refs)}
+        ${refs.block()}
+        <p class="report-line" style="margin-top:8px;">${AppNav.reportLink({ page: 'counters', champion: name(me), duel: name(m.opp) })}</p>
+      </div>
+    </details>`;
+  }
+
+  function render(){
+    const me = current();
+    grid(document.getElementById('ctrSearch').value);
+    const box = document.getElementById('ctrContent');
+    if(!me){ box.innerHTML = '<div class="detail-card"><p class="muted">Choisissez un champion ci-dessus.</p></div>'; return; }
+    try{ if(byDdid[me]) localStorage.setItem('docLastChamp', byDdid[me].id); }catch(e){}
+    const ms = CP.matchups[me] || [];
+    const lanes = [...new Set(ms.map(m => m.lane))];
+    const wantLane = (location.search.match(/[?&]lane=(\w+)/) || [])[1];
+    const pos = ms.filter(m => m.delta > 0), neg = ms.filter(m => m.delta < 0);
+    const col = (title, list, cls) => `<div class="detail-card ctr-col ${cls}"><h3>${title} <span class="muted small">(${list.length})</span></h3>${list.length ? list.map(m => row(me, m)).join('') : '<p class="muted small">Aucun matchup assez net mesuré.</p>'}</div>`;
+    const page = CP.namu[me] || {};
+    box.innerHTML = `<div class="detail-card ctr-head">
+        <img class="champ-icon" src="${icon(me)}" alt="" style="width:56px;height:56px">
+        <div><h2 style="margin:0;text-transform:none;letter-spacing:0">${esc(name(me))}</h2>
+        <div class="muted small">${lanes.map(l => LANES[l] || l).join(' · ')} · ${ms.length} matchups nets à probables ·
+        <a href="index.html#/champ/${encodeURIComponent((byDdid[me] || {}).id || me)}">fiche du champion</a>${page.url ? ` · <a href="${esc(page.url)}" target="_blank" rel="noopener">page Namu Wiki</a>` : ''}</div></div>
+      </div>
+      <div class="ctr-cols">${col(`À l'aise contre`, pos, 'pos')}${col(`En difficulté contre`, neg, 'neg')}</div>`;
+  }
+
+  // Clic sur un [n] : ouvre le bloc Sources du duel et fait défiler jusqu'à l'entrée.
+  document.getElementById('ctrContent').addEventListener('click', e => {
+    const a = e.target.closest('a.ref');
+    if(!a) return;
+    e.preventDefault();
+    const target = document.getElementById('src-' + a.dataset.ref);
+    if(!target) return;
+    const box = target.closest('details.ctr-sources');
+    if(box) box.open = true;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.classList.add('flash');
+    setTimeout(() => target.classList.remove('flash'), 1500);
+  });
+  document.getElementById('ctrSearch').addEventListener('input', e => grid(e.target.value));
+  window.addEventListener('hashchange', render);
+  render();
+})();
+</script>
+</body>
+</html>
