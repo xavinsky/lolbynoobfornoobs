@@ -14,6 +14,8 @@
 
 <main>
   <div class="detail-card">
+    <div id="pageSources"></div>
+    <script>document.getElementById('pageSources').outerHTML = AppNav.srcBlock([{ key: 'wiki', url: 'https://wiki.leagueoflegends.com/en-us/Template:Ability_data', title: 'Wiki League of Legends : les données de chaque sort, d’où vient cette classification (en anglais)' }, { key: 'riot', url: 'https://www.leagueoflegends.com/fr-fr/champions/', title: 'Riot : noms et descriptions officiels des sorts' }], 'page-src');</script>
     <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Compétences — lire un sort en un coup d'œil</h2>
     <p style="margin:6px 0 0;">Chaque sort d'un champion est décrit sur sa fiche par une rangée d'icônes : comment on vise, qui est touché, quel type de dégâts, à quelle distance, ce que le sort fait subir ou apporte, et ce qui peut le contrer. Cette page explique chaque icône, avec le nombre de sorts concernés et des exemples. Sources en fin de page <a class="ref" href="#sources">[1]</a>.</p>
     <nav class="sub-nav" id="axisNav"></nav>

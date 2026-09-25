@@ -59,7 +59,7 @@
   // Objets d'Arena que Data Dragon marque comme disponibles sur la Faille : écartés d'après les modes du wiki (data/item_effects.js).
   const onRift = id => !(ITEM_EFFECTS[id] && ITEM_EFFECTS[id].sr === false);
   const wikiImg = (name, alt) => `<img class="wiki-icon" src="${WIKI}images/${name}" alt="${esc(alt||'')}" loading="lazy">`;
-  const card = (id, title, body) => `<div class="detail-card" id="${id}"><h3 class="section-label">${title}</h3>${body}</div>`;
+  const card = (id, title, body, src) => `<div class="detail-card" id="${id}">${src || ''}<h3 class="section-label">${title}</h3>${body}</div>`;
 
   const PN261 = 'https://www.leagueoflegends.com/fr-fr/news/game-updates/patch-26-1-notes/';
   const src261 = (what) => src('Notes de patch 26.1 — ' + what + ' (archive locale : data/patchnotes)', PN261);
@@ -304,7 +304,19 @@
     ['sorts', "Sorts d'invocateur", sortsHtml],
   ];
   if(isPublicEdition()) PAGES.splice(0, PAGES.length, ...PAGES.filter(p => p[0] === 'objets'));  // édition publique : seule la sous-page Objets
-  document.getElementById('content').innerHTML = PAGES.map(([id, title, fn]) => `<div class="page" data-page="${id}" hidden>` + card(id, title, pageWithNotes(id, fn())) + '</div>').join('');
+  // Bloc « Sources : » de chaque sous-page, en haut à droite (AppNav.srcBlock) : les sites dont elle est tirée.
+  const WIKI_PAGE = p => 'https://wiki.leagueoflegends.com/en-us/' + p;
+  const DDRAGON = 'https://developer.riotgames.com/docs/lol#data-dragon';
+  const PAGE_SOURCES = {
+    cartes: [{ key: 'riot', url: 'https://www.leagueoflegends.com/fr-fr/how-to-play/', title: 'Riot : la page officielle « Comment jouer »' }, { key: 'wiki', url: WIKI_PAGE("Summoner's_Rift"), title: 'Wiki League of Legends : la Faille de l’invocateur, ses structures et ses icônes (en anglais)' }],
+    vision: [{ key: 'wiki', url: WIKI_PAGE('Sight'), title: 'Wiki League of Legends : la vision (en anglais)' }, { key: 'riot', url: DDRAGON, title: 'Riot, Data Dragon : descriptions officielles des objets de vision' }],
+    sbires: [{ key: 'wiki', url: WIKI_PAGE('Minion'), title: 'Wiki League of Legends : sbires et monstres (en anglais)' }],
+    champion: [{ key: 'wiki', url: WIKI_PAGE('Champion_statistic'), title: 'Wiki League of Legends : statistiques des champions et leur progression (en anglais)' }],
+    objets: [{ key: 'riot', url: DDRAGON, title: 'Riot, Data Dragon : noms, prix et descriptions officielles des objets' }],
+    runes: [{ key: 'riot', url: DDRAGON, title: 'Riot, Data Dragon : noms et descriptions officielles des runes' }],
+    sorts: [{ key: 'riot', url: DDRAGON, title: "Riot, Data Dragon : noms et descriptions officielles des sorts d'invocateur" }],
+  };
+  document.getElementById('content').innerHTML = PAGES.map(([id, title, fn]) => `<div class="page" data-page="${id}" hidden>` + card(id, title, pageWithNotes(id, fn()), AppNav.srcBlock(PAGE_SOURCES[id] || [], 'page-src')) + '</div>').join('');
 
   // Une sous-page à la fois (#/cartes, #/objets…). Une ancre d'élément (#item-6692 depuis une fiche
   // champion, #rune-…, #spell-…) ouvre la sous-page qui le contient et met la carte en évidence.

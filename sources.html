@@ -204,12 +204,14 @@
 
   // Tous les mécanismes, ceux rencontrés sur la fiche-type et la légende d'abord (dans l'ordre des [n]), puis
   // les éventuels autres. Édition publique : seuls les mécanismes des pages publiées.
+  // Carré au logo du site (AppNav.srcLink) devant chaque mécanisme ; une adresse à gabarit ({slug}…) mène à l'accueil du site.
+  const srcSquare = (url, label) => { const k = AppNav.srcKeyOf(url); return k ? AppNav.srcLink(k, url.includes('{') ? url.replace(/^(https?:\/\/[^/]+).*$/, '$1/') : url, label) : ''; };
   const PUBLIC_MECH = ['statDefs', 'analysisVideo', 'rolesTiers', 'tierIcons', 'roles', 'rolesCombined', 'abilities', 'icons', 'championIcon', 'pages', 'roleIcons', 'abilityVideos', 'championVideos', 'class', 'damageType', 'analysis', 'stats', 'powerCurve', 'mechanics', 'mechanicsFr', 'itemEffects', 'abilityTaxonomy', 'refs', 'reworks', 'releaseDate', 'countersPage'];
   for(const s of GLOBAL_SOURCES) if(!isPublicEdition() || PUBLIC_MECH.includes(s.id)) ref(s.id);
   document.getElementById('sourcesList').innerHTML = [...REFS.values()].map(({ n, src: s }) => `
     <div class="detail-card sources-card" id="src-${n}">
       <div class="source-item" style="padding-top:0;">
-        <div class="h"><span class="num">[${n}]</span><span class="label" style="font-size:1.1em;">${esc(s.label)}</span>${s.retrieved ? `<span class="date">récupéré le ${frDate(s.retrieved)}</span>` : '<span class="date">lien live, non daté (toujours l\'état actuel)</span>'}</div>
+        <div class="h"><span class="num">[${n}]</span>${srcSquare(s.url, s.label)}<span class="label" style="font-size:1.1em;">${esc(s.label)}</span>${s.retrieved ? `<span class="date">récupéré le ${frDate(s.retrieved)}</span>` : '<span class="date">lien live, non daté (toujours l\'état actuel)</span>'}</div>
         <div class="method" style="margin-top:6px;">${esc(s.method)}</div>
         ${s.url ? `<a class="url" href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : ''}
         ${s.technique && !isPublicEdition() ? `<div class="method"><strong>Technique (brouillon privé seulement)</strong> : ${esc(s.technique)}${s.technicalUrl ? ` — <span class="url">${esc(s.technicalUrl)}</span>` : ''}</div>` : ''}

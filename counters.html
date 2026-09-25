@@ -14,6 +14,8 @@
 
 <main>
   <div class="detail-card">
+    <div id="pageSources"></div>
+    <script>document.getElementById('pageSources').outerHTML = AppNav.srcBlock([{ key: 'lolalytics', url: 'https://lolalytics.com/', title: 'lolalytics : la mesure de chaque duel, parties Master+ cumulées patch par patch' }, { key: 'namu', url: 'https://namu.wiki/', title: 'Namu Wiki : les explications des matchups, tirées de la fiche de chaque champion (en coréen)' }], 'page-src');</script>
     <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Counters — contre qui un champion est à l'aise, contre qui il souffre</h2>
     <p style="margin:6px 0 0;">Choisissez un champion : ses matchups nettement favorables et défavorables mesurés chez les meilleurs joueurs, puis, pour chaque duel, l'explication tirée des deux fiches de Namu Wiki (wiki coréen de joueurs).</p>
     <p class="muted small" style="margin:6px 0 0;">Explications : Namu Wiki, contributeurs de Namu Wiki, licence <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/kr/" target="_blank" rel="noopener">CC BY-NC-SA 2.0 KR</a> ; traduction automatique (modèle gemma4:12b). La source de chaque counter est donnée dans son détail.</p>
@@ -78,7 +80,7 @@
   function explanation(owner, opp, refs){
     const page = CP.namu[owner];
     if(!page) return `<p class="muted small">Pas de page Namu Wiki pour ${esc(name(owner))}.</p>`;
-    const src = `<a href="${esc(page.url)}" target="_blank" rel="noopener">fiche Namu ${esc(de(name(owner)))}</a>${refs.link('namu-' + owner)}`;
+    const src = `${AppNav.srcLink('namu', page.url, `Namu Wiki : fiche de ${name(owner)}, section matchups (en coréen)`)} <a href="${esc(page.url)}" target="_blank" rel="noopener">fiche Namu ${esc(de(name(owner)))}</a>${refs.link('namu-' + owner)}`;
     if(!page.translated) return `<p class="muted small">La ${src} n'est pas encore traduite.</p>`;
     const entries = (page.opponents || {})[opp];
     if(!entries || !entries.length) return `<p class="muted small">La ${src} ne cite pas ${esc(name(opp))} dans ses matchups.</p>`;
@@ -150,7 +152,7 @@
     const block = () => `<details class="ctr-sources">
         <summary class="section-label">Sources de ce counter</summary>
         ${order.map((key, i) => { const d = defs[key]; return `<div class="source-item" id="src-${rowId}-${i + 1}">
-          <div class="h"><span class="num">[${i + 1}]</span><span class="label">${esc(d.label)}</span>${d.date ? `<span class="date">${d.verb} ${esc(frDate(d.date))}</span>` : ''}</div>
+          <div class="h"><span class="num">[${i + 1}]</span>${AppNav.srcLink(key.startsWith('namu-') ? 'namu' : 'lolalytics', d.url, d.label)}<span class="label">${esc(d.label)}</span>${d.date ? `<span class="date">${d.verb} ${esc(frDate(d.date))}</span>` : ''}</div>
           <div class="method">${d.method}</div>
           <a class="url" href="${esc(d.url)}" target="_blank" rel="noopener">${esc((() => { try{ return decodeURI(d.url); }catch(e){ return d.url; } })())}</a>
         </div>`; }).join('')}
@@ -201,6 +203,10 @@
         <div><h2 style="margin:0;text-transform:none;letter-spacing:0">${esc(name(me))}</h2>
         <div class="muted small">${lanes.map(l => LANES[l] || l).join(' · ')} · ${ms.length} matchups nets à probables ·
         <a href="index.html#/champ/${encodeURIComponent((byDdid[me] || {}).id || me)}">fiche du champion</a>${page.url ? ` · <a href="${esc(page.url)}" target="_blank" rel="noopener">page Namu Wiki</a>` : ''}</div></div>
+        ${AppNav.srcBlock([
+          { key: 'lolalytics', url: (CP.lolalytics || {})[me] ? `https://lolalytics.com/lol/${CP.lolalytics[me]}/counters/` : null, title: `lolalytics : counters de ${name(me)}` },
+          { key: 'namu', url: page.url, title: `Namu Wiki : fiche de ${name(me)}, dont ses matchups (en coréen)` },
+        ])}
       </div>
       <div class="ctr-cols">${col(`À l'aise contre`, pos, 'pos')}${col(`En difficulté contre`, neg, 'neg')}</div>`;
   }

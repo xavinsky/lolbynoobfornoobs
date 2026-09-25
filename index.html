@@ -160,17 +160,25 @@
   function champPageUrl(ch){ return `https://www.leagueoflegends.com/fr-fr/champions/${ch.id}/`; }
   // Bloc « Sources : » de la fiche : le logo de chaque site qui consacre une page au champion et dont le guide reprend
   // le contenu, vers cette page (mécanisme « pages » de data/sources.js ; fiche officielle calculée depuis l'id).
-  const SOURCE_PAGES = [
-    { key: 'riot', img: 'img/sources/riot.svg', alt: 'Riot Games', title: 'Fiche officielle Riot : présentation, compétences et skins du champion' },
-    { key: 'wiki', img: 'img/sources/wiki.png', alt: 'Wiki League of Legends', title: 'Wiki League of Legends : compétences, statistiques et mécaniques détaillées (en anglais)' },
-    { key: 'lolalytics', img: 'img/sources/lolalytics.png', alt: 'lolalytics', title: 'lolalytics : statistiques, builds, runes et counters du champion' },
-    { key: 'namu', img: 'img/sources/namu.svg', alt: 'Namu Wiki', title: 'Namu Wiki : fiche communautaire du champion, dont ses matchups (en coréen)' },
-  ];
+  // Carrés de source dans les titres de section (AppNav.srcLink) : lolalytics au rôle affiché, wiki, fiche Riot.
+  const LOLA_LANE = { top: 'top', jgl: 'jungle', mid: 'middle', adc: 'bottom', sup: 'support' };
+  function lolaPage(ch, lane, page){
+    const base = (ch.pages || {}).lolalytics;
+    if(!base) return null;
+    const url = page ? base.replace('/build/', `/${page}/`) : base;
+    return lane && LOLA_LANE[lane] ? `${url}?lane=${LOLA_LANE[lane]}` : url;
+  }
+  function lolaSq(ch, lane, what, page){
+    return AppNav.srcLink('lolalytics', lolaPage(ch, lane, page), `lolalytics : ${what} de ${ch.name}${lane ? ` au rôle ${ROLE_LABEL[lane]}` : ''}`);
+  }
   function sourcePagesHtml(ch){
-    const url = k => k === 'riot' ? champPageUrl(ch) : (ch.pages || {})[k];
-    const links = SOURCE_PAGES.filter(p => url(p.key)).map(p =>
-      `<a href="${url(p.key)}" target="_blank" rel="noopener" title="${escHtml(p.title)}"><img src="${p.img}" alt="${escHtml(p.alt)}"></a>`).join('');
-    return `<div class="src-pages"><span class="src-pages-lbl">Sources :</span>${links}</div>`;
+    const P = ch.pages || {};
+    return AppNav.srcBlock([
+      { key: 'riot', url: champPageUrl(ch), title: 'Fiche officielle Riot : présentation, compétences et skins du champion' },
+      { key: 'wiki', url: P.wiki, title: 'Wiki League of Legends : compétences, statistiques et mécaniques détaillées (en anglais)' },
+      { key: 'lolalytics', url: P.lolalytics, title: 'lolalytics : statistiques, builds, runes et counters du champion' },
+      { key: 'namu', url: P.namu, title: 'Namu Wiki : fiche communautaire du champion, dont ses matchups (en coréen)' },
+    ]);
   }
   function findChamp(id){ return CHAMPIONS.find(c => c.id === id); }
   function dmgTitle(ch){ return `Officiel Data Dragon — Physique ${ch.dmgRating.attack}/10 · Magie ${ch.dmgRating.magic}/10`; }
@@ -211,7 +219,7 @@
         </div>
       </div>`).join('')}</div>` : `<p class="rework-note">Ce champion n'apparaît pas dans l'historique de refontes consulté — son kit n'a donc jamais changé depuis sa création (aucune refonte recensée).</p>`;
     const releaseRow = ch.releaseDate ? `<div class="rework-item release"><div><span class="rework-date">${frDate(ch.releaseDate)}</span><span class="rework-type">Sortie du champion</span></div></div>` : '';
-    return sectionHtml('sec-rework', `Mise à jour du personnage par Riot${titleSuffix}`, historyRows + releaseRow, null, true);
+    return sectionHtml('sec-rework', `Mise à jour du personnage par Riot${titleSuffix}${AppNav.srcLink('wiki', 'https://wiki.leagueoflegends.com/en-us/Champion_update', 'Wiki League of Legends : historique des mises à jour des champions (en anglais)')}`, historyRows + releaseRow, null, true);
   }
   // Points forts/Contre = conseils officiels Riot copiés tels quels (Data Dragon allytips/enemytips,
   // cf. data/sources.js, mécanisme "analysis").
@@ -273,7 +281,8 @@
     document.querySelectorAll('#detailContent .section-label[data-toggle]').forEach(h => {
       if(h.dataset.bound) return;   // sections stats re-rendues au changement de rôle : ne pas doubler l'écouteur
       h.dataset.bound = '1';
-      h.addEventListener('click', () => {
+      h.addEventListener('click', e => {
+        if(e.target.closest('a')) return;  // un carré de source dans le titre ouvre son lien sans replier la section
         const body = document.getElementById(h.dataset.toggle);
         if(!body) return;
         body.hidden = !body.hidden;
@@ -799,15 +808,15 @@
   function statsSectionsHtml(ch, lane){
     if(!statsOf(ch) || !lane) return '';
     const opp = state.versus ? findChamp(state.versus) : null;
-    const power = sectionHtml('sec-power', `Courbe de puissance — ${ROLE_LABEL[lane]}`, powerCurveHtml(ch, lane));
+    const power = sectionHtml('sec-power', `Courbe de puissance — ${ROLE_LABEL[lane]}${lolaSq(ch, lane, 'taux de victoire selon la durée de partie')}`, powerCurveHtml(ch, lane));
     if(isPublicEdition()) return power;  // édition publique : la fiche s'arrête à la courbe de puissance
     return power +
       sectionHtml('sec-versus', 'Face à… — matchup et build adverse', `<div class="champ-switch versus"><input type="text" id="versusInput" placeholder="Adversaire en face…" autocomplete="off" value="${opp?escHtml(opp.name):''}"><div class="champ-switch-results" id="versusResults" hidden></div></div><div id="versusBody">${versusHtml(ch, lane, opp)}</div>`) +
-      sectionHtml('sec-build', 'Objets', buildHtml(ch, lane)) +
-      sectionHtml('sec-runes', 'Runes', runesHtml(ch, lane)) +
-      sectionHtml('sec-spells', "Sorts d'invocateur et ordre des sorts", spellsSkillsHtml(ch, lane)) +
-      sectionHtml('sec-matchups', 'Matchups — qui le bat, qui il bat', matchupsHtml(ch, lane), null, true) +
-      sectionHtml('sec-counter', `Contre-pick — que jouer face à ${escHtml(ch.name)}`, counterPickHtml(ch, lane), null, true);
+      sectionHtml('sec-build', `Objets${lolaSq(ch, lane, 'objets')}`, buildHtml(ch, lane)) +
+      sectionHtml('sec-runes', `Runes${lolaSq(ch, lane, 'runes')}`, runesHtml(ch, lane)) +
+      sectionHtml('sec-spells', `Sorts d'invocateur et ordre des sorts${lolaSq(ch, lane, "sorts d'invocateur et ordre des sorts")}`, spellsSkillsHtml(ch, lane)) +
+      sectionHtml('sec-matchups', `Matchups — qui le bat, qui il bat${lolaSq(ch, lane, 'matchups', 'counters')}`, matchupsHtml(ch, lane), null, true) +
+      sectionHtml('sec-counter', `Contre-pick — que jouer face à ${escHtml(ch.name)}${lolaSq(ch, lane, 'counters', 'counters')}`, counterPickHtml(ch, lane), null, true);
   }
   function initStatsSections(ch){
     const box = document.getElementById('statsSections'); if(!box) return;
@@ -1008,11 +1017,11 @@
           <span class="spacer"></span>
           ${sourcePagesHtml(ch)}
         </div>
-        <div class="roleline" style="margin-top:12px;">${rolelineHtml()}</div>
+        <div class="roleline" style="margin-top:12px;">${rolelineHtml()}${lolaSq(ch, null, 'taux de victoire, de sélection et de ban par rôle et par palier')}</div>
         ${analysisBlockHtml(ch, 'margin-top:12px;')}
       </div>
 
-      ${sectionHtml('sec-abilities', "Compétences — cliquer pour voir l'animation", `
+      ${sectionHtml('sec-abilities', `Compétences — cliquer pour voir l'animation${AppNav.srcLink('riot', champPageUrl(ch), 'Fiche officielle Riot : textes officiels des compétences')}${AppNav.srcLink('wiki', (ch.pages || {}).wiki, 'Wiki League of Legends : mécaniques détaillées des compétences (en anglais)')}`, `
         <div class="abilities-layout">
           <div class="abilities-left">
             <div class="abilities-list" id="abilitiesGrid">${rows}</div>

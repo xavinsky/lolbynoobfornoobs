@@ -195,9 +195,14 @@
   /* Bloc « Sources : » de la fiche champion : logos des sites qui ont une page sur le champion, dans le coin de l'en-tête */
   .src-pages{ display:flex; align-items:center; gap:8px; margin-left:auto; align-self:flex-start; padding:4px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface2); white-space:nowrap; }
   .src-pages-lbl{ font-size:.85em; color:var(--muted); }
-  .src-pages a{ display:flex; align-items:center; border-radius:4px; padding:2px; }
-  .src-pages a:hover{ background:var(--accent-soft); }
-  .src-pages img{ height:18px; width:auto; display:block; }
+  /* Carré au logo d'un site source, le même partout (AppNav.srcLink) : dans le bloc « Sources : » ou dans un titre de section */
+  a.src-link{ display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; border:1px solid var(--border); border-radius:5px; padding:2px; background:var(--surface2); margin-left:4px; line-height:0; }
+  a.src-link:hover{ background:var(--accent-soft); border-color:var(--accent); }
+  a.src-link img{ height:16px; width:auto; display:block; }
+  .src-pages a.src-link{ margin-left:0; }
+  .src-pages.page-src{ float:right; margin:0 0 8px 12px; }
+  /* Un encadré pleine largeur (barre de filtre repliable) placé sous le bloc passe en dessous, au lieu d'être recouvert */
+  .detail-card > .page-src ~ details, .detail-card > .page-src ~ * > details:first-child{ clear:right; }
 
   .empty{ text-align:center; padding:40px 20px; color:var(--muted); font-family:var(--body-font); }
   .newbadge{ font-family:var(--mono); font-size:.65em; text-transform:uppercase; letter-spacing:.04em; color:var(--c3); border:1px solid var(--c3); border-radius:10px; padding:1px 7px; }

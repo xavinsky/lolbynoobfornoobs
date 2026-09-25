@@ -14,6 +14,8 @@
 
 <main>
   <div class="detail-card">
+    <div id="pageSources"></div>
+    <script>document.getElementById('pageSources').outerHTML = AppNav.srcBlock([{ key: 'wiki', url: 'https://wiki.leagueoflegends.com/en-us/Item', title: 'Wiki League of Legends : les objets et leurs effets, d’où vient ce classement (en anglais)' }, { key: 'riot', url: 'https://developer.riotgames.com/docs/lol#data-dragon', title: 'Riot, Data Dragon : noms, statistiques et descriptions officielles des objets' }], 'page-src');</script>
     <h2 style="color:var(--r-h1); text-transform:none; letter-spacing:0; font-size:1.4em;">Effets et statistiques des objets — ce qu'un objet fait, et ce qu'il donne</h2>
     <p style="margin:6px 0 0;">Un objet apporte des <b>statistiques</b> (dégâts d'attaque, armure, vitesse de déplacement…) et, souvent, un ou plusieurs <b>effets</b> : un passif nommé, un actif à déclencher, une consommation. Cette page explique chaque famille d'effets et chaque statistique, avec le nombre d'objets concernés, trois exemples et la liste complète repliée ; sur la sous-page Objets, chaque objet porte les icônes de ses effets et peut être filtré par effet ou par statistique. Sources en fin de page <a class="ref pagenote" href="#sources">[1]</a> <a class="ref pagenote" href="#sources">[2]</a> <a class="ref pagenote" href="#sources">[3]</a>.</p>
     <nav class="sub-nav" id="axisNav"></nav>

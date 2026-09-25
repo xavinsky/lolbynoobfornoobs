@@ -376,7 +376,36 @@
   window.addEventListener('scroll', hideTip, { passive: true, capture: true });
   window.addEventListener('resize', hideTip);
 
-  window.AppNav = { render, lastChamp, params, tiers: () => tiers.slice(), tiersLabel, TIERS, CREDITS, creditLink, FLAGS, CONTRIBUTE, contributeUrl, reportLink };
+  // ---------- Liens vers les sites sources : un carré au logo du site, le même sur toutes les pages ----------
+  // srcLink : un carré qui mène à la page d'origine, avec au survol ce qu'on y trouve ; srcBlock : le bloc « Sources : »
+  // en haut à droite d'une page ou d'une fiche qui repose entièrement sur ces sites (existant/description-fonctionnelle.md,
+  // « Sources »). Logos : icônes officielles des sites, copiées dans img/sources/.
+  const SOURCE_LOGOS = {
+    riot: { img: 'img/sources/riot.svg', alt: 'Riot Games' },
+    wiki: { img: 'img/sources/wiki.png', alt: 'Wiki League of Legends' },
+    lolalytics: { img: 'img/sources/lolalytics.png', alt: 'lolalytics' },
+    namu: { img: 'img/sources/namu.svg', alt: 'Namu Wiki' },
+  };
+  const escAttr = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  function srcLink(key, url, title){
+    const l = SOURCE_LOGOS[key];
+    if(!l || !url) return '';
+    return `<a class="src-link" href="${escAttr(url)}" target="_blank" rel="noopener" title="${escAttr(title)}"><img src="${l.img}" alt="${escAttr(l.alt)}"></a>`;
+  }
+  // Site source d'une adresse, pour lui mettre son carré (null si ce n'est pas un des sites à logo).
+  function srcKeyOf(url){
+    const h = String(url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0];
+    if(h.endsWith('lolalytics.com')) return 'lolalytics';
+    if(h === 'wiki.leagueoflegends.com') return 'wiki';
+    if(h === 'namu.wiki') return 'namu';
+    if(h === 'leagueoflegends.com' || h.endsWith('riotgames.com') || h === 'ddragon.leagueoflegends.com') return 'riot';
+    return null;
+  }
+  function srcBlock(items, cls){
+    const links = items.map(i => srcLink(i.key, i.url, i.title)).join('');
+    return links ? `<div class="src-pages${cls ? ' ' + cls : ''}"><span class="src-pages-lbl">Sources :</span>${links}</div>` : '';
+  }
+  window.AppNav = { render, lastChamp, params, tiers: () => tiers.slice(), tiersLabel, TIERS, CREDITS, creditLink, FLAGS, CONTRIBUTE, contributeUrl, reportLink, srcLink, srcBlock, srcKeyOf };
   const h = document.querySelector('header.masthead');
   if(h && h.dataset.section) render(h.dataset.section, h.dataset.page);
 })();

@@ -216,7 +216,7 @@
     // nom traduit.
     const whatKey = lang === 'fr' ? 'what' : 'what_' + lang;
     document.getElementById('creditsTable').innerHTML = AppNav.CREDITS.map(c =>
-      `<tr><td>${AppNav.FLAGS[c.lang]} ${AppNav.creditLink(c, lang === 'ko' ? c.label_ko : null)}</td><td class="num">${vol(c.ko)}</td><td class="num">${c.refs.toLocaleString(lang === 'ko' ? 'ko-KR' : (lang === 'en' ? 'en-GB' : 'fr-FR'))}</td><td>${c[whatKey] || c.what}</td></tr>`).join('');
+      `<tr><td>${AppNav.FLAGS[c.lang]} ${AppNav.creditLink(c, lang === 'ko' ? c.label_ko : null)}${AppNav.srcKeyOf(c.url) ? AppNav.srcLink(AppNav.srcKeyOf(c.url), c.url, c.label) : ''}</td><td class="num">${vol(c.ko)}</td><td class="num">${c.refs.toLocaleString(lang === 'ko' ? 'ko-KR' : (lang === 'en' ? 'en-GB' : 'fr-FR'))}</td><td>${c[whatKey] || c.what}</td></tr>`).join('');
 
     // Liste « Contribuer »
     document.getElementById('contribList').innerHTML = t.contribItems.map(li => `<li>${li}</li>`).join('');
